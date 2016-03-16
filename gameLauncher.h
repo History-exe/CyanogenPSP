@@ -12,9 +12,9 @@
 #include <malloc.h>
 #include <oslib/oslib.h>
 
-#define MAX_GAME_DISPLAY		3 // max amount of files displayed on-screen.
-#define GAME_DISPLAY_X			20 // X value of where the filebrowser is displayed.
-#define GAME_DISPLAY_Y			87 // Y value of the filebrowser is displayed.
+#define MAX_GAME_DISPLAY	3 // max amount of files displayed on-screen.
+#define GAME_DISPLAY_X		20 // X value of where the filebrowser is displayed.
+#define GAME_DISPLAY_Y		87 // Y value of the filebrowser is displayed.
 #define GAME_CURR_DISPLAY_Y     66 
 
 #define game_xSelection 0 //The distance between the X axis of the two selections
