@@ -2217,6 +2217,7 @@ void themesLoad()
 	char gameSelectorImg[100] = "/app/game/gameselector.png";
 	
 	char quickSettingsBgImg[100] = "/home/menu/quickSettings.png";
+	char controlsImg[100] = "/home/menu/brightnesscontrol.png";
 	char volumeControlImg[100] = "/home/menu/volumeControl.png";
 	char backdropImg[100] = "/home/icons/backdrop.png";
 	char navbarImg[100] = "/home/icons/navbar.png";
@@ -2260,6 +2261,7 @@ void themesLoad()
 	replaceAsset(tempData, themeDirPath, gameImg, gameBgPath);
 	replaceAsset(tempData, themeDirPath, gameSelectorImg, gameSelectorPath);
 	replaceAsset(tempData, themeDirPath, quickSettingsBgImg, quickSettingsBgPath);
+	replaceAsset(tempData, themeDirPath, controlsImg, controlsPath);
 	replaceAsset(tempData, themeDirPath, volumeControlImg, volumeControlPath);
 	replaceAsset(tempData, themeDirPath, navbarImg, navbarPath);
 	replaceAsset(tempData, themeDirPath, navbar2Img, navbar2Path);
@@ -2288,6 +2290,7 @@ void themesReload()
 	oslDeleteImage(navbarHighlight);
 	oslDeleteImage(navbarHighlight2);
 	oslDeleteImage(quickSettings);
+	oslDeleteImage(control);
 	oslDeleteImage(volumeControl);
 	oslDeleteImage(cursor);
 	oslDeleteImage(displaybg);
@@ -2299,6 +2302,7 @@ void themesReload()
 	navbarHighlight = oslLoadImageFilePNG(navbarHighlightPath, OSL_IN_RAM, OSL_PF_8888);
 	navbarHighlight2 = oslLoadImageFilePNG(navbarHighlight2Path, OSL_IN_RAM, OSL_PF_8888);
 	quickSettings = oslLoadImageFile(quickSettingsBgPath, OSL_IN_VRAM, OSL_PF_8888);
+	control = oslLoadImageFilePNG(controlsPath, OSL_IN_VRAM, OSL_PF_8888);
 	cursor = oslLoadImageFilePNG(cursorPath, OSL_IN_RAM, OSL_PF_8888);
 	volumeControl = oslLoadImageFile(volumeControlPath, OSL_IN_RAM, OSL_PF_8888);
 	displaybg = oslLoadImageFilePNG(displayBgPath, OSL_IN_RAM, OSL_PF_8888);
