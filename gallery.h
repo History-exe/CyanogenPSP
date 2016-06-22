@@ -18,6 +18,15 @@
 
 OSL_IMAGE *gallerybg, *gallerySelection, *galleryThumbnail, *galleryBar, *wallpaper;
 
+char galleryFontColorPath[200];
+
+struct galleryFontColor 
+{
+   int	r;
+   int	g;
+   int	b;
+};
+
 int selection;
 
 void galleryUp();

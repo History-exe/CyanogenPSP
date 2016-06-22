@@ -12,6 +12,7 @@
 #include "gameLauncher.h"
 #include "gallery.h"
 #include "lockScreen.h"
+#include "musicPlayer.h"
 #include "recentsMenu.h"
 #include "powerMenu.h"
 #include "recoveryMenu.h"
@@ -36,12 +37,9 @@
 
 #define DATE_AS_INT (((YEAR - 2000) * 12 + MONTH) * 31 + DAY)
 
-char name;
-int setclock;
-char cyanogenpspversion[5] = "6.0";
-char lang[12] = "Uk English";
-static char Settings_message[100] = "";
+struct settingsFontColor fontColor;
 
+static char Settings_message[100] = "";
 char buffer[100] = "";
 
 //kernel function imports
@@ -172,9 +170,9 @@ void flashUpdate()
 	while (!osl_quit)
 	{	
 		oslStartDrawing();
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		oslDrawImageXY(recoverybg, 0, 0);
-		oslDrawStringf(10,60,"Flashing zip...");
+		oslDrawStringf(10, 60, "Flashing zip...");
 		if (fileExists("ms0:/PSP/GAME/update.zip"))
 		{		
 			pgeZip* zipFiles = pgeZipOpen("../update.zip");
@@ -304,25 +302,25 @@ void aboutMenu()
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 
 		oslDrawImageXY(aboutbg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
-		oslDrawStringf(20,78,"%s", lang_settingsAbout[language][0]);
-		oslDrawStringf(20,92,"%s", lang_settingsAbout[language][1]);
-		pspGetModel(20,143);
-		oslDrawStringf(20,129,"%s %s-%d%02d%02d-%s", lang_settingsAbout[language][2], cyanogenpspversion, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
-		oslDrawStringf(20,157,"%s %02X:%02X:%02X:%02X:%02X:%02X", lang_settingsAbout[language][4], macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
-		oslDrawStringf(20,185,"%s %d.%d", lang_settingsAbout[language][5], version.major, version.minor);
-		oslDrawStringf(20,199,"%s %s", lang_settingsAbout[language][6], OSL_VERSION);
-		oslDrawStringf(20,213,"Developer: Joel16");
+		oslDrawStringf(20, 78, "%s", lang_settingsAbout[language][0]);
+		oslDrawStringf(20, 92, "%s", lang_settingsAbout[language][1]);
+		pspGetModel(20, 143);
+		oslDrawStringf(20, 129, "%s %s-%d%02d%02d-%s", lang_settingsAbout[language][2], VERSION, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
+		oslDrawStringf(20, 157, "%s %02X:%02X:%02X:%02X:%02X:%02X", lang_settingsAbout[language][4], macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
+		oslDrawStringf(20, 185, "%s %d.%d", lang_settingsAbout[language][5], version.major, version.minor);
+		oslDrawStringf(20, 199, "%s %s", lang_settingsAbout[language][6], OSL_VERSION);
+		oslDrawStringf(20, 213, "Developer: Joel16");
 
 		if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 62 && cursor->y <= 119)
 		{
@@ -342,7 +340,7 @@ void aboutMenu()
 		{
 			oslDrawImageXY(highlight, 0, 122);
 			pspGetModel(20,143);
-			oslDrawStringf(20,129,"%s %s-%d%02d%02d-%s", lang_settingsAbout[language][2], cyanogenpspversion, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
+			oslDrawStringf(20,129,"%s %s-%d%02d%02d-%s", lang_settingsAbout[language][2], VERSION, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
 			oslDrawStringf(20,157,"%s %02X:%02X:%02X:%02X:%02X:%02X", lang_settingsAbout[language][4], macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 		}
 		
@@ -467,7 +465,7 @@ void creditsMenu()
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 
@@ -476,7 +474,7 @@ void creditsMenu()
 			oslDrawFillRect(0, 62, 444, 272, RGB(255,255,255));
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, 0.5, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, 0.5, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, 0.5, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -574,14 +572,14 @@ void updatesMenu()
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 
 		oslDrawImageXY(updatesbg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
@@ -678,14 +676,14 @@ void performanceMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 
 		oslDrawImageXY(performancebg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -870,14 +868,14 @@ void processorMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
 		oslDrawImageXY(processorbg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
@@ -1078,14 +1076,14 @@ void ramMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
 		oslDrawImageXY(performancebg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
@@ -1176,14 +1174,14 @@ void storageMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
 		oslDrawImageXY(performancebg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
@@ -1280,14 +1278,14 @@ void batteryMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 
 		oslDrawImageXY(performancebg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -1481,12 +1479,12 @@ void displayMenu()
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -1627,12 +1625,12 @@ void displayThemes()
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -1773,12 +1771,12 @@ void displayFontMenu()
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -1906,14 +1904,14 @@ void displayFontSizeMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 
 		oslDrawImageXY(displaybg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -2079,7 +2077,7 @@ void settingsDisplay()
 		if (folderIcons[i].active == 1) 
 		{
 			if (DARK == 0)
-				oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+				oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 			else
 				oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 			oslDrawStringf(SETTINGS_DISPLAY_X, (i - curScroll)*55+SETTINGS_DISPLAY_Y, "%.56s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
@@ -2229,6 +2227,12 @@ void themesLoad()
 	char keyBoardBgImg[100] = "/settings/keyboard.png";
 	
 	char rgbValues[100] = "/settings/rgb.bin";
+	char appDrawerFontColor[100] = "/app/rgb.bin";
+	char fileManagerFontColor[100] = "/app/filemanager/rgb.bin";
+	char galleryFontColor[100] = "/app/gallery/rgb.bin";
+	char gameFontColor[100] = "/app/game/rgb.bin";
+	char apolloFontColor[100] = "/app/apollo/rgb.bin";
+	char settingsFontColor[100] = "/settings/srgb.bin";
 	char backgroundData[100] = "/settings/background.bin";
 	
 	replaceAsset(tempData, themeDirPath, highlightImg, highlightPath);
@@ -2272,6 +2276,12 @@ void themesLoad()
 	replaceAsset(tempData, themeDirPath, keyBoardBgImg, keyBoardBgPath);
 	replaceAsset(tempData, themeDirPath, rgbValues, rgbValuesPath);
 	replaceAsset(tempData, themeDirPath, backgroundData, backgroundPath);
+	replaceAsset(tempData, themeDirPath, appDrawerFontColor, appDrawerFontColorPath);
+	replaceAsset(tempData, themeDirPath, fileManagerFontColor, fileManagerFontColorPath);
+	replaceAsset(tempData, themeDirPath, galleryFontColor, galleryFontColorPath);
+	replaceAsset(tempData, themeDirPath, gameFontColor, gameFontColorPath);
+	replaceAsset(tempData, themeDirPath, apolloFontColor, apolloFontColorPath);
+	replaceAsset(tempData, themeDirPath, settingsFontColor, settingsFontColorPath);
 	
 	FILE *temp;
 
@@ -2530,7 +2540,7 @@ char * settingsBrowse(const char * path, int n) // n is used here to search for 
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));	
+		oslClearScreen(RGB(0, 0, 0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 		settingsDisplay();
@@ -2592,7 +2602,7 @@ void displaySubThemes(char * browseDirectory, int n) // n is used here to search
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		centerText(480/2, 272/2, browseDirectory, 50);
 		
@@ -2631,12 +2641,12 @@ void displayTime()
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -2778,12 +2788,12 @@ void displayMiscellaneous()
 	
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -3017,7 +3027,7 @@ void securityMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 		
@@ -3025,7 +3035,7 @@ void securityMenu()
 		
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
@@ -3181,14 +3191,14 @@ void wifiMenu()
 	
 			oslStartDrawing();
 		
-			oslClearScreen(RGB(0,0,0));
+			oslClearScreen(RGB(0, 0, 0));
 		
 			controls();	
 
 			oslDrawImageXY(wifibg, 0, 0);
 			
 			if (DARK == 0)
-				oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+				oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 			else
 				oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 
@@ -3307,14 +3317,14 @@ void developerMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 
 		oslDrawImageXY(developerbg, 0, 0);
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
@@ -3536,6 +3546,19 @@ void settingsDeleteResources()
 
 void settingsMenu()
 {	
+	FILE *temp;
+	 
+	if (!(fileExists(settingsFontColorPath)))
+	{
+		temp = fopen(settingsFontColorPath, "w");
+		fprintf(temp, "0\n0\n0");
+		fclose(temp);
+	}
+	
+	temp = fopen(settingsFontColorPath, "r");
+	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(temp);
+
 	themesLoad();
 	
 	if (DARK == 0)
@@ -3570,14 +3593,14 @@ void settingsMenu()
 		
 		oslStartDrawing();
 		
-		oslClearScreen(RGB(0,0,0));
+		oslClearScreen(RGB(0, 0, 0));
 		
 		controls();	
 
 		oslDrawImageXY(settingsbg, 0, 0);
 
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		

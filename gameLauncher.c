@@ -11,6 +11,8 @@
 #include "include/systemctrl_se.h"  
 #include "include/utils.h"
 
+struct gameFontColor fontColor;
+
 void gameUp()
 {
 	current--; // Subtract a value from current so the ">" goes up
@@ -257,7 +259,7 @@ void gameDisplay()
 		// If the currently selected item is active, then display the name
 		if (folderIcons[i].active == 1) 
 		{
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 			oslDrawStringf(GAME_DISPLAY_X, (i - curScroll)*63+GAME_DISPLAY_Y, "%.41s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it
 		}
 	}
@@ -782,6 +784,19 @@ int gameBoot()
 
 int gameApp() 
 {
+	FILE *temp;
+	 
+	if (!(fileExists(gameFontColorPath)))
+	{
+		temp = fopen(gameFontColorPath, "w");
+		fprintf(temp, "0\n0\n0");
+		fclose(temp);
+	}
+	
+	temp = fopen(gameFontColorPath, "r");
+	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(temp);
+	
 	gamebg = oslLoadImageFilePNG(gameBgPath, OSL_IN_RAM, OSL_PF_8888);
 	gameSelection = oslLoadImageFilePNG(gameSelectorPath, OSL_IN_RAM, OSL_PF_8888);
 
@@ -811,7 +826,7 @@ int gameApp()
 		oslReadKeys();
 		oslClearScreen(RGB(0,0,0));	
 		oslDrawImageXY(gamebg, 0, 0);
-		oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		oslDrawImageXY(gameSelection, selector_image_x, selector_image_y);
 		
 		oslDrawStringf(20,87,"GAME");

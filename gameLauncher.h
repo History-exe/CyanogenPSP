@@ -23,6 +23,15 @@
 OSL_IMAGE *gamebg, *gameSelection, *icon0, *gameAnim[20];
 OSL_FONT *Roboto;
 
+char gameFontColorPath[250];
+
+struct gameFontColor 
+{
+   int	r;
+   int	g;
+   int	b;
+};
+
 typedef struct
 {
 	char signature[4];

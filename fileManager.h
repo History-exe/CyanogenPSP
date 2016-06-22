@@ -39,6 +39,15 @@
 OSL_IMAGE 	*filemanagerbg, *diricon, *imageicon, *mp3icon, *txticon, *unknownicon, *documenticon, *binaryicon, *videoicon, *archiveicon, *bar, 
 			*deletion, *action, *textview,  *gallerybar;
 			
+char fileManagerFontColorPath[200];
+
+struct fileManagerFontColor 
+{
+   int	r;
+   int	g;
+   int	b;
+};
+			
 SceCtrlData pad, oldpad;
 
 // Current Path

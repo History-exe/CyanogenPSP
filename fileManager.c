@@ -14,6 +14,7 @@
 #include "include/utils.h"
 
 static unsigned copy_progress;
+struct fileManagerFontColor fontColor;
 
 int copy_bytes(SceUID source, SceUID destination, unsigned bytes)
 {
@@ -996,7 +997,7 @@ void dirDisplay()
 	battery(370,2,1);
 	digitaltime(420,4,0,hrTime);
 	
-	oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, 0);
+	oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 
 	// Displays the directories, while also incorporating the scrolling
 	for(i=curScroll;i<MAX_DISPLAY+curScroll;i++) {
@@ -1073,7 +1074,7 @@ void dirDisplay()
 		// If the currently selected item is active, then display the name
 		if (folderIcons[i].active == 1) 
 		{
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, 0);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 			oslDrawStringf(DISPLAY_X, (i - curScroll)*44+DISPLAY_Y, "%.42s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
 			//oslDrawStringf(DISPLAY_X+335, (i - curScroll)*44+DISPLAY_Y, "<%.2f MB>", getFileSize(folderIcons[i].filePath));
 		}
@@ -1345,6 +1346,19 @@ void filemanager_unload()
 
 int filemanage(int argc, char *argv[])
 {
+	FILE *temp;
+	 
+	if (!(fileExists(fileManagerFontColorPath)))
+	{
+		temp = fopen(fileManagerFontColorPath, "w");
+		fprintf(temp, "0\n0\n0");
+		fclose(temp);
+	}
+	
+	temp = fopen(fileManagerFontColorPath, "r");
+	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(temp);
+	
 	filemanagerbg = oslLoadImageFilePNG(fmBgPath, OSL_IN_RAM, OSL_PF_8888);
 	diricon = oslLoadImageFilePNG(diriconPath, OSL_IN_RAM, OSL_PF_8888);
 	imageicon = oslLoadImageFilePNG("system/app/filemanager/image.png", OSL_IN_RAM, OSL_PF_8888);

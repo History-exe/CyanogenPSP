@@ -12,9 +12,9 @@ OBJS = main.o appDrawer.o homeMenu.o calculator.o lockScreen.o settingsMenu.o cl
 BUILD_PRX = 1
 PSP_LARGE_MEMORY = 1
 
-VERSION	= 6.0
+VERSION	= '"6.0.1"'
 
-CFLAGS = -O2 -g -G0 -Wall -Werror
+CFLAGS = -O2 -g -G0 -Wall -Werror -DVERSION=$(VERSION)
 CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
 ASFLAGS = $(CFLAGS)
 INCDIR = $(INCLUDE_DIR) \

@@ -12,6 +12,7 @@
 #include "include/utils.h"
 
 int imposeGetVolume();
+struct musicPlayerFontColor fontColor;
 
 void mp3Up()
 {
@@ -80,7 +81,7 @@ void MP3Play(char * path)
 
 		oslReadKeys();
 		
-		oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, 0);
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 		
 		if (MP3ME_playingTime > 59)
 		{
@@ -199,7 +200,7 @@ int soundPlay(char * path)
 
 		oslReadKeys();
 		
-		oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, 0);
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 		
 		oslDrawImageXY(nowplaying, 0, 0);
 		
@@ -273,7 +274,7 @@ int soundPlay(char * path)
 
 void mp3FileDisplay()
 {
-	oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, 0);
+	oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 
 	oslDrawImageXY(mp3bg, 0, 0);
 	oslDrawImageXY(mp3_select,8,(current - curScroll)*55+MP3_CURR_DISPLAY_Y);
@@ -478,6 +479,19 @@ int mp3View(char * browseDirectory)
 
 int mp3player() 
 {
+	FILE *temp;
+	 
+	if (!(fileExists(apolloFontColorPath)))
+	{
+		temp = fopen(apolloFontColorPath, "w");
+		fprintf(temp, "0\n0\n0");
+		fclose(temp);
+	}
+	
+	temp = fopen(apolloFontColorPath, "r");
+	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(temp);
+	
 	mp3bg = oslLoadImageFilePNG(apolloBgPath, OSL_IN_RAM, OSL_PF_8888);
 	mp3_select = oslLoadImageFilePNG(apolloSelectorPath, OSL_IN_RAM, OSL_PF_8888);
 	
@@ -505,7 +519,7 @@ int mp3player()
 		oslReadKeys();
 		oslClearScreen(RGB(0,0,0));	
 		
-		oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, 0);
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 		
 		oslDrawImageXY(mp3bg, 0, 0);
 		oslDrawImageXY(mp3_select, selector_image_x, selector_image_y);

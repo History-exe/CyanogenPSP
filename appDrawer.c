@@ -197,6 +197,21 @@ void appHighlight(int n)
 
 int appdrawer()
 {	
+	struct appDrawerFontColor fontColor;
+	
+	FILE *temp;
+	 
+	if (!(fileExists(appDrawerFontColorPath)))
+	{
+		temp = fopen(appDrawerFontColorPath, "w");
+		fprintf(temp, "0\n0\n0");
+		fclose(temp);
+	}
+	
+	temp = fopen(appDrawerFontColorPath, "r");
+	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(temp);
+	
 	int browser_x = 30;
 	int browser_text_x = 52;
 	int calc_x = 105;
@@ -257,7 +272,7 @@ int appdrawer()
 		}
 		
 		if (DARK == 0)
-			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_CENTER);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_CENTER);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, INTRAFONT_ALIGN_CENTER);
 			
@@ -408,4 +423,3 @@ int appdrawer()
 	}
 	return 0;
 }
-

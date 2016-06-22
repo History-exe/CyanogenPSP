@@ -7,18 +7,13 @@
 
 OSL_IMAGE *ic_launcher_calculator, *ic_launcher_clock, *ic_launcher_umd, *ic_launcher_gallery, *ic_launcher_filemanager, *ic_launcher_game, *backdrop;
 
-struct apps
+char appDrawerFontColorPath[200];
+
+struct appDrawerFontColor 
 {
-	int browser;
-	int calculator;
-	int clock;
-	int fileManager;
-	int gallery;
-	int game;
-	int messages;
-	int music;
-	int settings;
-	int umd;
+   int	r;
+   int	g;
+   int	b;
 };
 
 char appDirPath[100];

@@ -21,6 +21,15 @@
 
 OSL_IMAGE *mp3bg, *cursor, *nowplaying, *mp3_select, *mp3Play, *mp3Pause;
 
+char apolloFontColorPath[200];
+
+struct musicPlayerFontColor 
+{
+   int	r;
+   int	g;
+   int	b;
+};
+
 void mp3Up();
 void mp3Down();
 void mp3Upx5();

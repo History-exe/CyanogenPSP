@@ -49,7 +49,14 @@ struct fw_version
 	unsigned int minor;
 };
 
-char rgbValuesPath[250], backgroundDataPath[500];
+char rgbValuesPath[250], backgroundDataPath[500], settingsFontColorPath[200];
+
+struct settingsFontColor 
+{
+   int	r;
+   int	g;
+   int	b;
+};
 
 char settingsBgPath[250], displayBgPath[250], aboutBgPath[250], developerBgPath[250], performanceBgPath[250], performance2BgPath[250], 
 	 securityBgPath[250], updatesBgPath[250], wifiBgPath[250];

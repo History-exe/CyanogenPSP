@@ -10,6 +10,8 @@
 #include "fileManager.h"
 #include "include/utils.h"
 
+struct galleryFontColor fontColor;
+
 void galleryUp()
 {
 	current--; // Subtract a value from current so the ">" goes up
@@ -75,7 +77,7 @@ void galleryDisplay()
 		// If the currently selected item is active, then display the name
 		if (folderIcons[i].active == 1) 
 		{	
-			oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, 0);
+			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 			oslDrawStringf(GALLERY_DISPLAY_X, (i - curScroll)*55+GALLERY_DISPLAY_Y, "%.52s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
 		}
 	}
@@ -407,6 +409,19 @@ int galleryView(char * browseDirectory)
 
 int galleryApp() 
 {
+	FILE *temp;
+	 
+	if (!(fileExists(galleryFontColorPath)))
+	{
+		temp = fopen(galleryFontColorPath, "w");
+		fprintf(temp, "255\n255\n255");
+		fclose(temp);
+	}
+	
+	temp = fopen(galleryFontColorPath, "r");
+	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(temp);
+	
 	gallerybg = oslLoadImageFilePNG(galleryBgPath, OSL_IN_RAM, OSL_PF_8888);
 	gallerySelection = oslLoadImageFilePNG(gallerySelectorPath, OSL_IN_RAM, OSL_PF_8888);
 	galleryThumbnail = oslLoadImageFilePNG("system/app/gallery/ic_images.png", OSL_IN_RAM, OSL_PF_8888);
@@ -430,7 +445,7 @@ int galleryApp()
 		selector_image_x = selector_x+(galley_xSelection*MenuSelection); //Determines where the selection image is drawn for each selection
         selector_image_y = selector_y+(galley_ySelection*MenuSelection); //Determines where the selection image is drawn for each selection
 	
-		oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, 0);
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 	
 		oslStartDrawing();
 		oslReadKeys();
