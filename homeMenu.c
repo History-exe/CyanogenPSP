@@ -21,6 +21,9 @@ int yLine1 = -272;
 int yLine2 = -272;
 int controlX = 25;
 
+struct timeAndBatteryStatusFontColor fontColor;
+struct clockWidgetFontColor lFontColor;
+
 //kernel function imports
 
 int getBrightness(void);
@@ -197,7 +200,7 @@ void battery(int batX, int batY, int n) // Draws the battery icon depending on i
 	
 	batteryLife = scePowerGetBatteryLifePercent(); //Gets battery percentage
 	
-	oslIntraFontSetStyle(Roboto, 0.5f, WHITE, 0, INTRAFONT_ALIGN_LEFT);
+	oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 	
 	if (n == 0 || n == 1)
 	{
@@ -643,7 +646,7 @@ void androidQuickSettings()
 	else 
 		getMonthOfYear(72,yPos2+5);
 	
-	oslIntraFontSetStyle(Roboto, 0.5f, WHITE, 0, INTRAFONT_ALIGN_CENTER);
+	oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_CENTER);
 
 	oslDrawStringf(150,yLine1, "%s", lang_quickSettings[language][0]);
 	oslDrawStringf(350,yPos2, "%d%%",scePowerGetBatteryLifePercent());
@@ -902,11 +905,11 @@ void dayNightCycleWidget()
 	pspTime time;
 	sceRtcGetCurrentClockLocalTime(&time);
 	
-    oslIntraFontSetStyle(Roboto, 1.7f, WHITE, 0, INTRAFONT_ALIGN_CENTER);
+    oslIntraFontSetStyle(Roboto, 1.7f, RGBA(lFontColor.r, lFontColor.g, lFontColor.b, 255), 0, INTRAFONT_ALIGN_CENTER);
 	
 	centerClock(1);
 		
-	oslIntraFontSetStyle(Roboto, 0.5f, WHITE, 0, INTRAFONT_ALIGN_CENTER);
+	oslIntraFontSetStyle(Roboto, 0.5f, RGBA(lFontColor.r, lFontColor.g, lFontColor.b, 255), 0, INTRAFONT_ALIGN_CENTER);
 	getMonthOfYear(312,102);
 	getDayOfWeek(195,102,2);
 	
@@ -927,6 +930,32 @@ void homeUnloadResources()
 
 void home()
 {	
+	FILE *temp;
+	 
+	if (!(fileExists(clockWidgetFontColorPath)))
+	{
+		temp = fopen(clockWidgetFontColorPath, "w");
+		fprintf(temp, "255\n255\n255");
+		fclose(temp);
+	}
+	
+	temp = fopen(clockWidgetFontColorPath, "r");
+	fscanf(temp, "%d %d %d", &lFontColor.r, &lFontColor.g, &lFontColor.b);
+	fclose(temp);
+	
+	FILE *temp2;
+	 
+	if (!(fileExists(timeAndBatteryFontColorPath)))
+	{
+		temp2 = fopen(timeAndBatteryFontColorPath, "w");
+		fprintf(temp2, "255\n255\n255");
+		fclose(temp2);
+	}
+	
+	temp2 = fopen(timeAndBatteryFontColorPath, "r");
+	fscanf(temp2, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(temp2);
+
 	char message[100] = "";
 	char *updateData;
     int dialog = OSL_DIALOG_NONE;

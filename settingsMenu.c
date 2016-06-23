@@ -2233,6 +2233,8 @@ void themesLoad()
 	char gameFontColor[100] = "/app/game/rgb.bin";
 	char apolloFontColor[100] = "/app/apollo/rgb.bin";
 	char settingsFontColor[100] = "/settings/srgb.bin";
+	char timeAndBatteryFontColor[100] = "/home/rgb.bin";
+	char lockScreenWidgetFontColor[100] = "/app/clock/rgb.bin";
 	char backgroundData[100] = "/settings/background.bin";
 	
 	replaceAsset(tempData, themeDirPath, highlightImg, highlightPath);
@@ -2282,6 +2284,8 @@ void themesLoad()
 	replaceAsset(tempData, themeDirPath, gameFontColor, gameFontColorPath);
 	replaceAsset(tempData, themeDirPath, apolloFontColor, apolloFontColorPath);
 	replaceAsset(tempData, themeDirPath, settingsFontColor, settingsFontColorPath);
+	replaceAsset(tempData, themeDirPath, timeAndBatteryFontColor, timeAndBatteryFontColorPath);
+	replaceAsset(tempData, themeDirPath, lockScreenWidgetFontColor, clockWidgetFontColorPath);
 	
 	FILE *temp;
 

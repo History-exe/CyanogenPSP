@@ -8,6 +8,9 @@
 #include "settingsMenu.h"
 #include "include/utils.h"
 
+struct timeAndBatteryStatusFontColor fontColor;
+struct clockWidgetFontColor lFontColor;
+
 time_t		currentTime;
 time_t		startTimer_;
 
@@ -96,7 +99,7 @@ void digitaltime(int x, int y, int color, int hr) //color == 0 is white, color =
 	sceRtcGetCurrentClockLocalTime(&time);
 	
 	if (color == 0)
-		oslIntraFontSetStyle(Roboto, 0.5, WHITE, 0, 0);
+		oslIntraFontSetStyle(Roboto, 0.5, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 	else if (color == 1)
 		oslIntraFontSetStyle(Roboto, 0.5, BLACK, 0, 0);
 		
@@ -128,7 +131,7 @@ void centerClock(int n)
 	
 	if (hrTime == 0)
 	{
-		oslIntraFontSetStyle(Roboto, 0.6f, WHITE, BLACK, INTRAFONT_ALIGN_CENTER);
+		oslIntraFontSetStyle(Roboto, 0.6f, RGBA(lFontColor.r, lFontColor.g, lFontColor.b, 255), BLACK, INTRAFONT_ALIGN_CENTER);
 		
 		if (n == 0)
 		{
@@ -145,7 +148,7 @@ void centerClock(int n)
 			time.hour = 12;
 	}
 	
-    oslIntraFontSetStyle(Roboto, 1.7f, WHITE, 0, INTRAFONT_ALIGN_CENTER);
+    oslIntraFontSetStyle(Roboto, 1.7f, RGBA(lFontColor.r, lFontColor.g, lFontColor.b, 255), 0, INTRAFONT_ALIGN_CENTER);
 	
 	if (n == 0)
 	{

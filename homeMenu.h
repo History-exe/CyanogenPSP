@@ -37,6 +37,15 @@ OSL_SOUND *camera_click, *KeypressStandard, *Lock, *LowBattery, *Unlock, *Wirele
 //definition of our font
 OSL_FONT *Roboto;
 
+char timeAndBatteryFontColorPath[200];
+
+struct timeAndBatteryStatusFontColor 
+{
+   int	r;
+   int	g;
+   int	b;
+};
+
 void internet();
 void debugDisplay();
 void controls();

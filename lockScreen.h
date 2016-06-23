@@ -3,4 +3,13 @@
 
 OSL_IMAGE *background, *cursor, *lockscreenBg;
 
+char clockWidgetFontColorPath[200];
+
+struct clockWidgetFontColor 
+{
+   int	r;
+   int	g;
+   int	b;
+};
+
 int lockscreen();
