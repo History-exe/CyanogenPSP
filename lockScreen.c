@@ -6,7 +6,7 @@
 #include "settingsMenu.h"
 #include "include/utils.h"
 
-struct timeAndBatteryStatusFontColor fontColor;
+struct timeAndBatteryStatusFontColor fontColorTime;
 struct clockWidgetFontColor lFontColor;
 
 int lockscreen()
@@ -34,7 +34,7 @@ int lockscreen()
 	}
 	
 	temp2 = fopen(timeAndBatteryFontColorPath, "r");
-	fscanf(temp2, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fscanf(temp2, "%d %d %d", &fontColorTime.r, &fontColorTime.g, &fontColorTime.b);
 	fclose(temp2);
 	
 	FILE * password;
@@ -69,14 +69,14 @@ int lockscreen()
 		centerClock(1);
 		
 		oslIntraFontSetStyle(Roboto, 0.5f, RGBA(lFontColor.r, lFontColor.g, lFontColor.b, 255), 0, 0);
-		getDayOfWeek(180,90,1);
-		getMonthOfYear(250,90);
+		getDayOfWeek(178,90,1);
+		getMonthOfYear(252,90);
 		//oslDrawStringf(20,20,"%d",passProtect); //Used for debugging only
 
-		oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
+		oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColorTime.r, fontColorTime.g, fontColorTime.b, 255), 0, 0);
 		
 		battery(370,2,1);
-		digitaltime(420,4,0,hrTime);
+		digitaltime(420, 4, 0, hrTime);
 		
 		if (passProtect != 1)
 			androidQuickSettings();

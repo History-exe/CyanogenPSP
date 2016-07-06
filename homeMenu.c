@@ -21,7 +21,7 @@ int yLine1 = -272;
 int yLine2 = -272;
 int controlX = 25;
 
-struct timeAndBatteryStatusFontColor fontColor;
+struct timeAndBatteryStatusFontColor fontColorTime;
 struct clockWidgetFontColor lFontColor;
 
 //kernel function imports
@@ -200,7 +200,7 @@ void battery(int batX, int batY, int n) // Draws the battery icon depending on i
 	
 	batteryLife = scePowerGetBatteryLifePercent(); //Gets battery percentage
 	
-	oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
+	oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColorTime.r, fontColorTime.g, fontColorTime.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 	
 	if (n == 0 || n == 1)
 	{
@@ -646,7 +646,7 @@ void androidQuickSettings()
 	else 
 		getMonthOfYear(72,yPos2+5);
 	
-	oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_CENTER);
+	oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColorTime.r, fontColorTime.g, fontColorTime.b, 255), 0, INTRAFONT_ALIGN_CENTER);
 
 	oslDrawStringf(150,yLine1, "%s", lang_quickSettings[language][0]);
 	oslDrawStringf(350,yPos2, "%d%%",scePowerGetBatteryLifePercent());
@@ -953,7 +953,7 @@ void home()
 	}
 	
 	temp2 = fopen(timeAndBatteryFontColorPath, "r");
-	fscanf(temp2, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fscanf(temp2, "%d %d %d", &fontColorTime.r, &fontColorTime.g, &fontColorTime.b);
 	fclose(temp2);
 
 	char message[100] = "";

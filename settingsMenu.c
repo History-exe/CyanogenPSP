@@ -18,26 +18,8 @@
 #include "recoveryMenu.h"
 #include "screenshot.h"
 
-#define YEAR ((((__DATE__ [7] - '0') * 10 + (__DATE__ [8] - '0')) * 10 \
-+ (__DATE__ [9] - '0')) * 10 + (__DATE__ [10] - '0'))
-
-#define MONTH (__DATE__ [2] == 'n' ? 0 \
-: __DATE__ [2] == 'b' ? 1 \
-: __DATE__ [2] == 'r' ? (__DATE__ [0] == 'M' ? 2 : 3) \
-: __DATE__ [2] == 'y' ? 4 \
-: __DATE__ [2] == 'n' ? 5 \
-: __DATE__ [2] == 'l' ? 6 \
-: __DATE__ [2] == 'g' ? 7 \
-: __DATE__ [2] == 'p' ? 8 \
-: __DATE__ [2] == 't' ? 9 \
-: __DATE__ [2] == 'v' ? 10 : 11)
-
-#define DAY ((__DATE__ [4] == ' ' ? 0 : __DATE__ [4] - '0') * 10 \
-+ (__DATE__ [5] - '0'))
-
-#define DATE_AS_INT (((YEAR - 2000) * 12 + MONTH) * 31 + DAY)
-
 struct settingsFontColor fontColor;
+struct timeAndBatteryStatusFontColor fontColorTime;
 
 static char Settings_message[100] = "";
 char buffer[100] = "";
@@ -2321,6 +2303,32 @@ void themesReload()
 	volumeControl = oslLoadImageFile(volumeControlPath, OSL_IN_RAM, OSL_PF_8888);
 	displaybg = oslLoadImageFilePNG(displayBgPath, OSL_IN_RAM, OSL_PF_8888);
 	highlight = oslLoadImageFilePNG(highlightPath, OSL_IN_RAM, OSL_PF_8888);
+	
+	FILE *temp;
+	 
+	if (!(fileExists(settingsFontColorPath)))
+	{
+		temp = fopen(settingsFontColorPath, "w");
+		fprintf(temp, "0\n0\n0");
+		fclose(temp);
+	}
+	
+	temp = fopen(settingsFontColorPath, "r");
+	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(temp);
+	
+	FILE *temp2;
+	 
+	if (!(fileExists(timeAndBatteryFontColorPath)))
+	{
+		temp2 = fopen(timeAndBatteryFontColorPath, "w");
+		fprintf(temp2, "255\n255\n255");
+		fclose(temp2);
+	}
+	
+	temp2 = fopen(timeAndBatteryFontColorPath, "r");
+	fscanf(temp2, "%d %d %d", &fontColorTime.r, &fontColorTime.g, &fontColorTime.b);
+	fclose(temp2);
 }
 
 void iconPackLoad()
