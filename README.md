@@ -1,4 +1,4 @@
-CyanogenPSP v6.0 [![Build Status](https://travis-ci.org/joel16/CyanogenPSP.svg?branch=master)](https://travis-ci.org/joel16/CyanogenPSP) [![Github latest downloads](https://img.shields.io/github/downloads/joel16/CyanogenPSP/total.svg)](https://github.com/joel16/CyanogenPSP/releases/latest)
+CyanogenPSP [![Build Status](https://travis-ci.org/joel16/CyanogenPSP.svg?branch=master)](https://travis-ci.org/joel16/CyanogenPSP) [![Github latest downloads](https://img.shields.io/github/downloads/joel16/CyanogenPSP/total.svg)](https://github.com/joel16/CyanogenPSP/releases/latest)
 =================
 
 This is a program that allows you to do everything a PSP can do with a little more handy features, but with a whole different UI. This isn't a port of CyanogenMod for android, it's a project created from scratch. It's purpose is similar to that of "iR Shell", but has a UI inspired by CyanogenMod, Android. It will never allow you to run android apps, the psp system doesn't have the hardware capabilities to run android. If developers are intrested, feel free to contact me through my email: sauskethunderkid@gmail.com 
