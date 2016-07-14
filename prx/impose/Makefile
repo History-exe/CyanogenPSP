@@ -12,9 +12,9 @@ PRX_EXPORTS = imposeLib.exp
 USE_KERNEL_LIBC = 1
 USE_KERNEL_LIBS = 1
 
-LIBDIR =
 LDFLAGS = -mno-crt0 -nostartfiles
 LIBS = -lpsppower_driver -lpspsystemctrl_kernel
+LIBDIR = libs
 
 PSPSDK=$(shell psp-config --pspsdk-path)
 include $(PSPSDK)/lib/build.mak

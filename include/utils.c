@@ -66,7 +66,7 @@ char * setFileDefaultsChar(char path[], char data[], char var[])
 	return var;
 }
 
-void deleteUpdateFile()
+void removeUpdateZip()
 {
 	if (fileExists("ms0:/PSP/GAME/update.zip"))
 	{
@@ -74,9 +74,9 @@ void deleteUpdateFile()
 	}
 }
 
-void createDirs()
+void installRequiredFiles()
 {
-	SceUID dir = sceIoDopen("ms0:/PICTUREO");
+	SceUID dir = sceIoDopen("ms0:/PICTURE");
 	
 	if (dirExists("ms0:/PICTURE"))
 	{

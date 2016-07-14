@@ -2270,7 +2270,14 @@ void themesLoad()
 	replaceAsset(tempData, themeDirPath, lockScreenWidgetFontColor, clockWidgetFontColorPath);
 	
 	FILE *temp;
-
+	 
+	if (!(fileExists(rgbValuesPath)))
+	{
+		temp = fopen(rgbValuesPath, "w");
+		fprintf(temp, "0\n149\n135");
+		fclose(temp);
+	}
+	
 	temp = fopen(rgbValuesPath, "r");
 	fscanf(temp, "%d %d %d", &r, &g, &b);
 	fclose(temp);

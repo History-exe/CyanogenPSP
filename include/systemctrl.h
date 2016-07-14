@@ -5,7 +5,6 @@
 #include <pspkernel.h>
 #include <psploadexec_kernel.h>
 #include <pspinit.h>
-#include "psploadcore.h"
 
 enum BootLoadFlags
 {

@@ -388,21 +388,8 @@ int main()
 	fontSize = setFileDefaultsFloat("system/settings/fontSize.bin", 0.5, fontSize);
 	
 	checkGBootActivation();
-	createDirs();
+	installRequiredFiles();
 	themesLoad();
-	
-	FILE *temp;
-	 
-	if (!(fileExists(rgbValuesPath)))
-	{
-		temp = fopen(rgbValuesPath, "w");
-		fprintf(temp, "0\n149\n135");
-		fclose(temp);
-	}
-	
-	temp = fopen(rgbValuesPath, "r");
-	fscanf(temp, "%d %d %d", &r, &g, &b);
-	fclose(temp);
 	
 	quickSettings = oslLoadImageFile(quickSettingsBgPath, OSL_IN_VRAM, OSL_PF_8888);
 	batt100 = oslLoadImageFile("system/home/icons/100.png", OSL_IN_VRAM, OSL_PF_8888);
@@ -440,7 +427,7 @@ int main()
 		}
 	}
 	
-	deleteUpdateFile(); //Delete update.zip
+	removeUpdateZip(); //Delete update.zip
 	
 	setCpuBoot(); //Set default CPU or load pre-existing value
 	setPowerManagement(); //Set default power save settings or load pre-existing values.

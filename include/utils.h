@@ -32,18 +32,15 @@ enum colors {
 int setFileDefaultsInt(char *path, int value, int var);
 float setFileDefaultsFloat(char *path, float value, float var);
 char * setFileDefaultsChar(char path[], char data[], char var[]);
-void deleteUpdateFile();
-void createDirs();
-void makeMusicDir();
+void removeUpdateZip();
+void installRequiredFiles();
 void openOSK(char * message, char * initialMessage, int textLimit, int lang);
-void encryptFile(FILE *file);
-void decryptFile(FILE *file);
 int isEmpty(FILE *file);
 void fadeOut(OSL_IMAGE* bg,int x, int y);
 void fadeIn(OSL_IMAGE* bg, int x, int y);
 int disableUsb(void);
 int enableUsb();
 int enableUsbEx(u32 device);
-char getPSPNickname();
 int isUSBCableConnected();
+char getPSPNickname();
 

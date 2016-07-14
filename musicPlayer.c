@@ -71,6 +71,35 @@ void MP3Play(char * path)
 	
 	isPlaying = 1;
 	
+	if (experimentalF == 1)
+	{
+		if (ID3.ID3EncapsulatedPictureOffset && ID3.ID3EncapsulatedPictureLength <= MAX_IMAGE_DIMENSION)
+		{
+			u8 *buffer = (unsigned char *) malloc(sizeof(unsigned char) * ID3.ID3EncapsulatedPictureLength);
+			if (buffer != NULL)
+			{
+				SceUID file = sceIoOpen(path, PSP_O_RDONLY, 0777);
+				if (file >= 0)
+				{
+					sceIoLseek(file, ID3.ID3EncapsulatedPictureOffset, PSP_SEEK_SET);
+					sceIoRead(file, buffer, ID3.ID3EncapsulatedPictureLength);
+					sceIoClose(file);
+
+					oslSetTempFileData(buffer, ID3.ID3EncapsulatedPictureLength, &VF_MEMORY);
+					tempCoverArt = oslLoadImageFileJPG(oslGetTempFileName(), OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
+				}
+				free(buffer);
+				buffer = NULL;
+			}
+		}
+		
+		if (tempCoverArt)
+		{
+			coverArt = oslScaleImageCreate(tempCoverArt, OSL_IN_RAM | OSL_SWIZZLED, 222, 210, OSL_PF_8888);
+			oslDeleteImage(tempCoverArt);
+		}
+	}
+	
 	while (!osl_quit)
 	{
 		LowMemExit();
@@ -89,6 +118,8 @@ void MP3Play(char * path)
 			MP3ME_playingTime = 0;
 		}
 		oslDrawImageXY(nowplaying, 0, 0);
+		if (experimentalF == 1)
+			oslDrawImageXY(coverArt, 0, 62);
 		oslDrawStringf(240,76, "Playing: %.19s", folderIcons[current].name);
 		oslDrawStringf(240,96, "Title: %.21s", ID3.ID3Title);
 		
@@ -110,6 +141,8 @@ void MP3Play(char * path)
 		if(osl_keys->pressed.select) 
 		{
 			oslDeleteImage(nowplaying);
+			if (experimentalF == 1)
+				oslDeleteImage(coverArt);
 			oslDeleteImage(mp3Play);
 			oslDeleteImage(mp3Pause);
 			return;
@@ -145,6 +178,8 @@ void MP3Play(char * path)
 			MP3ME_Stop();
 			releaseAudio();
 			oslDeleteImage(nowplaying);
+			if (experimentalF == 1)
+				oslDeleteImage(coverArt);
 			oslDeleteImage(mp3Play);
 			oslDeleteImage(mp3Pause);
 			isPlaying = 0;

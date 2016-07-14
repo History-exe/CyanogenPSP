@@ -19,7 +19,7 @@
 #define mp3XSelection 0 //The distance between the X axis of the two selections
 #define mp3YSelection 55 //The distance between the Y axis of the two selections
 
-OSL_IMAGE *mp3bg, *cursor, *nowplaying, *mp3_select, *mp3Play, *mp3Pause;
+OSL_IMAGE *mp3bg, *tempCoverArt, *coverArt, *cursor, *nowplaying, *mp3_select, *mp3Play, *mp3Pause;
 
 char apolloFontColorPath[200];
 
