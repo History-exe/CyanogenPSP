@@ -24,7 +24,12 @@ int bootAnimation()
 		if (firstBoot == 1)
 			displayLangSelection("system/settings/language");
 		else 
+		{
+			oslDeleteImage(welcome);
+			oslDeleteImage(transbackground);	
+			lockscreen();
 			home();
+		}
 	}
 	
 	bootAnim[0] = oslLoadImageFilePNG("system/boot/part1/boot0.png", OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
