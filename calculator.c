@@ -1,14 +1,12 @@
-#include "calculator.h"
 #include "appDrawer.h"
-#include "fileManager.h"
-#include "homeMenu.h"
+#include "calculator.h"
 #include "clock.h"
-#include "lockScreen.h"
-#include "recentsMenu.h"
-#include "powerMenu.h"
-#include "settingsMenu.h"
-#include "screenshot.h"
+#include "homeMenu.h"
 #include "include/utils.h"
+#include "lockScreen.h"
+#include "powerMenu.h"
+#include "screenshot.h"
+#include "settingsMenu.h"
 
 char x1[4][20] = {
 	{"sin"},

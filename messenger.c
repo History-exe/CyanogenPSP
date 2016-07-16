@@ -1,13 +1,13 @@
-#include "messenger.h"
-#include "homeMenu.h"
 #include "appDrawer.h"
-#include "powerMenu.h"
 #include "clock.h"
+#include "homeMenu.h"
+#include "include/utils.h"
 #include "lockScreen.h"
+#include "messenger.h"
+#include "powerMenu.h"
 #include "recentsMenu.h"
 #include "screenshot.h"
 #include "settingsMenu.h"
-#include "include/utils.h"
 
 char message[500] = "";	
 
@@ -170,7 +170,6 @@ void doClient()
 	}
 	oslAdhocTerm();
 }
-
 
 //The server accepted the connection and it's ready to receive data:
 void serverConnected(struct remotePsp *aPsp)

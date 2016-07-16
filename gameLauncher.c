@@ -1,49 +1,17 @@
-#include "homeMenu.h"
 #include "appDrawer.h"
-#include "gameLauncher.h"
 #include "clock.h"
 #include "fileManager.h"
-#include "lockScreen.h"
-#include "recentsMenu.h"
-#include "powerMenu.h"
-#include "screenshot.h"
-#include "settingsMenu.h"
+#include "gameLauncher.h"
+#include "homeMenu.h"
 #include "include/systemctrl_se.h"  
 #include "include/utils.h"
+#include "lockScreen.h"
+#include "powerMenu.h"
+#include "recentsMenu.h"
+#include "screenshot.h"
+#include "settingsMenu.h"
 
 struct gameFontColor fontColor;
-
-void gameUp()
-{
-	current--; // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
-		curScroll--; // To do with how it scrolls
-	}
-}
-
-void gameDown()
-{
-	if (folderIcons[current+1].active) current++; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_GAME_DISPLAY+curScroll)) {
-		curScroll++; // To do with how it scrolls
-	}
-}
-
-void gameUpx5()
-{
-	current -= 5;  // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
-		curScroll -= 5;  // To do with how it scrolls
-	}
-}
-
-void gameDownx5()
-{
-	if (folderIcons[current+1].active) current += 5; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_DISPLAY+curScroll)) {
-		curScroll += 5; // To do with how it scrolls
-	}
-}
 
 int launchEbootMs0(char path[])
 {
@@ -191,10 +159,10 @@ int launchUMD(char path[])
 	return sctrlKernelLoadExecVSHWithApitype(0x120, path, &param);
 }
 
-char gPath[400] = "ms0:/PSP/GAME/";
-
 void gameDisplay()
 {	
+	//char gPath[400] = "ms0:/PSP/GAME/";
+
 	oslDrawImageXY(gamebg, 0, 0);
 	oslDrawImageXY(gameSelection,-2,(current - curScroll)*63+GAME_CURR_DISPLAY_Y);
 
@@ -273,23 +241,23 @@ void gameControls(int n) //Controls
 	{
 		if (osl_keys->pressed.down) 
 		{
-			gameDown();
+			selectionDown(MAX_GAME_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.up) 
 		{
-			gameUp();
+			selectionUp();
 			timer = 0;
 		}	
 	
 		if (osl_keys->pressed.right) 
 		{
-			gameDownx5();
+			selectionDownx5(MAX_GAME_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.left) 
 		{
-			gameUpx5();	
+			selectionUpx5();	
 			timer = 0;
 		}
 		
@@ -406,7 +374,7 @@ void gameControls(int n) //Controls
 	{	
 		if((strcmp("ms0:/ISO", curDir)==0) || (strcmp("ms0:/PSP/GAME", curDir)==0) || (strcmp("ms0:/", curDir)==0))
 		{
-			gameUnload();
+			gameUnloadAssets();
 			gameApp();
 		}
 		else if((strcmp("ms0:/PSP/GAME/", curDir)!=0)) 
@@ -435,12 +403,12 @@ void gameControls(int n) //Controls
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
 	{
-		gameUp();
+		selectionUp();
 		timer = 25;
 	} 
 	else if ((timer > 30) && (pad.Buttons & PSP_CTRL_DOWN))
 	{
-		gameDown();
+		selectionDown(MAX_GAME_DISPLAY);
 		timer = 25;
 	}
 
@@ -505,7 +473,7 @@ char * popsBrowse(const char * path)
 	return returnMe;
 }
 
-void gameUnload()
+void gameUnloadAssets()
 {
 	oslDeleteImage(gamebg);
 	oslDeleteImage(gameSelection);
@@ -550,10 +518,10 @@ void getIcon0(char* filename)
 	sceIoClose(fd);
 }
 
-char *filename[8] = {"PARAM.SFO", "ICON0.PNG", "ICON1.PMF", "UNKNOWN.PNG", "PIC1.PNG", "SND0.AT3", "UNKNOWN.PSP", "UNKNOWN.PSAR"}; 
-
-OSL_IMAGE * processPBP(const char * path) { 
-
+OSL_IMAGE * processPBP(const char * path) 
+{ 
+	char *filename[8] = {"PARAM.SFO", "ICON0.PNG", "ICON1.PMF", "UNKNOWN.PNG", "PIC1.PNG", "SND0.AT3", "UNKNOWN.PSP", "UNKNOWN.PSAR"}; 
+	
 	OSL_IMAGE * imgSource; 
 	OSL_IMAGE * imgDefault; 
     
@@ -846,25 +814,25 @@ int gameApp()
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {		
 			oslPlaySound(KeypressStandard, 1);  
-			gameUnload();
+			gameUnloadAssets();
 			gameView("ms0:/PSP/GAME", 0); //PSP Homebrew
         }
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
         {		
 			oslPlaySound(KeypressStandard, 1);  
-			gameUnload();
+			gameUnloadAssets();
 			gameView("ms0:/ISO", 0); //ISO backups
         }
 		else if (MenuSelection == 3 && osl_keys->pressed.cross)
         {		
 			oslPlaySound(KeypressStandard, 1);  
-			gameUnload();
+			gameUnloadAssets();
 			gameView("ms0:/PSP/GAME", 1); //POPS
         }
 
 		if (osl_keys->pressed.circle)
 		{
-			gameUnload();
+			gameUnloadAssets();
 			appdrawer();
 		}
 		

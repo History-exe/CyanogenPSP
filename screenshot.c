@@ -1,6 +1,5 @@
 #include "fileManager.h"
 #include "homeMenu.h"
-#include "include/utils.h"
 #include "screenshot.h"
 
 unsigned int getbuttons();
@@ -38,6 +37,8 @@ void genScreenshotFileName(int lastNumber, char *fileName, const char *ext) //Ch
 
 void screenshot() //Takes screenshot
 {
+	char checkname[256];
+	
 	oslPlaySound(camera_click, 1);  
 	sprintf(checkname, "%s", "screenshot"); 
 

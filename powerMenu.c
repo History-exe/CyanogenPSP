@@ -1,12 +1,11 @@
-#include "homeMenu.h"
 #include "clock.h"
-#include "screenshot.h"
-#include "powerMenu.h"
-#include "lockScreen.h"
-#include "recoveryMenu.h"
-#include "settingsMenu.h"
+#include "homeMenu.h"
 #include "include/utils.h"
+#include "powerMenu.h"
 #include "prx/scepower.h"
+#include "recoveryMenu.h"
+#include "screenshot.h"
+#include "settingsMenu.h"
 
 void powermenu()
 {	
@@ -34,8 +33,8 @@ void powermenu()
 		navbarButtons(0);
 		oslDrawImageXY(power, 100, 61);
 		
-		battery(370,2,1);
-		digitaltime(420,4,0,hrTime);
+		battery(370, 2, 1);
+		digitaltime(420, 4, 0, hrTime);
 		
 		oslIntraFontSetStyle(Roboto, 0.75f, BLACK, 0, 0);
 		oslDrawStringf(165, 100, "Power off");

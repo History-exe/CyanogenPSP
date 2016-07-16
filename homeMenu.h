@@ -1,29 +1,7 @@
-#include <pspkernel.h>
-#include <pspdebug.h>
-#include <pspdisplay.h>
-#include <pspsdk.h>
-#include <pspctrl.h>
-#include <pspsysmem.h>
-#include <string.h>
-#include <malloc.h> 
 #include <oslib/oslib.h>
-#include <psprtc.h>
 
-#include <pspuser.h>
-#include <pspgu.h>
-#include <psputility.h>
-#include <psputility_netmodules.h>
-#include <psputility_htmlviewer.h>
-#include <pspnet.h>
-#include <pspnet_inet.h>
-#include <pspnet_apctl.h>
 #include <pspnet_resolver.h>
 #include <psphttp.h>
-#include <pspssl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <sys/unistd.h>
 
 //definition of our Images
 OSL_IMAGE *background, *cursor, *ic_allapps, *ic_allapps_pressed, *ic_launcher_apollo, *ic_launcher_settings, *ic_launcher_messenger, *ic_launcher_browser, 
@@ -46,18 +24,32 @@ struct timeAndBatteryStatusFontColor
    int	b;
 };
 
+//kernel function imports
+int getBrightness(void);
+void setBrightness(int brightness);
+int displayEnable(void);
+int displayDisable(void);
+
+int imposeGetVolume();
+int imposeSetVolume();
+int imposeGetBrightness();
+int imposeSetBrightness(int value);
+int imposeGetBacklightOffTime();
+int imposeSetBacklightOffTime(int value);
+
+void set_volume(int vol);
+void increase_volume(int n);
+void decrease_volume(int n);
+
 void internet();
-void debugDisplay();
 void controls();
 void battery(int batx, int baty, int n);
 void volumeController();
 void appDrawerIcon();
 void navbarButtons(int n);
 void androidQuickSettings();
-void notif_2();
 void loadIcons();
 void unloadIcons();
-void LowMemExit();
 void dayNightCycleWidget();
-void homeUnloadResources();
+void homeUnloadAssets();
 void home();

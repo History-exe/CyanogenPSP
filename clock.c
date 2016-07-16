@@ -1,12 +1,13 @@
-#include "clock.h"
 #include "appDrawer.h"
+#include "clock.h"
 #include "homeMenu.h"
+#include "include/utils.h"
 #include "lockScreen.h"
-#include "recentsMenu.h"
 #include "powerMenu.h"
+#include "recentsMenu.h"
 #include "screenshot.h"
 #include "settingsMenu.h"
-#include "include/utils.h"
+
 
 struct timeAndBatteryStatusFontColor fontColor;
 struct clockWidgetFontColor lFontColor;
@@ -175,7 +176,7 @@ void centerClock(int n)
 	}
 }
 
-int pspTimer()
+int cyanogenPSPTimer()
 {
 	pspTime time;
 	sceRtcGetCurrentClockLocalTime(&time);
@@ -184,7 +185,7 @@ int pspTimer()
 	timerPause = oslLoadImageFilePNG("system/app/clock/pause.png", OSL_IN_RAM, OSL_PF_8888);
 	timerPlay = oslLoadImageFilePNG("system/app/clock/play.png", OSL_IN_RAM, OSL_PF_8888);
 	
-	loadBg();
+	loadClockBg();
 	
 	if (!timerBg || !timeBg || !timerPause || !timerPlay)
 		debugDisplay();
@@ -251,7 +252,7 @@ int pspTimer()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(timerBg);
 			oslDeleteImage(timeBg);
-			pspclock();
+			cyanogenPSPClock();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -285,7 +286,7 @@ int pspTimer()
 	return 0;
 }
 
-int pspStopWatch()
+int cyanogenPSPStopWatch()
 {
 	int hour = 0, min = 0, miliSec = 0;
 	pspTime time;
@@ -296,7 +297,7 @@ int pspStopWatch()
 	timerPlay = oslLoadImageFilePNG("system/app/clock/play.png", OSL_IN_RAM, OSL_PF_8888);
 	reset = oslLoadImageFilePNG("system/app/clock/reset.png", OSL_IN_RAM, OSL_PF_8888);
 	
-	loadBg();
+	loadClockBg();
 	
 	if (!stopWatchBg || !timeBg || !timerPause || !timerPlay)
 		debugDisplay();
@@ -407,7 +408,7 @@ int pspStopWatch()
 			oslDeleteImage(reset);
 			oslDeleteImage(timerPlay);
 			oslDeleteImage(timerPause);
-			pspclock();
+			cyanogenPSPClock();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -447,7 +448,7 @@ int pspStopWatch()
 	return 0;
 }
 
-void loadBg()
+void loadClockBg()
 {
 	pspTime time;
 	sceRtcGetCurrentClockLocalTime(&time);
@@ -474,14 +475,14 @@ void loadBg()
 	}
 }
 
-int pspclock()
+int cyanogenPSPClock()
 {
 	pspTime time;
 	sceRtcGetCurrentClockLocalTime(&time);
 
 	clockBg = oslLoadImageFilePNG("system/app/clock/clockBg.png", OSL_IN_RAM, OSL_PF_8888);
 	
-	loadBg();
+	loadClockBg();
 	
 	if (!clockBg || !timeBg)
 		debugDisplay();
@@ -561,7 +562,7 @@ int pspclock()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(clockBg);
 			oslDeleteImage(timeBg);
-			pspTimer();
+			cyanogenPSPTimer();
 		}
 		*/
 		
@@ -570,7 +571,7 @@ int pspclock()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(clockBg);
 			oslDeleteImage(timeBg);
-			pspStopWatch();
+			cyanogenPSPStopWatch();
 		}
 		
 		captureScreenshot();

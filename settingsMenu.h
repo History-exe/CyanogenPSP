@@ -1,27 +1,5 @@
-#include <pspkernel.h>
-#include <pspctrl.h>
-#include <pspumd.h>
+#include <oslib/oslib.h> //OSLib
 
-//PSP Net Stuff
-#include <pspnet.h>
-#include <pspnet_inet.h>
-#include <pspnet_apctl.h>
-#include <pspwlan.h>
-
-//OSLib
-#include <oslib/oslib.h>
-
-//File Management
-#include <pspiofilemgr.h>
-#include <pspiofilemgr_kernel.h>
-#include <pspiofilemgr_dirent.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdint.h> 
-#include <stdlib.h> 
-
-#define configFile "system/build.prop"
-#define Address "www.google.com"
 #define MAX 8
 
 #define stateOff 0
@@ -98,21 +76,15 @@ char quickSettingsBgPath[250], controlsPath[250], navbarPath[250], navbar2Path[2
 
 typedef struct fw_version fw_version;
 
-int connectAPCallback(int state);
-int connectToAP(int config);
 char backgroundPath[500], nickname[25], pspname[25], fontPath[100], themeDirPath[250];
-int widgetActivator, eDesktopActivator, bootAnimActivator, gBootActivator, processorState, hrTime, language, usbStat, isPlaying, batteryM, experimentalF;
+int widgetActivator, eDesktopActivator, bootAnimActivator, gBootActivator, processorState, hrTime, language, usbStat, isPlaying, batteryM, experimentalF, firstBoot;
 int r, g, b;
 float fontSize;
 int passProtect;
 int DARK;
 int updateReady;
-void onlineUpdater();
-void flashUpdate();
+
 void switchStatus(int n);
-int getCpuClock();
-int getBusClock();
-void pspGetModel(int x, int y);
 void aboutMenu();
 void creditsMenu();
 void updatesMenu();
@@ -128,10 +100,6 @@ void displayThemes();
 void displayFontMenu();
 void displayFontSizeMenu();
 void settingsDisplay();
-void settingsUp();
-void settingsDown();
-void settingsUpx5();
-void settingsDownx5();
 void changeFont();
 int changeLanguage();
 void replaceAsset(char tempData[], char path[], char imgPath[], char redirectPath[]);
@@ -148,5 +116,5 @@ void securityMenu();
 void wifiMenu();
 void developerMenu();
 void settingsHighlight();
-void settingsDeleteResources();
+void settingsUnloadAssets();
 void settingsMenu();

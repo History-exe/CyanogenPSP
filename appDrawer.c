@@ -1,19 +1,19 @@
 #include "appDrawer.h"
-#include "language.h"
 #include "calculator.h"
-#include "musicPlayer.h"
-#include "messenger.h"
-#include "fileManager.h"
-#include "gameLauncher.h"
-#include "settingsMenu.h"
 #include "clock.h"
-#include "homeMenu.h"
-#include "lockScreen.h"
-#include "recentsMenu.h"
-#include "powerMenu.h"
+#include "fileManager.h"
 #include "gallery.h"
-#include "screenshot.h"
+#include "gameLauncher.h"
+#include "homeMenu.h"
 #include "include/utils.h"
+#include "language.h"
+#include "lockScreen.h"
+#include "messenger.h"
+#include "musicPlayer.h"
+#include "powerMenu.h"
+#include "recentsMenu.h"
+#include "screenshot.h"
+#include "settingsMenu.h"
 
 void appdrawer_loadImages()
 {
@@ -341,14 +341,14 @@ int appdrawer()
 		{
 			oslPlaySound(KeypressStandard, 1); 
 			appdrawer_deleteImages();
-			pspclock();
+			cyanogenPSPClock();
 		}
 		
 		if (cursor->x >= 245 && cursor->x <= 295 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
 			appdrawer_deleteImages();
-			filemanage();
+			cyanogenPSPFileManager();
 		}
 		
 		if (cursor->x >= 320 && cursor->x <= 370 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)

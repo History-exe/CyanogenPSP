@@ -1,23 +1,11 @@
-#include <pspsdk.h>
-#include <pspkernel.h>
-#include <string.h>
-#include <stdio.h>
-#include <systemctrl.h>
-#include <psppower.h>
-#include <pspdebug.h>
-#include <pspdisplay.h>
-#include <pspctrl.h>
-#include <pspsdk.h>
-#include <unistd.h>
-#include <pspiofilemgr.h>
-#include <pspinit.h>
-#include <stdlib.h>
-#include <kubridge.h>
 #include <oslib/oslib.h>
-#include <psploadexec.h>
-#include <psploadexec_kernel.h>
 
-#define rootdir "ms0:/"
+#include <pspctrl.h>
+#include <pspiofilemgr.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_FILES			256 // max amount of files needed to load.
 #define MAX_DISPLAY			5 // max amount of files displayed on-screen.
@@ -32,9 +20,6 @@
 #define COPY_DELETE_ON_FINISH 1
 #define COPY_KEEP_ON_FINISH 0
 #define NOTHING_TO_COPY -1
-
-// Default Start Path
-#define START_PATH "ms0:/PSP/SAVEDATA/"
 
 OSL_IMAGE 	*filemanagerbg, *diricon, *imageicon, *mp3icon, *txticon, *unknownicon, *documenticon, *binaryicon, *videoicon, *archiveicon, *bar, 
 			*deletion, *action, *textview,  *gallerybar;
@@ -103,6 +88,7 @@ char read_buffer[128*1024];
 
 int copy_bytes(SceUID source, SceUID destination, unsigned bytes);
 int copy_folder(char * source, char * destination);
+File * findindex(int index);
 void copy(int flag);
 int paste(void);
 int copy_file(char * a, char * b);
@@ -110,15 +96,9 @@ int copy_folder_recursive(char * a, char * b);
 int fileExists(const char* path);
 int dirExists(const char* path);
 double getFileSize(const char * path);
-int IsNextDir();
-char* GetNextFileName();
-int ChangeDir(const char* path);
-
 int folderScan(const char* path);
 int runFile(const char* path, char* type);
 int openDir(const char* path, char* type);
-void build_path(char *output, const char *root, const char *path, int append);
-void write_file(const char *read_loc, const char *write_loc, const char *name);
 void refresh();
 void OptionMenu();
 void renameFile();
@@ -129,14 +109,13 @@ char * readTextFromFile(char *path);
 void displayTextFromFile(char * path);
 void centerText(int centerX, int centerY, char * centerText, int centerLength);
 void dirVars();
-void dirUp();
-void dirDown();
-void dirUpx5();
-void dirDownx5();
+void selectionUp();
+void selectionDown(int maxDisplay);
+void selectionUpx5();
+void selectionDownx5(int maxDisplay);
 void dirDisplay();
 void dirControls();
-char* pspFileGetParentDirectory(const char *path);
 void dirBack(int n);
 char * dirBrowse(const char * path);
-void filemanager_unload();
-int filemanage();
+void filemanagerUnloadAssets();
+int cyanogenPSPFileManager();

@@ -1,12 +1,12 @@
-#include "clock.h"
 #include "appDrawer.h"
+#include "clock.h"
 #include "homeMenu.h"
+#include "include/utils.h"
 #include "lockScreen.h"
-#include "recentsMenu.h"
 #include "powerMenu.h"
+#include "recentsMenu.h"
 #include "screenshot.h"
 #include "settingsMenu.h"
-#include "include/utils.h"
 
 int multitask()
 {	

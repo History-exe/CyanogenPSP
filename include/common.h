@@ -47,6 +47,7 @@ void SetBatSer(u16 ser1, u16 ser2);
 int GetBatType();
 int SetRegistryValue(const char *dir, const char *name, u32 val);
 int GetRegistryValue(const char *dir, const char *name, u32 *val);
+void *GetRegistryValueBufsize(const char *dir, const char *name, void *buf, int bufsize);
 void swap_buttons();
 void active_wma();
 void active_flash();

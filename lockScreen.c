@@ -1,10 +1,10 @@
 #include "clock.h"
 #include "fileManager.h"
 #include "homeMenu.h"
+#include "include/utils.h"
 #include "lockScreen.h"
 #include "screenshot.h"
 #include "settingsMenu.h"
-#include "include/utils.h"
 
 struct timeAndBatteryStatusFontColor fontColorTime;
 struct clockWidgetFontColor lFontColor;

@@ -1,19 +1,18 @@
-#include "homeMenu.h"
-#include "language.h"
 #include "appDrawer.h"
-#include "messenger.h"
-#include "musicPlayer.h"
 #include "clock.h"
 #include "fileManager.h"
-#include "lockScreen.h"
-#include "recentsMenu.h"
-#include "powerMenu.h"
-#include "settingsMenu.h"
-#include "screenshot.h"
+#include "homeMenu.h"
 #include "include/utils.h"
+#include "language.h"
+#include "lockScreen.h"
+#include "messenger.h"
+#include "musicPlayer.h"
+#include "powerMenu.h"
+#include "recentsMenu.h"
+#include "screenshot.h"
+#include "settingsMenu.h"
 
 //variables
-int result;
 int notif_y = -272;
 int yPos1 = -272;
 int yPos2 = -272;
@@ -24,25 +23,8 @@ int controlX = 25;
 struct timeAndBatteryStatusFontColor fontColorTime;
 struct clockWidgetFontColor lFontColor;
 
-//kernel function imports
-
-int getBrightness(void);
-void setBrightness(int brightness);
-int displayEnable(void);
-int displayDisable(void);
-
-int imposeGetVolume();
-int imposeSetVolume();
-int imposeGetBrightness();
-int imposeSetBrightness(int value);
-int imposeGetBacklightOffTime();
-int imposeSetBacklightOffTime(int value);
-
-void set_volume(int vol);
-void increase_volume(int n);
-void decrease_volume(int n);
-
-void set_volume(int vol) {
+void set_volume(int vol) 
+{
 	if(vol > 30)
 		vol = 30;
 	if(vol < 0)
@@ -51,13 +33,15 @@ void set_volume(int vol) {
 	imposeSetVolume(vol);
 }
 
-void increase_volume(int n) {
+void increase_volume(int n) 
+{
 	int v = imposeGetVolume();
 	
 	set_volume(v+n);
 }
 
-void decrease_volume(int n) {
+void decrease_volume(int n) 
+{
 	int v = imposeGetVolume();
 	
 	set_volume(v-n);
@@ -107,42 +91,6 @@ void internet() //Draws the browser
         }
     }
 	oslNetTerm();
-}
-
-void debugDisplay()
-{
-	debug = oslLoadImageFilePNG("system/debug/debug.png", OSL_IN_RAM, OSL_PF_8888);
-
-	oslSetFont(Roboto);
-	
-	while (!osl_quit)
-	{	
-		oslStartDrawing();
-
-		controls();	
-		
-		oslIntraFontSetStyle(Roboto, 0.5f,BLACK,0,0);
-
-		oslDrawImageXY(debug, 65, 67);
-		oslDrawStringf(110,95,"Unfortunately some files required by");
-		oslDrawStringf(110,110,"the program are missing. The program");
-		oslDrawStringf(110,125,"has stopped, press (X) to exit to XMB.");
-
-		if (osl_keys->pressed.cross)
-		{
-			oslPlaySound(KeypressStandard, 1);  
-			sceKernelExitGame();
-		}
-	
-		if (osl_pad.held.R && osl_keys->pressed.triangle) //Takes screenshot
-		{
-			screenshot();
-		}
-	
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();
-	}
 }
 
 void controls() //Main controller function - allows cursor movement
@@ -868,18 +816,6 @@ void androidQuickSettings()
 	}
 }
 
-void notif_2()
-{
-	while(!osl_quit)
-	{
-		oslStartDrawing();
-		oslCopyImageTo(notif,notif2);	
-		oslEndDrawing();
-        oslEndFrame(); 
-		oslSyncFrame();	
-	}
-}
-
 void loadIcons() // Loading the app drawer icons.
 {
 	ic_allapps = oslLoadImageFilePNG(allappsPath, OSL_IN_RAM, OSL_PF_8888);
@@ -890,14 +826,6 @@ void unloadIcons() //Deleting the app drawer icons to save memory.
 {
 	oslDeleteImage(ic_allapps);
 	oslDeleteImage(ic_allapps_pressed);
-}
-
-void LowMemExit() //This is temporary until I come up with a solution. It exits the app, once the memory is less than/equal to 1.5 MB
-{
-	if (oslGetRamStatus().maxAvailable <= 1500000)
-	{
-		oslQuit();
-	}
 }
 
 void dayNightCycleWidget()
@@ -920,7 +848,7 @@ void dayNightCycleWidget()
 	oslDrawImageXY(wNight, 205, 82);
 }
 
-void homeUnloadResources()
+void homeUnloadAssets()
 {
 	oslDeleteImage(ic_allapps);
 	oslDeleteImage(ic_allapps_pressed);
@@ -930,6 +858,8 @@ void homeUnloadResources()
 
 void home()
 {	
+	firstBoot = setFileDefaultsInt("system/settings/boot.bin", 1, firstBoot);
+	
 	FILE *temp;
 	 
 	if (!(fileExists(clockWidgetFontColorPath)))
@@ -1019,7 +949,40 @@ void home()
 		androidQuickSettings();
 		volumeController();
 		appHighlight(0);
+		
+		if (firstBoot!= 0)
+		{
+			oslDrawImageXY(transbackground, 0, 0);
+			oslDrawImageXY(welcome, 0, 0);
+			
+			oslIntraFontSetStyle(Roboto, 0.8f,BLACK,0,INTRAFONT_ALIGN_LEFT);
+			oslDrawStringf(20,30, "%s", lang_welcome[language][0]);
+			
+			oslIntraFontSetStyle(Roboto, 0.6f,DARKGRAY,0,INTRAFONT_ALIGN_LEFT);
+			oslDrawStringf(20,60, "%s", lang_welcome[language][1]);
+			
+			oslDrawStringf(20,80, "%s", lang_welcome[language][2]);
+			
+			oslIntraFontSetStyle(Roboto, 0.6f,WHITE,0,INTRAFONT_ALIGN_LEFT);
+			oslDrawStringf(385,110, "%s", lang_welcome[language][3]);
+		}
+		
 		oslDrawImage(cursor);
+		
+		if (firstBoot!= 0)
+		{
+			if (cursor->x >= 388 && cursor->x <= 464 && cursor->y >= 98 && cursor->y <= 132 && osl_keys->pressed.cross)
+			{
+				FILE * firstBootTxt = fopen("system/settings/boot.bin", "w"); 
+				fprintf(firstBootTxt, "0");
+				fclose(firstBootTxt);
+				oslPlaySound(KeypressStandard, 1); 
+				oslDeleteImage(welcome);
+				oslDeleteImage(transbackground);
+				unloadIcons();
+				home();
+			}
+		}
 		
 		dialog = oslGetDialogType();
         if (dialog)
@@ -1054,21 +1017,21 @@ void home()
 
 		if (cursor->x >= 276 && cursor->x <= 321 && cursor->y >= 195 && cursor->y <= 240 && osl_keys->pressed.cross)
 		{
-			homeUnloadResources();
+			homeUnloadAssets();
 			internet();
 		}
 		
 		if (cursor->x >= 330 && cursor->x <= 374 && cursor->y >= 190 && cursor->y <= 240 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			homeUnloadResources();
+			homeUnloadAssets();
 			settingsMenu();
 		}
 		
 		if (cursor->x >= 100 && cursor->x <= 154 && cursor->y >= 195 && cursor->y <= 240 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			homeUnloadResources();
+			homeUnloadAssets();
 			mp3player();
 		}
 		
@@ -1076,7 +1039,7 @@ void home()
 		{
 			if (cursor->x >= 155 && cursor->x <= 210 && cursor->y >= 195 && cursor->y <= 240 && osl_keys->pressed.cross)
 			{
-				homeUnloadResources();
+				homeUnloadAssets();
 				messenger();
 			}
 		}
@@ -1084,7 +1047,7 @@ void home()
 		if (cursor->x >= 215 && cursor->x <= 243 && cursor->y >= 195 && cursor->y <= 230 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			homeUnloadResources();
+			homeUnloadAssets();
 			appdrawer();
 		}
 
@@ -1112,4 +1075,3 @@ void home()
 	oslSyncFrame();
 	}
 }
-

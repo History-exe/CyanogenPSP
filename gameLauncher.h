@@ -1,16 +1,9 @@
-#include <pspsdk.h>
-#include <systemctrl.h>
+#include <oslib/oslib.h>
+
+#include <pspctrl.h>
 #include <psploadexec.h>
 #include <psploadexec_kernel.h>
-#include <pspkernel.h>
-#include <pspdebug.h>
-#include <pspctrl.h>
-#include <pspdisplay.h>
-#include <psppower.h>
-#include <stdio.h>
-#include <string.h>
-#include <malloc.h>
-#include <oslib/oslib.h>
+#include <systemctrl.h>
 
 #define MAX_GAME_DISPLAY	3 // max amount of files displayed on-screen.
 #define GAME_DISPLAY_X		20 // X value of where the filebrowser is displayed.
@@ -42,10 +35,6 @@ typedef struct
 
 } HEADER;
 
-void gameUp();
-void gameDown();
-void gameUpx5();
-void gameDownx5();
 int launchEbootMs0(char path[]);
 int launchEbootEf0(char path[]);
 int launchPOPsMs0(char path[]);
@@ -57,7 +46,7 @@ void gameDisplay();
 void gameControls(int n);
 char * gameBrowse(const char * path);
 char * popsBrowse(const char * path);
-void gameUnload();
+void gameUnloadAssets();
 void getIcon0(char* filename);
 OSL_IMAGE * processPBP(const char * path);
 int gameView(char * browseDirectory, int type);

@@ -1,183 +1,24 @@
-#include "settingsMenu.h"
-#include "language.h"
-#include "include/pgeZip.h"
+#include "appDrawer.h"
+#include "clock.h"
+#include "fileManager.h"
+#include "gallery.h"
+#include "gameLauncher.h"
+#include "homeMenu.h"
+#include "include/common.h"
+#include "include/pspusbdevice.h"
 #include "include/ram.h"
 #include "include/utils.h"
-#include "include/pspusbdevice.h"
-#include "include/common.h"
-#include "homeMenu.h"
-#include "appDrawer.h"
-#include "fileManager.h"
-#include "clock.h"
-#include "gameLauncher.h"
-#include "gallery.h"
+#include "language.h"
 #include "lockScreen.h"
 #include "musicPlayer.h"
-#include "recentsMenu.h"
 #include "powerMenu.h"
+#include "recentsMenu.h"
 #include "recoveryMenu.h"
 #include "screenshot.h"
+#include "settingsMenu.h"
 
 struct settingsFontColor fontColor;
 struct timeAndBatteryStatusFontColor fontColorTime;
-
-static char Settings_message[100] = "";
-char buffer[100] = "";
-
-//kernel function imports
-int imposeSetBrightness(int value);
-
-int connectAPCallback(int state) //Internet stuff
-{
-    oslStartDrawing();
-    oslDrawImageXY(wifibg, 0, 19);
-    oslDrawStringf(30, 175, "Connecting to AP...");
-    sprintf(buffer, "State: %i", state);
-    oslDrawStringf(30, 195, buffer);
-    oslEndDrawing();
-    oslEndFrame();
-    oslSyncFrame();
-
-    return 0;
-} 
- 
-int connectToAP(int config) //Internet stuff
-{
-    oslStartDrawing();
-    oslDrawImageXY(wifibg, 0, 19);
-    oslDrawStringf(30, 175, "Connecting to AP...");
-    oslEndDrawing();
-    oslEndFrame();
-    oslSyncFrame();
-
-    int result = oslConnectToAP(config, 30, connectAPCallback);
-    if (!result){
-        char ip[30] = "";
-        char resolvedIP[30] = "";
-
-        oslStartDrawing();
-        oslDrawImageXY(wifibg, 0, 19);
-        oslGetIPaddress(ip);
-        sprintf(buffer, "IP address: %s", ip);
-        oslDrawStringf(30, 175, buffer);
-
-        sprintf(buffer, "Resolving %s", Address);
-        oslDrawStringf(30, 195, buffer);
-        oslEndDrawing();
-        oslEndFrame();
-        oslSyncFrame();
-
-        result = oslResolveAddress(Address, resolvedIP);
-
-        oslStartDrawing();
-        oslDrawImageXY(wifibg, 0, 19);
-        oslGetIPaddress(ip);
-        if (!result)
-            sprintf(buffer, "Resolved IP address: %s", ip);
-        else
-            sprintf(buffer, "Error resolving address!");
-        oslDrawStringf(30, 195, buffer);
-        oslEndDrawing();
-        oslEndFrame();
-        oslSyncFrame();
-		sceKernelDelayThread(3*1000000);
-    }else{
-        oslStartDrawing();
-        oslDrawImageXY(wifibg, 0, 19);
-        sprintf(buffer, "Error connecting to AP!");
-        oslDrawStringf(30, 195, buffer);
-        oslEndDrawing();
-        oslEndFrame();
-        oslSyncFrame();
-		sceKernelDelayThread(3*1000000);
-    }
-    oslDisconnectFromAP();
-    return 0;
-} 
-
-void onlineUpdater()
-{
-	int skip = 0;
-    int browser = 0;
-	char message[100] = "";
-	
-	oslNetInit();
-
-    while(!osl_quit)
-	{
-        browser = oslBrowserIsActive();
-		if (!skip)
-		{
-            oslStartDrawing();
-			
-            if (browser)
-			{
-                oslDrawBrowser();
-                if (oslGetBrowserStatus() == PSP_UTILITY_DIALOG_NONE)
-				{
-                    oslEndBrowser();
-					updateReady = 1;
-					aboutMenu();
-                }
-            }
-            oslEndDrawing();
-		}
-		oslEndFrame();
-		skip = oslSyncFrame();
-
-        if (!browser)
-		{
-            oslReadKeys();
-            oslBrowserInit("http://downloads.sourceforge.net/project/cyanogenpsp/Updates/update.zip", "/PSP/GAME", 14*1024*1024,
-                                         PSP_UTILITY_HTMLVIEWER_DISPLAYMODE_SMART_FIT,
-                                         PSP_UTILITY_HTMLVIEWER_DISABLE_STARTUP_LIMITS,
-                                         PSP_UTILITY_HTMLVIEWER_INTERFACEMODE_FULL,
-                                         PSP_UTILITY_HTMLVIEWER_CONNECTMODE_MANUAL_ALL);
-			memset(message, 0, sizeof(message));
-
-        }
-		
-		captureScreenshot();
-    }
-	oslNetTerm();
-}
-
-void flashUpdate()
-{
-	recoverybg = oslLoadImageFilePNG("android_bootable_recovery/res/images/recoverybg.png", OSL_IN_RAM, OSL_PF_8888);
-	
-	if (!recoverybg)
-		debugDisplay();
-	
-	while (!osl_quit)
-	{	
-		oslStartDrawing();
-		oslClearScreen(RGB(0, 0, 0));
-		oslDrawImageXY(recoverybg, 0, 0);
-		oslDrawStringf(10, 60, "Flashing zip...");
-		if (fileExists("ms0:/PSP/GAME/update.zip"))
-		{		
-			pgeZip* zipFiles = pgeZipOpen("../update.zip");
-			chdir("..");
-			pgeZipExtract(zipFiles, NULL);
-			pgeZipClose(zipFiles);
-			oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, INTRAFONT_ALIGN_LEFT);
-			oslDrawStringf(10,80,"Installed Successfully.");
-			oslDrawStringf(10,90,"Exiting..");
-			oslSyncFrame();
-			sceKernelDelayThread(2*1000000);
-			oslSyncFrame();
-			oslDrawStringf(10,50,"Enjoy :)");
-			sceKernelDelayThread(3*1000000);
-			oslDeleteImage(recoverybg);
-			sceIoRemove("ms0:/PSP/GAME/CyanogenPSP/system/build.prop");
-			sceKernelExitGame();
-		}
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();
-	}
-}
 	
 void switchStatus(int n)
 {
@@ -203,48 +44,6 @@ void switchStatus(int n)
 			oslDrawImageXY(onswitch, 392, 68);
 			oslDrawStringf(58,74,"On");
 		}
-	}
-}
-
-int getCpuClock()
-{
-    return scePowerGetCpuClockFrequency();
-}
-
-int getBusClock()
-{
-    return scePowerGetBusClockFrequency();
-}
-
-void pspGetModel(int x, int y)
-{
-	int pspmodel = kuKernelGetModel();
-	
-	switch(pspmodel)
-	{
-		case 0:
-			oslDrawStringf(x,y,"Model: PSP 1000");
-			break;
-   
-		case 1:
-			oslDrawStringf(x,y,"Model: PSP 2000");
-			break;
-   
-		case 2:
-			oslDrawStringf(x,y,"Model: PSP 3000");
-			break;
-   
-		case 3:
-			oslDrawStringf(x,y,"Model: PSP 3000");
-			break;
-		
-		case 4:
-			oslDrawStringf(x,y,"Model: PSP Go N1000");
-			break;
-   
-		default:
-			oslDrawStringf(x,y,"Model: PS Vita");
-			break;
 	}
 }
 
@@ -2067,38 +1866,6 @@ void settingsDisplay()
 	}
 }
 
-void settingsUp()
-{
-	current--; // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
-		curScroll--; // To do with how it scrolls
-	}
-}
-
-void settingsDown()
-{
-	if (folderIcons[current+1].active) current++; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_SETTINGS_DISPLAY+curScroll)) {
-		curScroll++; // To do with how it scrolls
-	}
-}
-
-void settingsUpx5()
-{
-	current -= 5;  // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
-		curScroll -= 5;  // To do with how it scrolls
-	}
-}
-
-void settingsDownx5()
-{
-	if (folderIcons[current+1].active) current += 5; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_SETTINGS_DISPLAY+curScroll)) {
-		curScroll += 5; // To do with how it scrolls
-	}
-}
-
 void changeFont() //Created a separated function for this only because deleting a font while its in use causes it to crash.
 {
 	while (!osl_quit)
@@ -2400,23 +2167,23 @@ void settingsControls(int n) //Controls
 	{
 		if (osl_keys->pressed.down)
 		{
-			settingsDown();
+			selectionDown(MAX_SETTINGS_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.up)
 		{
-			settingsUp();
+			selectionUp();
 			timer = 0;
 		}
 		
 		if (osl_keys->pressed.right)
 		{
-			settingsDownx5();
+			selectionDownx5(MAX_SETTINGS_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.left)
 		{
-			settingsUpx5();	
+			selectionUpx5();	
 			timer = 0;
 		}
 		
@@ -2533,12 +2300,12 @@ void settingsControls(int n) //Controls
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
 	{
-		dirDown();
+		selectionUp();
 		timer = 25;
 	} 
 	else if ((timer > 30) && (pad.Buttons & PSP_CTRL_DOWN))
 	{
-		dirDown();
+		selectionDown(MAX_SETTINGS_DISPLAY);
 		timer = 25;
 	}
 
@@ -3169,6 +2936,8 @@ void securityMenu()
 
 void wifiMenu()
 {	
+	static char wifiData[100];
+
 	if (DARK == 0)
 		wifibg = oslLoadImageFilePNG(wifiBgPath, OSL_IN_RAM, OSL_PF_8888);
 	else
@@ -3193,14 +2962,12 @@ void wifiMenu()
     int numconfigs = oslGetNetConfigs(configs);
 	if (!numconfigs)
 	{
-        sprintf(Settings_message, "%s", lang_settingsWifi[language][0]);
+        sprintf(wifiData, "%s", lang_settingsWifi[language][0]);
         enabled = 0;
     }
 	
-	oslNetInit(); 
-	
 	if (!oslIsWlanPowerOn())
-        sprintf(Settings_message, "%s", lang_settingsWifi[language][1]);
+        sprintf(wifiData, "%s", lang_settingsWifi[language][1]);
 
 	while (!osl_quit)
 	{		
@@ -3228,7 +2995,7 @@ void wifiMenu()
 				oslDrawStringf(10, 206, "%s", lang_settingsWifi[language][2]);
 			}
 		
-			oslDrawStringf(10, 220, Settings_message);
+			oslDrawStringf(10, 220, wifiData);
 	
 			switchStatus(3);
 			navbarButtons(2);
@@ -3300,7 +3067,6 @@ void wifiMenu()
 		
 			captureScreenshot();
 		}
-	oslNetTerm();
 	oslEndDrawing(); 
     oslEndFrame(); 
 	skip = oslSyncFrame();
@@ -3552,7 +3318,7 @@ void settingsHighlight()
 	}
 }
 
-void settingsDeleteResources()
+void settingsUnloadAssets()
 {
 	oslDeleteImage(settingsbg);
 	oslDeleteImage(about);
@@ -3652,63 +3418,63 @@ void settingsMenu()
 		
 		if (osl_keys->pressed.circle)
 		{	
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			appdrawer();
 		}
 		
 		if (cursor->x >= 3 && cursor->x <= 219 && cursor->y >= 98 && cursor->y <= 154 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			wifiMenu();
 		}
 		
 		if (cursor->x >= 226 && cursor->x <= 442 && cursor->y >= 98 && cursor->y <= 154 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			securityMenu();
 		}
 		
 		if (cursor->x >= 3 && cursor->x <= 219 && cursor->y >= 155 && cursor->y <= 210 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			displayMenu();
 		}
 
 		if (cursor->x >= 226 && cursor->x <= 442 && cursor->y >= 155 && cursor->y <= 210 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			performanceMenu();
 		}
 		
 		if (cursor->x >= 3 && cursor->x <= 219 && cursor->y >= 211 && cursor->y <= 267 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			developerMenu();
 		}
 
 		if (cursor->x >= 226 && cursor->x <= 442 && cursor->y >= 211 && cursor->y <= 267 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			aboutMenu();
 		}
 		
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 157 && cursor->y <= 213) && (osl_keys->pressed.cross))
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			appdrawer();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 76 && cursor->y <= 155) && (osl_keys->pressed.cross))
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			settingsDeleteResources();
+			settingsUnloadAssets();
 			home();
 		}
 		

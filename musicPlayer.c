@@ -1,52 +1,16 @@
-#include "musicPlayer.h"
 #include "appDrawer.h"
-#include "homeMenu.h"
 #include "clock.h"
 #include "fileManager.h"
+#include "homeMenu.h"
+#include "include/audio/mp3playerME.h"
+#include "include/utils.h"
 #include "lockScreen.h"
-#include "recentsMenu.h"
+#include "musicPlayer.h"
 #include "powerMenu.h"
 #include "screenshot.h"
 #include "settingsMenu.h"
-#include "include/audio/mp3playerME.h"
-#include "include/utils.h"
 
-int imposeGetVolume();
 struct musicPlayerFontColor fontColor;
-
-void mp3Up()
-{
-	current--; // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) 
-	{
-		curScroll--; // To do with how it scrolls
-	}
-}
-
-void mp3Down()
-{
-	if (folderIcons[current+1].active) current++; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_MP3_DISPLAY+curScroll)) 
-	{
-		curScroll++; // To do with how it scrolls
-	}
-}
-
-void mp3Upx5()
-{
-	current -= 5;  // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
-		curScroll -= 5;  // To do with how it scrolls
-	}
-}
-
-void mp3Downx5()
-{
-	if (folderIcons[current+1].active) current += 5; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_DISPLAY+curScroll)) {
-		curScroll += 5; // To do with how it scrolls
-	}
-}
 
 void MP3Play(char * path)
 {	
@@ -352,23 +316,23 @@ void mp3Controls() //Controls
 	{
 		if (osl_keys->pressed.down) 
 		{
-			mp3Down();
+			selectionDown(MAX_MP3_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.up) 
 		{
-			mp3Up();
+			selectionUp();
 			timer = 0;
 		}
 	
 		if (osl_keys->pressed.right) 
 		{
-			mp3Downx5();
+			selectionDownx5(MAX_MP3_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.left) 
 		{
-			mp3Upx5();
+			selectionUpx5();
 			timer = 0;
 		}
 	
@@ -443,12 +407,12 @@ void mp3Controls() //Controls
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
 	{
-		mp3Up();
+		selectionUp();
 		timer = 25;
 	}
 	else if ((timer > 30) && (pad.Buttons & PSP_CTRL_DOWN))
 	{
-		mp3Down();
+		selectionDown(MAX_MP3_DISPLAY);
 		timer = 25;
 	}
 

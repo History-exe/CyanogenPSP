@@ -2,17 +2,18 @@
 // Thanks DAX for his ipl_update.prx
 // Thanks Yoti for his libpspident.a
 // Thanks Raing3 for his psppower lib.
-#include "recoveryMenu.h"
+
+#include "homeMenu.h"
+#include "include/common.h"
+#include "include/utils.h"
 #include "prx/ipl_update.h"
 #include "prx/battManager.h"
 #include "prx/kernelUserManager.h"
 #include "prx/scepower.h"
 #include "prx/kernelUserManagerHeader.h"
-#include "include/common.h"
-#include "include/utils.h"
-#include "homeMenu.h"
-#include "systemctrl_se.h"
+#include "recoveryMenu.h"
 #include "settingsMenu.h"
+#include "systemctrl_se.h"
 
 SEConfig config;
 
@@ -141,12 +142,14 @@ void ShowPage4()
 
 void backupPassword()
 {	
-	u32 pass;
-
-	char password = GetRegistryValue("/CONFIG/SYSTEM/LOCK", "password", &pass);
+	char password[256]; // Password
+	char pass[5]; 
+	memset(pass, 0, sizeof(pass));
+	GetRegistryValueBufsize("/CONFIG/SYSTEM/LOCK", "password", &pass, sizeof(pass)); 
+	sprintf(password, "Password: %s", pass); 
 	
-	FILE * configtxt = fopen(PWD, "wb"); //create config file
-	fprintf(configtxt, "Password: %d\n", password);
+	FILE * configtxt = fopen(PWD, "w"); //create config file
+	fprintf(configtxt, "%s", password);
 	fclose(configtxt);	
 }
 
@@ -500,37 +503,37 @@ int ConfigurationMenu()
 		
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			mainRecoveryMenu();
         }
 		
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowAdvancedCnfMenu();
         }
 	
 		else if (MenuSelection == 3 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         }
 		
 		else if (MenuSelection == 4 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowSystemMenu();
         }
 		
 		else if (MenuSelection == 5 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowBatteryMenu();
         }
 		
 		if (osl_keys->pressed.circle)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    mainRecoveryMenu();
 		}	
 	oslEndDrawing(); 
@@ -588,48 +591,48 @@ int ShowAdvancedCnfMenu()
 
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
         }	
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
         {
 			config.umdactivatedplaincheck = !config.umdactivatedplaincheck;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowAdvancedCnfMenu();
         }
         else if (MenuSelection == 3 && osl_keys->pressed.cross)
         {
 			config.executebootbin = !config.executebootbin;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowAdvancedCnfMenu();
         }	
         else if (MenuSelection == 4 && osl_keys->pressed.cross)
         {
 			config.xmbplugins = !config.xmbplugins;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowAdvancedCnfMenu();
         }	
         else if (MenuSelection == 5 && osl_keys->pressed.cross)
         {
 			config.gameplugins = !config.gameplugins;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowAdvancedCnfMenu();
         }
         else if (MenuSelection == 6 && osl_keys->pressed.cross)
         {
 			config.popsplugins = !config.popsplugins;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowAdvancedCnfMenu();
         }
 		
 		if (osl_keys->pressed.circle)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
 		}		
 	oslEndDrawing(); 
@@ -690,14 +693,14 @@ int ShowCnfMenu()
 
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
         }
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
         {
 			config.startupprog = !config.startupprog;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         }
         else if (MenuSelection == 3 && osl_keys->pressed.cross)
@@ -711,7 +714,7 @@ int ShowCnfMenu()
             else if(config.umdmode == MODE_OE_LEGACY)
                 config.umdmode = MODE_UMD;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         }
         else if (MenuSelection == 4 && osl_keys->pressed.cross)
@@ -745,7 +748,7 @@ int ShowCnfMenu()
             else if(config.fakeregion == FAKE_REGION_DEBUG_TYPE_II)
                 config.fakeregion = FAKE_REGION_DISABLED;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         }
         else if (MenuSelection == 5 && osl_keys->pressed.cross)
@@ -764,48 +767,48 @@ int ShowCnfMenu()
                 config.usbdevice = USBDEVICE_MEMORYSTICK;
 				
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         } 
         else if (MenuSelection == 6 && osl_keys->pressed.cross)
         {
 			config.notusedaxupd = !config.notusedaxupd;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         }
         else if (MenuSelection == 7 && osl_keys->pressed.cross)
         {
 			config.hidepics = !config.hidepics;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         } 
         else if (MenuSelection == 8 && osl_keys->pressed.cross)
         {
 			config.useversiontxt = !config.useversiontxt;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         } 
         else if (MenuSelection == 9 && osl_keys->pressed.cross)
         {
 			config.slimcolors = !config.slimcolors;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         } 
         else if (MenuSelection == 10 && osl_keys->pressed.cross)
         {
 			config.hidemac = !config.hidemac;
 			sctrlSESetConfig(&config);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowCnfMenu();
         }
 
 		if (osl_keys->pressed.circle)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
 		}			
 	oslEndDrawing(); 
@@ -860,7 +863,7 @@ int ShowSystemMenu()
 
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
         } 
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
@@ -869,7 +872,7 @@ int ShowSystemMenu()
 			oslSyncFrame();
 			sceKernelDelayThread(2*1000000);
 			swap_buttons();
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowSystemMenu();
         }
 		else if (MenuSelection == 3 && osl_keys->pressed.cross)
@@ -878,7 +881,7 @@ int ShowSystemMenu()
 			oslSyncFrame();
 			sceKernelDelayThread(2*1000000);
 			active_wma();
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowSystemMenu();
         }
 		else if (MenuSelection == 4 && osl_keys->pressed.cross)
@@ -887,7 +890,7 @@ int ShowSystemMenu()
 			oslSyncFrame();
 			sceKernelDelayThread(2*1000000);
 			active_flash();
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowSystemMenu();
         }
 		else if (MenuSelection == 5 && osl_keys->pressed.cross)
@@ -896,7 +899,7 @@ int ShowSystemMenu()
 			oslSyncFrame();
 			sceKernelDelayThread(2*1000000);
 			fake_name();
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowSystemMenu();
         }
 		else if (MenuSelection == 6 && osl_keys->pressed.cross)
@@ -905,13 +908,13 @@ int ShowSystemMenu()
 			oslSyncFrame();
 			sceKernelDelayThread(2*1000000);
 			hide_mac();
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowSystemMenu();
         }
 		
 		if (osl_keys->pressed.circle)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
 		}		
 	oslEndDrawing(); 
@@ -968,7 +971,7 @@ int ShowBatteryMenu()
 
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
         } 
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
@@ -982,7 +985,7 @@ int ShowBatteryMenu()
 	        oslDrawStringf(10,210,"Done");
 			oslSyncFrame();
 			sceKernelDelayThread(1*1000000);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowBatteryMenu();
         }
 		else if (MenuSelection == 3 && osl_keys->pressed.cross)
@@ -996,7 +999,7 @@ int ShowBatteryMenu()
 			oslDrawStringf(10,210,"Done");
 			oslSyncFrame();
 			sceKernelDelayThread(1*1000000);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowBatteryMenu();
         }
 		else if (MenuSelection == 4 && osl_keys->pressed.cross)
@@ -1010,7 +1013,7 @@ int ShowBatteryMenu()
 			oslDrawStringf(10,200,"Done");
 			oslSyncFrame();
 			sceKernelDelayThread(1*1000000);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowBatteryMenu();
         }
 		else if (MenuSelection == 5 && osl_keys->pressed.cross)
@@ -1029,13 +1032,13 @@ int ShowBatteryMenu()
 			oslDrawStringf(10,200,"Done");
 			oslSyncFrame();
 			sceKernelDelayThread(1*1000000);
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowBatteryMenu();
         }
 		
 		if (osl_keys->pressed.circle)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
 		}	
 	oslEndDrawing(); 
@@ -1045,7 +1048,7 @@ int ShowBatteryMenu()
 	return selection;
 }
 
-void unloadRecoveryMenuRes()
+void unloadRecoveryMenuAssets()
 {
 	oslDeleteImage(recoverybg);
 	oslDeleteImage(Selector);
@@ -1117,25 +1120,25 @@ int mainRecoveryMenu()
 		
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowPage1();
 		}
 		
 		else if (MenuSelection == 3 && osl_keys->pressed.cross)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ConfigurationMenu();
 		}
 		
 		else if (MenuSelection == 4 && osl_keys->pressed.cross)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			ShowVersionTxt();
 		}
 		
 		else if (MenuSelection == 5 && osl_keys->pressed.cross)
 		{
-			unloadRecoveryMenuRes();
+			unloadRecoveryMenuAssets();
 			oslDeleteFont(roboto);
 			oslSyncFrame();
 			sceKernelDelayThread(3*1000000);

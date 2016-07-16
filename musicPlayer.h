@@ -1,13 +1,3 @@
-#include <pspkernel.h>
-#include <pspctrl.h>
-#include <pspdebug.h>
-#include <pspaudio.h>
-#include <pspaudiolib.h>
-#include <psppower.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <oslib/oslib.h>
 
 #define MAX_MP3_DISPLAY			3 // max amount of files displayed on-screen.
@@ -30,10 +20,6 @@ struct musicPlayerFontColor
    int	b;
 };
 
-void mp3Up();
-void mp3Down();
-void mp3Upx5();
-void mp3Downx5();
 char *compact_str(char *s, int max_length);
 void MP3Play(char * path);
 int soundPlay(char * path);

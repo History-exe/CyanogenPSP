@@ -1,11 +1,6 @@
-#include <pspkernel.h>
-#include <pspctrl.h>
-#include <pspdebug.h>
-#include <pspaudio.h>
-#include <pspaudiolib.h>
-#include <psppower.h>
-#include <pspiofilemgr.h>
 #include <oslib/oslib.h>
+
+#include <pspctrl.h>
 
 #define MAX_GALLERY_DISPLAY			3 // max amount of files displayed on-screen.
 #define GALLERY_DISPLAY_X			78 // X value of where the filebrowser is displayed.
@@ -29,15 +24,11 @@ struct galleryFontColor
 
 int selection;
 
-void galleryUp();
-void galleryDown();
-void galleryUpx5();
-void galleryDownx5();
 void galleryDisplay();
 int changeWallpaper();
 int showImage(char * path, int n);
 void galleryControls();
 char * galleryBrowse(const char * path);
-void galleryUnload();
+void galleryUnloadAssets();
 int galleryView(char * browseDirectory);
 int galleryApp();

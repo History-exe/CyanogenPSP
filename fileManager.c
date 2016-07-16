@@ -1,17 +1,16 @@
-#include "homeMenu.h"
-#include "gameLauncher.h"
 #include "appDrawer.h"
-#include "musicPlayer.h"
-#include "fileManager.h"
 #include "clock.h"
+#include "fileManager.h"
 #include "gallery.h"
-#include "lockScreen.h"
-#include "recentsMenu.h"
-#include "powerMenu.h"
+#include "gameLauncher.h"
+#include "homeMenu.h"
 #include "include/pgeZip.h"
-#include "settingsMenu.h"
-#include "screenshot.h"
 #include "include/utils.h"
+#include "lockScreen.h"
+#include "musicPlayer.h"
+#include "powerMenu.h"
+#include "screenshot.h"
+#include "settingsMenu.h"
 
 static unsigned copy_progress;
 struct fileManagerFontColor fontColor;
@@ -408,30 +407,7 @@ double getFileSize(const char * path)
 	return size;
 }
 
-SceUID dirId;
-int dirStatus = 1;
-char * fileName;
-
-int IsNextDir()
-{
-	return FIO_S_ISDIR(g_dir.d_stat.st_mode);
-}
-
-char* GetNextFileName()
-{
-	if (dirStatus > 0)
-	{
-		if(dirStatus >= 0)strcpy(fileName, g_dir.d_name);
-	}
-	return fileName;
-}
-
-int ChangeDir(const char* path)
-{
-	return sceIoChdir(path);
-}
-
-int folderScan(const char* path )
+int folderScan(const char* path)
 {
 	memset(&g_dir, 0, sizeof(SceIoDirent));
 
@@ -550,73 +526,6 @@ int openDir(const char* path, char* type)
 		folderScan(path);
 	}
 	return 1;
-}
-
-/* Build a path, append a directory slash if requested */
-void build_path(char *output, const char *root, const char *path, int append)
-{
-	while(*root != 0)
-	{
-		*output++ = *root++;
-	}
-
-	if(*(root-1) != '/')
-	{
-		*output++ = '/';
-	}
-
-	while(*path != 0)
-	{
-		*output++ = *path++;
-	}
-	if(append)
-		*output++ = '/';
-
-	*output++ = 0;
-}
-
-void write_file(const char *read_loc, const char *write_loc, const char *name)
-{
-	int fdin;
-	int fdout;
-	char readpath[256];
-	char writepath[256];
-
-	build_path(readpath, read_loc, name, 0);
-	build_path(writepath, write_loc, name, 0);
-	printf("Writing %s\n", writepath);
-
-	fdin = sceIoOpen(readpath, PSP_O_RDONLY, 0777);
-	if(fdin >= 0)
-	{
-		int bytesRead = 1;
-		fdout = sceIoOpen(writepath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
-		if(fdout < 0)
-		{
-			printf("Couldn't open %s\n", writepath);
-		}
-
-		bytesRead = sceIoRead(fdin, write_buffer, sizeof(write_buffer));
-		while((bytesRead > 0) && (fdout >= 0))
-		{
-			sceIoWrite(fdout, write_buffer, bytesRead);
-			bytesRead = sceIoRead(fdin, write_buffer, sizeof(write_buffer));
-		}
-
-		if(fdout >= 0)
-		{
-			sceIoClose(fdout);
-		}
-
-		if(fdin >= 0)
-		{
-			sceIoClose(fdin);
-		}
-	}
-	else
-	{
-		printf("Couldn't open %s\n", readpath);
-	}
 }
 
 void refresh()
@@ -954,34 +863,40 @@ void dirVars()
 	timer = 0;
 }
 
-void dirUp()
+void selectionUp()
 {
 	current--; // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
+	if ((current <= curScroll - 1) && (curScroll > 1)) 
+	{
 		curScroll--; // To do with how it scrolls
 	}
 }
 
-void dirDown()
+void selectionDown(int maxDisplay)
 {
-	if (folderIcons[current+1].active) current++; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_DISPLAY+curScroll)) {
+	if (folderIcons[current + 1].active) 
+		current++; // Add a value onto current so the ">" goes down
+	if (current >= (maxDisplay + curScroll - 1)) 
+	{
 		curScroll++; // To do with how it scrolls
 	}
 }
 
-void dirUpx5()
+void selectionUpx5()
 {
 	current -= 5;  // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
+	if ((current <= curScroll - 1) && (curScroll > 1)) 
+	{
 		curScroll -= 5;  // To do with how it scrolls
 	}
 }
 
-void dirDownx5()
+void selectionDownx5(int maxDisplay)
 {
-	if (folderIcons[current+1].active) current += 5; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_DISPLAY+curScroll)) {
+	if (folderIcons[current + 1].active) 
+		current += 5; // Add a value onto current so the ">" goes down
+	if (current >= (maxDisplay + curScroll)) 
+	{
 		curScroll += 5; // To do with how it scrolls
 	}
 }
@@ -1089,23 +1004,23 @@ void dirControls() //Controls
 	{
 		if (osl_keys->pressed.down) 
 		{
-			dirDown();
+			selectionDown(MAX_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.up) 
 		{
-			dirUp();
+			selectionUp();
 			timer = 0;
 		}	
 	
 		if (osl_keys->pressed.right) 
 		{
-			dirDownx5();
+			selectionDownx5(MAX_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.left) 
 		{
-			dirUpx5();
+			selectionUpx5();
 			timer = 0;
 		}
 		
@@ -1135,7 +1050,7 @@ void dirControls() //Controls
 	{		
 		if((!strcmp("ms0:/", curDir)) || (!strcmp("ms0:", curDir))) //If pressed circle in root folder
 		{
-			filemanager_unload();
+			filemanagerUnloadAssets();
 			appdrawer();
 		}
 		else
@@ -1210,12 +1125,12 @@ void dirControls() //Controls
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
 	{
-		dirUp();
+		selectionUp();
 		timer = 25;
 	} 
 	else if ((timer > 30) && (pad.Buttons & PSP_CTRL_DOWN))
 	{
-		dirDown();
+		selectionDown(MAX_DISPLAY);
 		timer = 25;
 	}
 
@@ -1223,19 +1138,6 @@ void dirControls() //Controls
 		current = 1;
 	if (current > MAX_FILES) 
 		current = MAX_FILES;
-}
-
-char* pspFileGetParentDirectory(const char *path)
-{
-  char *pos = strrchr(path, '/');
-
-  if (!pos) return NULL;
-
-  char *parent = (char*)malloc(sizeof(char) * (pos - path + 2));
-  strncpy(parent, path, pos - path + 1);
-  parent[pos - path + 1] = '\0';
-
-  return parent;
 }
 
 void dirBack(int n)
@@ -1329,7 +1231,7 @@ char * dirBrowse(const char * path)
 	return returnMe;
 }
 
-void filemanager_unload()
+void filemanagerUnloadAssets()
 {
 	oslDeleteImage(filemanagerbg);
 	oslDeleteImage(diricon);
@@ -1344,7 +1246,7 @@ void filemanager_unload()
 	oslDeleteImage(archiveicon);	
 }
 
-int filemanage(int argc, char *argv[])
+int cyanogenPSPFileManager(int argc, char *argv[])
 {
 	FILE *temp;
 	 

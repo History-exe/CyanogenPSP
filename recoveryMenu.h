@@ -9,7 +9,7 @@
 #include <kubridge.h>
 
 #define Version "flash0:/vsh/etc/version.txt"
-#define PWD "password.TXT"
+#define PWD "system/settings/backupPassword.txt"
 #define selector_xDistance 0 //The distance between the X axis of the two selections
 #define selector_yDistance 20 //The distance between the Y axis of the two selections
 
@@ -31,5 +31,5 @@ int ShowAdvancedCnfMenu();
 int ShowCnfMenu();
 int ShowSystemMenu();
 int ShowBatteryMenu();
-void unloadRecoveryMenuRes();
+void unloadRecoveryMenuAssets();
 int mainRecoveryMenu();

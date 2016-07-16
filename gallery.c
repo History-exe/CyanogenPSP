@@ -1,48 +1,15 @@
-#include "homeMenu.h"
-#include "clock.h"
-#include "gallery.h"
 #include "appDrawer.h"
-#include "settingsMenu.h"
-#include "screenshot.h"
-#include "lockScreen.h"
-#include "recentsMenu.h"
-#include "powerMenu.h"
+#include "clock.h"
 #include "fileManager.h"
+#include "gallery.h"
+#include "homeMenu.h"
 #include "include/utils.h"
+#include "lockScreen.h"
+#include "powerMenu.h"
+#include "screenshot.h"
+#include "settingsMenu.h"
 
 struct galleryFontColor fontColor;
-
-void galleryUp()
-{
-	current--; // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
-		curScroll--; // To do with how it scrolls
-	}
-}
-
-void galleryDown()
-{
-	if (folderIcons[current+1].active) current++; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_GALLERY_DISPLAY+curScroll)) {
-		curScroll++; // To do with how it scrolls
-	}
-}
-
-void galleryUpx5()
-{
-	current -= 5;  // Subtract a value from current so the ">" goes up
-	if ((current <= curScroll-1) && (curScroll > 1)) {
-		curScroll -= 5;  // To do with how it scrolls
-	}
-}
-
-void galleryDownx5()
-{
-	if (folderIcons[current+1].active) current += 5; // Add a value onto current so the ">" goes down
-	if (current >= (MAX_DISPLAY+curScroll)) {
-		curScroll += 5; // To do with how it scrolls
-	}
-}
 
 void galleryDisplay()
 {	
@@ -252,23 +219,23 @@ void galleryControls() //Controls
 	{
 		if (osl_keys->pressed.down) 
 		{
-			galleryDown();
+			selectionDown(MAX_GALLERY_DISPLAY);
 			timer = 0;
 		}
 		if (osl_keys->pressed.up) 
 		{
-			galleryUp();
+			selectionUp();
 			timer = 0;
 		}
 		
 		if (osl_keys->pressed.right) 
 		{
-			galleryDownx5();
+			selectionDownx5(MAX_GALLERY_DISPLAY);
 			timer = 0;
 		}
 		else if (osl_keys->pressed.left) 
 		{
-			galleryUpx5();	
+			selectionUpx5();	
 			timer = 0;
 		}
 		
@@ -290,7 +257,7 @@ void galleryControls() //Controls
 	if (osl_keys->pressed.cross  && (strcmp(folderIcons[current].filePath, "doesn't matter") != 0))
 	{
 		oslPlaySound(KeypressStandard, 1);  
-		galleryUnload();
+		galleryUnloadAssets();
 		showImage(folderIcons[current].filePath, 2);
 	}
 	
@@ -298,7 +265,7 @@ void galleryControls() //Controls
 	{			
 		if((strcmp("ms0:/PICTURE", curDir)==0) || (strcmp("ms0:/PSP/PHOTO", curDir)==0) || (strcmp("ms0:/PSP/GAME/CyanogenPSP/screenshots", curDir)==0) || (strcmp("ms0:/", curDir)==0))
 		{
-			galleryUnload();
+			galleryUnloadAssets();
 			galleryApp();
 		}
 		else if((strcmp("ms0:/PICTURE", curDir)!=0)) 
@@ -331,12 +298,12 @@ void galleryControls() //Controls
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
 	{
-		galleryUp();
+		selectionUp();
 		timer = 25;
 	} 
 	else if ((timer > 30) && (pad.Buttons & PSP_CTRL_DOWN))
 	{
-		galleryDown();
+		selectionDown(MAX_GALLERY_DISPLAY);
 		timer = 25;
 	}
 	
@@ -374,7 +341,7 @@ char * galleryBrowse(const char * path)
 	return returnMe;
 }
 
-void galleryUnload()
+void galleryUnloadAssets()
 {
 	oslDeleteImage(gallerybg);
 	oslDeleteImage(gallerySelection);
@@ -472,14 +439,14 @@ int galleryApp()
         {		
 			selection = 1;
 			oslPlaySound(KeypressStandard, 1);  
-			galleryUnload();
+			galleryUnloadAssets();
 			galleryView("ms0:/PICTURE");
         }
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
         {		
 			selection = 2;
 			oslPlaySound(KeypressStandard, 1);  
-			galleryUnload();
+			galleryUnloadAssets();
 			galleryView("ms0:/PSP/PHOTO");
         
 		}
@@ -487,13 +454,13 @@ int galleryApp()
         {	
 			selection = 3;
 			oslPlaySound(KeypressStandard, 1);  
-			galleryUnload();
+			galleryUnloadAssets();
 			galleryView("ms0:/PSP/GAME/CyanogenPSP/screenshots");
         }
 		
 		if (osl_keys->pressed.circle)
 		{
-			galleryUnload();
+			galleryUnloadAssets();
 			appdrawer();
 		}
 		
