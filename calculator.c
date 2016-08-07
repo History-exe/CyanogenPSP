@@ -41,7 +41,7 @@ int calculator()
 	int x = 1;
 	int y = 1;
 	
-	int enteredNum = 0;
+	//int enteredNum = 0;
 	//int numUse = 0;
 	//int suppression = 1;
 	char * display = "";
@@ -120,8 +120,8 @@ int calculator()
 			{
 				oslIntraFontSetStyle(Roboto, 0.8f, RED, 0, 0);
 				oslDrawString(35, 120, "7");
-				if (osl_keys->pressed.cross)
-					enteredNum = 7;
+				//if (osl_keys->pressed.cross)
+					//enteredNum = 7;
 			}
 			else if (y == 1 && x == 2)
 			{
