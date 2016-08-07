@@ -4,6 +4,7 @@
 #include "homeMenu.h"
 #include "include/utils.h"
 #include "main.h"
+#include "powerMenu.h"
 #include "settingsMenu.h"
 
 PSP_MODULE_INFO("CyanogenPSP",  1, 6, 0);
@@ -33,7 +34,7 @@ int main()
 	Lock = oslLoadSoundFile("system/media/audio/ui/Lock.wav", OSL_FMT_NONE);
 	Unlock = oslLoadSoundFile("system/media/audio/ui/Unlock.wav", OSL_FMT_NONE);
 	
-	strcpy(backgroundPath, setFileDefaultsChar("system/settings/background.bin", "system/framework/framework-res/res/background1.png", backgroundPath));
+	strcpy(backgroundPath, setFileDefaultsChar("system/settings/background.bin", "system/framework/framework-res/res/ventana.png", backgroundPath));
 	strcpy(fontPath, setFileDefaultsChar("system/settings/font.bin", "system/fonts/Roboto.pgf", fontPath));
 	
 	hrTime = setFileDefaultsInt("system/app/clock/timeSet.bin", 0, hrTime);
@@ -44,16 +45,17 @@ int main()
 	fontSize = setFileDefaultsFloat("system/settings/fontSize.bin", 0.5, fontSize);
 	
 	checkGBootActivation();
-	installRequiredFiles();
 	themesLoad();
 	iconPackLoad();
-	loadIcons();
+	installRequiredFiles();
 	
 	//Loads our images into memory
 	background = oslLoadImageFile(backgroundPath, OSL_IN_RAM, OSL_PF_8888);
 	cursor = oslLoadImageFilePNG(cursorPath, OSL_IN_VRAM, OSL_PF_8888);
 	navbar = oslLoadImageFile(navbarPath, OSL_IN_RAM, OSL_PF_8888);
 	navbar2 = oslLoadImageFile(navbar2Path, OSL_IN_RAM, OSL_PF_8888);
+	ic_allapps = oslLoadImageFilePNG(allappsPath, OSL_IN_RAM, OSL_PF_8888);
+	ic_allapps_pressed = oslLoadImageFile(allapps_pressedPath, OSL_IN_RAM, OSL_PF_8888);
 	//notif = oslLoadImageFile("system/home/menu/notif.png", OSL_IN_RAM, OSL_PF_8888);
 	welcome = oslLoadImageFilePNG("system/home/icons/welcome.png", OSL_IN_RAM, OSL_PF_8888);
 	transbackground = oslLoadImageFilePNG("system/home/icons/transbackground.png", OSL_IN_RAM, OSL_PF_8888);
@@ -84,9 +86,12 @@ int main()
 	layerB = oslLoadImageFilePNG("system/home/icons/layerB.png", OSL_IN_RAM, OSL_PF_8888);
 	navbarHighlight = oslLoadImageFilePNG(navbarHighlightPath, OSL_IN_RAM, OSL_PF_8888);
 	navbarHighlight2 = oslLoadImageFilePNG(navbarHighlight2Path, OSL_IN_RAM, OSL_PF_8888);
+	power = oslLoadImageFilePNG("system/home/menu/powerMenu.png", OSL_IN_RAM, OSL_PF_8888);
+	powerSelection = oslLoadImageFilePNG("system/home/menu/powerSelection.png", OSL_IN_RAM, OSL_PF_8888);
+	recoverySelection = oslLoadImageFilePNG("system/home/menu/recoverySelection.png", OSL_IN_RAM, OSL_PF_8888);
 	
 	//Debugger - Displays an error message if the following resources are missing.
-	if (!background || !cursor || !ic_allapps || !ic_allapps_pressed || !navbar || !ic_launcher_apollo || !ic_launcher_settings || !ic_launcher_messenger || !ic_launcher_browser || !batt100 || !batt80 || !batt60 || !batt40 || !batt20 || !batt10 || !batt0 || !battcharge || !navbar2 || !usbdebug  || !music)
+	if (!background || !cursor || !navbar || !navbar2 || !ic_allapps || !ic_allapps_pressed || !ic_launcher_apollo || !ic_launcher_settings || !ic_launcher_messenger || !ic_launcher_browser || !batt100 || !batt80 || !batt60 || !batt40 || !batt20 || !batt10 || !batt0 || !battcharge || !usbdebug  || !music || !power || !powerSelection || !recoverySelection)
 		debugDisplay();
 	
 	Roboto = oslLoadIntraFontFile(fontPath, INTRAFONT_CACHE_ALL | INTRAFONT_STRING_UTF8);

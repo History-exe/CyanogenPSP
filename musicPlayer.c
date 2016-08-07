@@ -59,7 +59,7 @@ void MP3Play(char * path)
 		
 		if (tempCoverArt)
 		{
-			coverArt = oslScaleImageCreate(tempCoverArt, OSL_IN_RAM | OSL_SWIZZLED, 222, 210, OSL_PF_8888);
+			coverArt = oslScaleImageCreate(tempCoverArt, OSL_IN_RAM | OSL_SWIZZLED, 222, 204, OSL_PF_8888);
 			oslDeleteImage(tempCoverArt);
 		}
 	}
@@ -74,7 +74,7 @@ void MP3Play(char * path)
 
 		oslReadKeys();
 		
-		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(255, 255, 255, 255), 0, 0);
 		
 		if (MP3ME_playingTime > 59)
 		{
@@ -83,20 +83,22 @@ void MP3Play(char * path)
 		}
 		oslDrawImageXY(nowplaying, 0, 0);
 		if (experimentalF == 1)
-			oslDrawImageXY(coverArt, 0, 62);
-		oslDrawStringf(240,76, "Playing: %.19s", folderIcons[current].name);
-		oslDrawStringf(240,96, "Title: %.21s", ID3.ID3Title);
+			oslDrawImageXY(coverArt, 0, 68);
+		//oslDrawStringf(240,76, "Playing: %.19s", folderIcons[current].name);
+		strcpy(playingStatus, ID3.ID3Title);
+		strcpy(artistStatus, ID3.ID3Artist);
+		oslDrawStringf(15, 28, "%s", strupr(ID3.ID3Title));
+		oslDrawStringf(15, 48, "%s", strupr(ID3.ID3Artist));
 		
-		oslDrawStringf(240,116, "Artist: %.20s", ID3.ID3Artist);
-		oslDrawStringf(240,136, "Album: %.21s", ID3.ID3Album);
-		oslDrawStringf(240,156, "Year: %.22s", ID3.ID3Year);
-		oslDrawStringf(240,176, "Genre: %.21s", ID3.ID3GenreText);
-		oslDrawStringf(435,206, "0%d:%.f", mp3Min, MP3ME_playingTime);
+		//oslDrawStringf(240, 136, "Album: %.21s", ID3.ID3Album);
+		//oslDrawStringf(240, 156, "Year: %.22s", ID3.ID3Year);
+		//oslDrawStringf(240, 176, "Genre: %.21s", ID3.ID3GenreText);
+		//oslDrawStringf(435, 206, "0%d:%.f", mp3Min, MP3ME_playingTime);
 		
 		if (MP3ME_isPlaying == 1)
-			oslDrawImageXY(mp3Play, 230, 224);
+			oslDrawImageXY(mp3Play, 328, 147);
 		if (MP3ME_isPlaying == 0)
-			oslDrawImageXY(mp3Pause, 230, 224);
+			oslDrawImageXY(mp3Pause, 328, 147);
 		
 		battery(370,2,1);
 		digitaltime(420,4,0,hrTime);
@@ -273,10 +275,15 @@ int soundPlay(char * path)
 
 void mp3FileDisplay()
 {
-	oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
-
 	oslDrawImageXY(mp3bg, 0, 0);
-	oslDrawImageXY(mp3_select,8,(current - curScroll)*55+MP3_CURR_DISPLAY_Y);
+	oslDrawImageXY(mp3_select, 0,(current - curScroll) * 57 + MP3_CURR_DISPLAY_Y);
+	
+	oslIntraFontSetStyle(Roboto, fontSize, RGBA(255, 255, 255, 255), 0, 0);
+	
+	oslDrawStringf(20, 238, "%s", playingStatus);
+	oslDrawStringf(20, 252, "%s", artistStatus);
+	
+	oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 	
 	// Displays the directories, while also incorporating the scrolling
 	for(i=curScroll;i<MAX_MP3_DISPLAY+curScroll;i++) 
@@ -300,7 +307,7 @@ void mp3FileDisplay()
 		// If the currently selected item is active, then display the name
 		if (folderIcons[i].active == 1)
 		{	
-			oslDrawStringf(MP3_DISPLAY_X, (i - curScroll)*55+MP3_DISPLAY_Y, "%.62s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
+			oslDrawStringf(MP3_DISPLAY_X, (i - curScroll) * 57 + MP3_DISPLAY_Y, "%.62s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
 		}
 	}
 
@@ -478,18 +485,10 @@ int mp3View(char * browseDirectory)
 
 int mp3player() 
 {
-	FILE *temp;
-	 
-	if (!(fileExists(apolloFontColorPath)))
-	{
-		temp = fopen(apolloFontColorPath, "w");
-		fprintf(temp, "0\n0\n0");
-		fclose(temp);
-	}
-	
-	temp = fopen(apolloFontColorPath, "r");
-	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
-	fclose(temp);
+
+	FILE * file = fopen(apolloFontColorPath, "r");
+	fscanf(file, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(file);
 	
 	mp3bg = oslLoadImageFilePNG(apolloBgPath, OSL_IN_RAM, OSL_PF_8888);
 	mp3_select = oslLoadImageFilePNG(apolloSelectorPath, OSL_IN_RAM, OSL_PF_8888);
@@ -500,10 +499,10 @@ int mp3player()
 	oslSetFont(Roboto);
 	
 	int MenuSelection = 1; // Pretty obvious
-	int selector_x = 8; //The x position of the first selection
-	int selector_y = 43; //The y position of the first selection
+	int selector_x = 0; //The x position of the first selection
+	int selector_y = -2; //The y position of the first selection
 	int selector_image_x; //Determines the starting x position of the selection
-	int selector_image_y = 55; //Determines the starting y position of the selection
+	int selector_image_y = 57; //Determines the starting y position of the selection
 	int numMenuItems = 3; //Amount of items in the menu
 	int selection = 0;
 
@@ -523,19 +522,28 @@ int mp3player()
 		oslDrawImageXY(mp3bg, 0, 0);
 		oslDrawImageXY(mp3_select, selector_image_x, selector_image_y);
 		
-		oslDrawStringf(20,108,"MUSIC");
-		oslDrawStringf(20,163,"PSP/MUSIC");
-		oslDrawStringf(20,218,"PSP/GAME/CyanogenPSP/Downloads");
+		oslDrawStringf(20, 78, "MUSIC");
+		oslDrawStringf(20, 135, "PSP/MUSIC");
+		oslDrawStringf(20, 192, "PSP/GAME/CyanogenPSP/Downloads");
 		
-		battery(370,2,1);
-		digitaltime(420,4,0,hrTime);
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(255, 255, 255, 255), 0, 0);
+		
+		oslDrawStringf(20, 238, "%s", playingStatus);
+		oslDrawStringf(20, 252, "%s", artistStatus);
+		
+		battery(370, 2, 1);
+		digitaltime(420, 4, 0,hrTime);
 		volumeController();
 		
-        if (osl_keys->pressed.down) MenuSelection++; //Moves the selector down
-        if (osl_keys->pressed.up) MenuSelection--; //Moves the selector up
+        if (osl_keys->pressed.down) 
+			MenuSelection++; //Moves the selector down
+        if (osl_keys->pressed.up) 
+			MenuSelection--; //Moves the selector up
         
-        if (MenuSelection > numMenuItems) MenuSelection = 1; //Sets the selection to the first
-        if (MenuSelection < 1) MenuSelection = numMenuItems; //Sets the selection back to last
+        if (MenuSelection > numMenuItems) 
+			MenuSelection = 1; //Sets the selection to the first
+        if (MenuSelection < 1) 
+			MenuSelection = numMenuItems; //Sets the selection back to last
 		
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {	

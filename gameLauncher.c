@@ -751,19 +751,10 @@ int gameBoot()
 }
 
 int gameApp() 
-{
-	FILE *temp;
-	 
-	if (!(fileExists(gameFontColorPath)))
-	{
-		temp = fopen(gameFontColorPath, "w");
-		fprintf(temp, "0\n0\n0");
-		fclose(temp);
-	}
-	
-	temp = fopen(gameFontColorPath, "r");
-	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
-	fclose(temp);
+{	 
+	FILE * file = fopen(gameFontColorPath, "r");
+	fscanf(file, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(file);
 	
 	gamebg = oslLoadImageFilePNG(gameBgPath, OSL_IN_RAM, OSL_PF_8888);
 	gameSelection = oslLoadImageFilePNG(gameSelectorPath, OSL_IN_RAM, OSL_PF_8888);

@@ -21,6 +21,7 @@ void appdrawer_loadImages()
 		backdrop = oslLoadImageFilePNG(backdropPath, OSL_IN_RAM, OSL_PF_8888);
 	else 
 		backdrop = oslLoadImageFilePNG("system/home/icons/backdropDark.png", OSL_IN_RAM, OSL_PF_8888);
+	
 	ic_launcher_clock = oslLoadImageFilePNG(clockPath, OSL_IN_RAM, OSL_PF_8888);
 }
 
@@ -199,18 +200,9 @@ int appdrawer()
 {	
 	struct appDrawerFontColor fontColor;
 	
-	FILE *temp;
-	 
-	if (!(fileExists(appDrawerFontColorPath)))
-	{
-		temp = fopen(appDrawerFontColorPath, "w");
-		fprintf(temp, "0\n0\n0");
-		fclose(temp);
-	}
-	
-	temp = fopen(appDrawerFontColorPath, "r");
-	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
-	fclose(temp);
+	FILE * file = fopen(appDrawerFontColorPath, "r");
+	fscanf(file, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(file);
 	
 	int browser_x = 30;
 	int browser_text_x = 52;

@@ -48,8 +48,6 @@ void volumeController();
 void appDrawerIcon();
 void navbarButtons(int n);
 void androidQuickSettings();
-void loadIcons();
-void unloadIcons();
 void dayNightCycleWidget();
 void homeUnloadAssets();
 void home();

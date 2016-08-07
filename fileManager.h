@@ -10,9 +10,9 @@
 #define MAX_FILES			256 // max amount of files needed to load.
 #define MAX_DISPLAY			5 // max amount of files displayed on-screen.
 #define DISPLAY_X			85 // X value of where the filebrowser is displayed.
-#define DISPLAY_Y			70 // Y value of the filebrowser is displayed.
-#define ICON_DISPLAY_Y      56 
-#define CURR_DISPLAY_Y     	52
+#define DISPLAY_Y			85 // Y value of the filebrowser is displayed.
+#define ICON_DISPLAY_Y      70 
+#define CURR_DISPLAY_Y     	68
 #define MP3DISPLAY_X        20
 
 // Copy Flags

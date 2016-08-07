@@ -1,11 +1,15 @@
 #include "pgeZip.h"
 #include "utils.h"
+#include "../appDrawer.h"
 #include "../clock.h"
 #include "../fileManager.h"
+#include "../gallery.h"
+#include "../gameLauncher.h"
 #include "../homeMenu.h"
+#include "../lockScreen.h"
+#include "../musicPlayer.h"
 #include "../screenshot.h"
 #include "../settingsMenu.h"
-
 
 int transp;//For transparency
 int fade;//To hold the colour of the rectangle
@@ -163,81 +167,127 @@ void removeUpdateZip()
 
 void installRequiredFiles()
 {
-	SceUID dir = sceIoDopen("ms0:/PICTURE");
+	SceUID dir;
 	
-	if (dirExists("ms0:/PICTURE"))
+	if (!(dirExists("ms0:/PICTURE")))
 	{
+		dir = sceIoDopen("ms0:/PICTURE");
+		sceIoMkdir("ms0:/PICTURE", 0777);
 		sceIoDclose(dir);
 	}
-	else 
+
+	if (!(dirExists("ms0:/PSP/PHOTO")))
 	{
-		sceIoMkdir("ms0:/PICTURE",0777);
+		dir = sceIoDopen("ms0:/PSP/PHOTO");
+		sceIoMkdir("ms0:/PSP/PHOTO", 0777);
+		sceIoDclose(dir);
 	}
 
-	SceUID dir1 = sceIoDopen("ms0:/PSP/PHOTO");
-	
-	if (dirExists("ms0:/PSP/PHOTO"))
+	if (!(dirExists("ms0:/MUSIC")))
 	{
-		sceIoDclose(dir1);
-	}
-	else 
-	{
-		sceIoMkdir("ms0:/PSP/PHOTO",0777);
+		dir = sceIoDopen("ms0:/MUSIC");
+		sceIoMkdir("ms0:/MUSIC", 0777);
+		sceIoDclose(dir);
 	}
 	
-	SceUID dir2 = sceIoDopen("ms0:/PSP/GAME/CyanogenPSP/screenshots");
-	
-	if (dirExists("ms0:/PSP/GAME/CyanogenPSP/screenshots"))
+	if (!(dirExists("ms0:/PSP/MUSIC")))
 	{
-		sceIoDclose(dir2);
-	}
-	else 
-	{
-		sceIoMkdir("ms0:/PSP/GAME/CyanogenPSP/screenshots",0777);
+		dir = sceIoDopen("ms0:/PSP/MUSIC");
+		sceIoMkdir("ms0:/PSP/MUSIC", 0777);
+		sceIoDclose(dir);
 	}
 	
-	SceUID dir3 = sceIoDopen("ms0:/MUSIC");
-	
-	if (dirExists("ms0:/MUSIC"))
+	if (!(dirExists("ms0:/ISO")))
 	{
-		sceIoDclose(dir3);
-	}
-	else 
-	{
-		sceIoMkdir("ms0:/MUSIC",0777);
+		dir = sceIoDopen("ms0:/ISO");
+		sceIoMkdir("ms0:/ISO", 0777);
+		sceIoDclose(dir);
 	}
 	
-	SceUID dir4 = sceIoDopen("ms0:/PSP/MUSIC");
-	
-	if (dirExists("ms0:/PSP/MUSIC"))
+	if (!(dirExists("ms0:/PSP/GAME/CyanogenPSP/screenshots")))
 	{
-		sceIoDclose(dir4);
-	}
-	else 
-	{
-		sceIoMkdir("ms0:/PSP/MUSIC",0777);
+		dir = sceIoDopen("ms0:/PSP/GAME/CyanogenPSP/screenshots");
+		sceIoMkdir("ms0:/PSP/GAME/CyanogenPSP/screenshots", 0777);
+		sceIoDclose(dir);
 	}
 	
-	SceUID dir5 = sceIoDopen("ms0:/PSP/GAME/CyanogenPSP/downloads");
-	
-	if (dirExists("ms0:/PSP/GAME/CyanogenPSP/downloads"))
+	if (!(dirExists("ms0:/PSP/GAME/CyanogenPSP/downloads")))
 	{
-		sceIoDclose(dir5);
-	}
-	else 
-	{
-		sceIoMkdir("ms0:/PSP/GAME/CyanogenPSP/downloads",0777);
+		dir = sceIoDopen("ms0:/PSP/GAME/CyanogenPSP/downloads");
+		sceIoMkdir("ms0:/PSP/GAME/CyanogenPSP/downloads", 0777);
+		sceIoDclose(dir);
 	}
 	
-	SceUID dir6 = sceIoDopen("ms0:/ISO");
-	
-	if (dirExists("ms0:/ISO"))
+	if (!(dirExists("ms0:/PSP/GAME/CyanogenPSP/system/themes")))
 	{
-		sceIoDclose(dir6);
+		dir = sceIoDopen("ms0:/PSP/GAME/CyanogenPSP/system/themes");
+		sceIoMkdir("ms0:/PSP/GAME/CyanogenPSP/system/themes", 0777);
+		sceIoDclose(dir);
 	}
-	else 
+	
+	if (!(dirExists("ms0:/PSP/GAME/CyanogenPSP/system/themes/Default")))
 	{
-		sceIoMkdir("ms0:/ISO",0777);
+		dir = sceIoDopen("ms0:/PSP/GAME/CyanogenPSP/system/themes/Default");
+		sceIoMkdir("ms0:/PSP/GAME/CyanogenPSP/system/themes/Default", 0777);
+		sceIoDclose(dir);
+	}
+	
+	SceUID file;
+	 
+	if (!(fileExists(appDrawerFontColorPath)))
+	{
+		file = sceIoOpen(appDrawerFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "0\n0\n0", 15);
+		sceIoClose(file);
+	}
+	
+	if (!(fileExists(fileManagerFontColorPath)))
+	{	
+		file = sceIoOpen(fileManagerFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "0\n0\n0", 15);
+		sceIoClose(file);
+	}
+	
+	if (!(fileExists(clockWidgetFontColorPath)))
+	{	
+		file = sceIoOpen(clockWidgetFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "255\n255\n255", 15);
+		sceIoClose(file);
+	}
+	
+	if (!(fileExists(timeAndBatteryFontColorPath)))
+	{
+		file = sceIoOpen(timeAndBatteryFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "255\n255\n255", 15);
+		sceIoClose(file);
+	}
+	
+	if (!(fileExists(settingsFontColorPath)))
+	{
+		file = sceIoOpen(settingsFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "0\n0\n0", 15);
+		sceIoClose(file);
+	}
+	
+	if (!(fileExists(apolloFontColorPath)))
+	{
+		file = sceIoOpen(apolloFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "0\n0\n0", 15);
+		sceIoClose(file);
+	}
+	
+	if (!(fileExists(gameFontColorPath)))
+	{	
+		file = sceIoOpen(gameFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "0\n0\n0", 15);
+		sceIoClose(file);
+	}
+	
+	if (!(fileExists(galleryFontColorPath)))
+	{
+		file = sceIoOpen(galleryFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "255\n255\n255", 15);
+		sceIoClose(file);
 	}
 }
 
@@ -818,7 +868,8 @@ void flashUpdate()
 	}
 }
 
-int isUSBCableConnected(){
+int isUSBCableConnected()
+{
     return (sceUsbGetState() & PSP_USB_CABLE_CONNECTED);
 }
 

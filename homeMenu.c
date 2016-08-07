@@ -816,18 +816,6 @@ void androidQuickSettings()
 	}
 }
 
-void loadIcons() // Loading the app drawer icons.
-{
-	ic_allapps = oslLoadImageFilePNG(allappsPath, OSL_IN_RAM, OSL_PF_8888);
-	ic_allapps_pressed = oslLoadImageFile(allapps_pressedPath, OSL_IN_RAM, OSL_PF_8888);
-}
-
-void unloadIcons() //Deleting the app drawer icons to save memory.
-{
-	oslDeleteImage(ic_allapps);
-	oslDeleteImage(ic_allapps_pressed);
-}
-
 void dayNightCycleWidget()
 {
 	pspTime time;
@@ -850,8 +838,6 @@ void dayNightCycleWidget()
 
 void homeUnloadAssets()
 {
-	oslDeleteImage(ic_allapps);
-	oslDeleteImage(ic_allapps_pressed);
 	oslDeleteImage(wDay);
 	oslDeleteImage(wNight);
 }
@@ -860,38 +846,19 @@ void home()
 {	
 	firstBoot = setFileDefaultsInt("system/settings/boot.bin", 1, firstBoot);
 	
-	FILE *temp;
-	 
-	if (!(fileExists(clockWidgetFontColorPath)))
-	{
-		temp = fopen(clockWidgetFontColorPath, "w");
-		fprintf(temp, "255\n255\n255");
-		fclose(temp);
-	}
-	
-	temp = fopen(clockWidgetFontColorPath, "r");
-	fscanf(temp, "%d %d %d", &lFontColor.r, &lFontColor.g, &lFontColor.b);
-	fclose(temp);
-	
-	FILE *temp2;
-	 
-	if (!(fileExists(timeAndBatteryFontColorPath)))
-	{
-		temp2 = fopen(timeAndBatteryFontColorPath, "w");
-		fprintf(temp2, "255\n255\n255");
-		fclose(temp2);
-	}
-	
-	temp2 = fopen(timeAndBatteryFontColorPath, "r");
-	fscanf(temp2, "%d %d %d", &fontColorTime.r, &fontColorTime.g, &fontColorTime.b);
-	fclose(temp2);
+	FILE * file = fopen(clockWidgetFontColorPath, "r");
+	fscanf(file, "%d %d %d", &lFontColor.r, &lFontColor.g, &lFontColor.b);
+	fclose(file);
+
+	file = fopen(timeAndBatteryFontColorPath, "r");
+	fscanf(file, "%d %d %d", &fontColorTime.r, &fontColorTime.g, &fontColorTime.b);
+	fclose(file);
 
 	char message[100] = "";
 	char *updateData;
     int dialog = OSL_DIALOG_NONE;
 	int read = 0;
 
-	loadIcons();
 	wDay = oslLoadImageFilePNG("system/widget/Day.png", OSL_IN_RAM, OSL_PF_8888);
 	wNight = oslLoadImageFile("system/widget/Night.png", OSL_IN_RAM, OSL_PF_8888);
 	
@@ -979,7 +946,6 @@ void home()
 				oslPlaySound(KeypressStandard, 1); 
 				oslDeleteImage(welcome);
 				oslDeleteImage(transbackground);
-				unloadIcons();
 				home();
 			}
 		}

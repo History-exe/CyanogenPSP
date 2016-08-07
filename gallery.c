@@ -14,14 +14,13 @@ struct galleryFontColor fontColor;
 void galleryDisplay()
 {	
 	oslDrawImageXY(gallerybg, 0, 0);
-	oslDrawImageXY(gallerySelection,15,(current - curScroll)*56+GALLERY_CURR_DISPLAY_Y);
-	oslDrawStringf(25,25,"Album");
+	oslDrawImageXY(gallerySelection, 15, (current - curScroll) * 56 + GALLERY_CURR_DISPLAY_Y);
 	
-	battery(370,2,1);
-	digitaltime(420,4,0,hrTime);
+	battery(370, 2, 1);
+	digitaltime(420, 4, 0, hrTime);
 	
 	// Displays the directories, while also incorporating the scrolling
-	for(i=curScroll;i<MAX_GALLERY_DISPLAY+curScroll;i++) 
+	for(i=curScroll; i < MAX_GALLERY_DISPLAY + curScroll; i++) 
 	{
 		// Handles the cursor and the display to not move past the MAX_GALLERY_DISPLAY.
 		// For moving down
@@ -376,18 +375,9 @@ int galleryView(char * browseDirectory)
 
 int galleryApp() 
 {
-	FILE *temp;
-	 
-	if (!(fileExists(galleryFontColorPath)))
-	{
-		temp = fopen(galleryFontColorPath, "w");
-		fprintf(temp, "255\n255\n255");
-		fclose(temp);
-	}
-	
-	temp = fopen(galleryFontColorPath, "r");
-	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
-	fclose(temp);
+	FILE * file = fopen(galleryFontColorPath, "r");
+	fscanf(file, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
+	fclose(file);
 	
 	gallerybg = oslLoadImageFilePNG(galleryBgPath, OSL_IN_RAM, OSL_PF_8888);
 	gallerySelection = oslLoadImageFilePNG(gallerySelectorPath, OSL_IN_RAM, OSL_PF_8888);
@@ -400,9 +390,9 @@ int galleryApp()
 	
 	int MenuSelection = 1; // Pretty obvious
 	int selector_x = 15; //The x position of the first selection
-	int selector_y = 10; //The y position of the first selection
+	int selector_y = 14; //The y position of the first selection
 	int selector_image_x; //Determines the starting x position of the selection
-	int selector_image_y = 26; //Determines the starting y position of the selection
+	int selector_image_y = 30; //Determines the starting y position of the selection
 	int numMenuItems = 3; //Amount of items in the menu
 
 	while (!osl_quit)
@@ -416,24 +406,27 @@ int galleryApp()
 	
 		oslStartDrawing();
 		oslReadKeys();
-		oslClearScreen(RGB(0,0,0));	
+		oslClearScreen(RGB(0, 0, 0));	
 		oslDrawImageXY(gallerybg, 0, 0);
-		oslDrawStringf(25,25,"Album");
 		oslDrawImageXY(gallerySelection, selector_image_x, selector_image_y);
 		
-		oslDrawStringf(25,89,"PICTURE");
-		oslDrawStringf(25,145,"PSP/PHOTO");
-		oslDrawStringf(25,201,"PSP/GAME/CyanogenPSP/screenshots");
+		oslDrawStringf(25, 89, "PICTURE");
+		oslDrawStringf(25, 145, "PSP/PHOTO");
+		oslDrawStringf(25, 201, "PSP/GAME/CyanogenPSP/screenshots");
 		
-		battery(370,2,1);
-		digitaltime(420,4,0,hrTime);
+		battery(370, 2, 1);
+		digitaltime(420, 4, 0,hrTime);
 		volumeController();
         
-        if (osl_keys->pressed.down) MenuSelection++; //Moves the selector down
-        if (osl_keys->pressed.up) MenuSelection--; //Moves the selector up
+        if (osl_keys->pressed.down) 
+			MenuSelection++; //Moves the selector down
+        if (osl_keys->pressed.up) 
+			MenuSelection--; //Moves the selector up
         
-        if (MenuSelection > numMenuItems) MenuSelection = 1; //Sets the selection to the first
-        if (MenuSelection < 1) MenuSelection = numMenuItems; //Sets the selection back to last
+        if (MenuSelection > numMenuItems) 
+			MenuSelection = 1; //Sets the selection to the first
+        if (MenuSelection < 1) 
+			MenuSelection = numMenuItems; //Sets the selection back to last
 		
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {		

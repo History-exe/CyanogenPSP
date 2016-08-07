@@ -8,14 +8,7 @@
 #include "settingsMenu.h"
 
 void powermenu()
-{	
-	power = oslLoadImageFilePNG("system/home/menu/powerMenu.png", OSL_IN_RAM, OSL_PF_8888);
-	powerSelection = oslLoadImageFilePNG("system/home/menu/powerSelection.png", OSL_IN_RAM, OSL_PF_8888);
-	recoverySelection = oslLoadImageFilePNG("system/home/menu/recoverySelection.png", OSL_IN_RAM, OSL_PF_8888);
-	
-	if (!power || !powerSelection || !recoverySelection)
-		debugDisplay();
-
+{
 	while (!osl_quit)
 	{
 		LowMemExit();
@@ -30,6 +23,7 @@ void powermenu()
 		oslDrawImageXY(ic_launcher_browser, 276, 190);
 		oslDrawImageXY(ic_launcher_settings, 331, 190);
 		oslDrawImageXY(ic_launcher_messenger, 160, 190);
+		appDrawerIcon();
 		navbarButtons(0);
 		oslDrawImageXY(power, 100, 61);
 		
@@ -67,9 +61,6 @@ void powermenu()
 				oslPlaySound(KeypressStandard, 1);  
 				oslSyncFrame();
 				sceKernelDelayThread(3*1000000);
-				oslDeleteImage(power);
-				oslDeleteImage(powerSelection);
-				oslDeleteImage(recoverySelection);
 				mainRecoveryMenu();
 			}
 		}
@@ -77,12 +68,7 @@ void powermenu()
 		oslDrawImage(cursor);
 	
 		if (osl_keys->pressed.circle)
-		{	
-			oslDeleteImage(power);
-			oslDeleteImage(powerSelection);
-			oslDeleteImage(recoverySelection);
 			return;
-		}
 		
 		captureScreenshot();
 		
