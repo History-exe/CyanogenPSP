@@ -61,5 +61,6 @@ int connectAPCallback(int state);
 int connectToAP(int config);
 void onlineUpdater();
 void flashUpdate();
+int isUSBCableActivated();
 int isUSBCableConnected();
 char getPSPNickname();

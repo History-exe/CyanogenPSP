@@ -166,7 +166,7 @@ void battery(int batX, int batY, int n) // Draws the battery icon depending on i
 			oslDrawStringf(batX+10, 4, "%d%%", batteryLife);
 		}
 		
-		if (usbStat == 1)
+		if (usbStat == 1 && (isUSBCableConnected() == 1))
 		{
 			oslDrawImageXY(usbdebug, 5, -1);
 		}
@@ -176,7 +176,7 @@ void battery(int batX, int batY, int n) // Draws the battery icon depending on i
 			oslDrawImageXY(music, 5, 2);
 		}
 		
-		if (usbStat == 1 && isPlaying == 1)
+		if ((usbStat == 1 && (isUSBCableConnected() == 1)) && isPlaying == 1)
 		{
 			oslDrawImageXY(usbdebug, 5, -1);
 			oslDrawImageXY(music, 26, 2);
@@ -210,7 +210,7 @@ void battery(int batX, int batY, int n) // Draws the battery icon depending on i
 			oslDrawStringf(batX+10, y+2, "%d%%", batteryLife);
 		}
 		
-		if (usbStat == 1)
+		if (usbStat == 1 && (isUSBCableConnected() == 1))
 		{
 			oslDrawImageXY(usbdebug, 5, y-3);
 		}
@@ -220,7 +220,7 @@ void battery(int batX, int batY, int n) // Draws the battery icon depending on i
 			oslDrawImageXY(music, 5, y);
 		}
 		
-		if (usbStat == 1 && isPlaying == 1)
+		if ((usbStat == 1 && (isUSBCableConnected() == 1)) && isPlaying == 1)
 		{
 			oslDrawImageXY(usbdebug, 5, y-3);
 			oslDrawImageXY(music, 26, y);

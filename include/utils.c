@@ -868,9 +868,22 @@ void flashUpdate()
 	}
 }
 
+int isUSBCableActivated()
+{
+	unsigned long state = oslGetUsbState();
+	if (state & PSP_USB_ACTIVATED)
+		return 1;
+	else
+		return 0;
+}
+
 int isUSBCableConnected()
 {
-    return (sceUsbGetState() & PSP_USB_CABLE_CONNECTED);
+	unsigned long state = oslGetUsbState();
+	if (state & OSL_USB_CABLE_CONNECTED)
+		return 1;
+	else
+		return 0;
 }
 
 char getPSPNickname()
