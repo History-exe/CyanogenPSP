@@ -1,8 +1,10 @@
 #include "clock.h"
 #include "fileManager.h"
 #include "homeMenu.h"
+#include "include/audio/mp3playerME.h"
 #include "include/utils.h"
 #include "lockScreen.h"
+#include "musicPlayer.h"
 #include "screenshot.h"
 #include "settingsMenu.h"
 
@@ -45,8 +47,39 @@ int lockscreen()
 		
 		controls();	
 
-		oslDrawImage(background);	
+		oslDrawImage(background);		
 		oslDrawImage(lockscreenBg);
+		
+		oslIntraFontSetStyle(Roboto, 0.5f, RGBA(255, 255, 255, 255), 0, 0);
+		
+		if (isPlaying)
+		{
+			if (lsCoverArt)
+				oslDrawImage(lsMusicBg);
+			oslDrawImage(lockscreenBg);
+			oslDrawImageXY(lsMusic, 40, 120);
+			if (MP3ME_isPlaying == 1)
+				oslDrawImageXY(mp3Play, 310, 147);
+			if (MP3ME_isPlaying == 0)
+				oslDrawImageXY(mp3Pause, 310, 147);
+			oslDrawStringf(120, 140, "%.14s", playingStatus);
+			oslDrawStringf(120, 156, "%.14s", artistStatus);
+			
+			if((MP3ME_isPlaying == 1) && (!(cursor->x >= 200 && cursor->x <= 280 && cursor->y >= 100 && cursor->y <= 272)) && (osl_keys->pressed.cross))
+			{
+				oslPlaySound(KeypressStandard, 1); 
+				MP3ME_Pause();
+				for(i=0; i<10; i++) 
+				{
+					sceDisplayWaitVblankStart();
+				}
+			}
+		
+			else if (MP3ME_isPlaying == 0 && osl_keys->pressed.cross)
+			{
+				MP3ME_Play();
+			}
+		}
 		
 		centerClock(1);
 		

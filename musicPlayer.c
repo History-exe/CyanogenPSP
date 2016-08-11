@@ -17,8 +17,6 @@ void MP3Play(char * path)
 	struct ID3Tag ID3;
 
 	nowplaying = oslLoadImageFilePNG(nowplayingBgPath, OSL_IN_RAM, OSL_PF_8888);
-	mp3Play = oslLoadImageFilePNG("system/app/apollo/play.png", OSL_IN_RAM, OSL_PF_8888);
-	mp3Pause = oslLoadImageFilePNG("system/app/apollo/pause.png", OSL_IN_RAM, OSL_PF_8888);
 	
 	if (!nowplaying)
 		debugDisplay();
@@ -87,8 +85,8 @@ void MP3Play(char * path)
 		//oslDrawStringf(240,76, "Playing: %.19s", folderIcons[current].name);
 		strcpy(playingStatus, ID3.ID3Title);
 		strcpy(artistStatus, ID3.ID3Artist);
-		oslDrawStringf(15, 28, "%s", strupr(ID3.ID3Title));
-		oslDrawStringf(15, 48, "%s", strupr(ID3.ID3Artist));
+		oslDrawStringf(15, 28, "%.44s", strupr(ID3.ID3Title));
+		oslDrawStringf(15, 48, "%.44s", strupr(ID3.ID3Artist));
 		
 		//oslDrawStringf(240, 136, "Album: %.21s", ID3.ID3Album);
 		//oslDrawStringf(240, 156, "Year: %.22s", ID3.ID3Year);
@@ -100,6 +98,10 @@ void MP3Play(char * path)
 		if (MP3ME_isPlaying == 0)
 			oslDrawImageXY(mp3Pause, 328, 147);
 		
+		oslDrawStringf(270, 155, "%s", MP3ME_GetTimeString());
+		
+		//oslDrawStringf(400, 155, "%d", MP3ME_GetLength());
+		
 		battery(370,2,1);
 		digitaltime(420,4,0,hrTime);
 		volumeController();
@@ -109,8 +111,6 @@ void MP3Play(char * path)
 			oslDeleteImage(nowplaying);
 			if (experimentalF == 1)
 				oslDeleteImage(coverArt);
-			oslDeleteImage(mp3Play);
-			oslDeleteImage(mp3Pause);
 			return;
 		}
 		
@@ -146,8 +146,6 @@ void MP3Play(char * path)
 			oslDeleteImage(nowplaying);
 			if (experimentalF == 1)
 				oslDeleteImage(coverArt);
-			oslDeleteImage(mp3Play);
-			oslDeleteImage(mp3Pause);
 			isPlaying = 0;
 			setCpuBoot(); //Restore previous CPU state
 			return;
@@ -169,14 +167,12 @@ void MP3Play(char * path)
 		oslEndDrawing(); 
         oslEndFrame(); 
 		oslSyncFrame();	
-		}
+	}
 }
 
 int soundPlay(char * path)
 {	
 	nowplaying = oslLoadImageFilePNG(nowplayingBgPath, OSL_IN_RAM, OSL_PF_8888);
-	mp3Play = oslLoadImageFilePNG("system/app/apollo/play.png", OSL_IN_RAM, OSL_PF_8888);
-	mp3Pause = oslLoadImageFilePNG("system/app/apollo/pause.png", OSL_IN_RAM, OSL_PF_8888);
 	
 	OSL_SOUND * sound = oslLoadSoundFile(path, OSL_FMT_NONE);
 
@@ -204,13 +200,14 @@ int soundPlay(char * path)
 		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 		
 		oslDrawImageXY(nowplaying, 0, 0);
-		
+
 		if (Play == 1)
-			oslDrawImageXY(mp3Play, 230, 224);
-		else if (Play == 0)
-			oslDrawImageXY(mp3Pause, 230, 224);
+			oslDrawImageXY(mp3Play, 328, 147);
+		if (Play == 0)
+			oslDrawImageXY(mp3Pause, 328, 147);
 		
-		oslDrawStringf(240,76, "%.28s", folderIcons[current].name);
+		strcpy(playingStatus, folderIcons[current].name);
+		oslDrawStringf(15, 28, "%.44s", folderIcons[current].name);
 		
 		battery(370,2,1);
 		digitaltime(420,4,0,hrTime);
@@ -219,8 +216,6 @@ int soundPlay(char * path)
 		if(osl_keys->pressed.select) 
 		{
 			oslDeleteImage(nowplaying);
-			oslDeleteImage(mp3Play);
-			oslDeleteImage(mp3Pause);
 			return 1;
 		}
 		
@@ -243,8 +238,6 @@ int soundPlay(char * path)
 			oslStopSound(sound);
 			oslDeleteSound(sound);
 			oslDeleteImage(nowplaying);
-			oslDeleteImage(mp3Play);
-			oslDeleteImage(mp3Pause);
 			return 1;
 		}
 		
@@ -273,6 +266,103 @@ int soundPlay(char * path)
 	return 0;
 }
 
+void musicSettings()
+{
+	mp3bg = oslLoadImageFilePNG(apolloBgPath, OSL_IN_RAM, OSL_PF_8888);
+	mp3_select = oslLoadImageFilePNG(apolloSelectorPath, OSL_IN_RAM, OSL_PF_8888);
+	offswitch = oslLoadImageFilePNG(offSwitchPath, OSL_IN_RAM, OSL_PF_8888);
+	onswitch = oslLoadImageFilePNG(onSwitchPath, OSL_IN_RAM, OSL_PF_8888);
+	
+	oslSetFont(Roboto);
+
+	while (!osl_quit)
+	{		
+		LowMemExit();
+		
+		oslStartDrawing();		
+		
+		oslClearScreen(RGB(0,0,0));
+		
+		controls();	
+		
+		oslDrawImageXY(mp3bg, 0, 0);
+		
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
+		
+		oslDrawStringf(20, 80, "Enable music background on lock screen");
+		
+		if (lsCoverArt == 0)
+			oslDrawImageXY(offswitch, 410, 72);
+				
+		else if (lsCoverArt == 1)
+			oslDrawImageXY(onswitch, 410, 72);
+		
+		if (cursor->x >= 0 && cursor->x <= 480 && cursor->y >= 38 && cursor->y <= 115) 
+		{	
+			oslDrawImageXY(mp3_select, 0, 56);
+			oslDrawStringf(20, 80, "Enable music background on lock screen");
+			if (lsCoverArt == 0)
+			{
+				oslDrawImageXY(offswitch, 410, 72);
+				
+				if (osl_keys->pressed.cross)
+				{
+					oslPlaySound(KeypressStandard, 1);
+					lsCoverArt = 1;
+					FILE * _CoverArt = fopen("system/app/apollo/lsCoverArt.bin", "w");
+					fprintf(_CoverArt, "%d", lsCoverArt);
+					fclose(_CoverArt);
+				}
+			}
+			else if (lsCoverArt == 1)
+			{
+				oslDrawImageXY(onswitch, 410, 72);
+			
+				if (osl_keys->pressed.cross)
+				{
+					oslPlaySound(KeypressStandard, 1);
+					lsCoverArt = 0;
+					FILE * _CoverArt = fopen("system/app/apollo/lsCoverArt.bin", "w");
+					fprintf(_CoverArt, "%d", lsCoverArt);
+					fclose(_CoverArt);
+				}
+			}
+		}
+		
+		battery(370, 2, 1);
+		digitaltime(420, 4, 0, hrTime);
+		volumeController();
+		
+		oslDrawImage(cursor);
+		
+		if (osl_keys->pressed.circle)
+		{
+			oslDeleteImage(mp3bg);
+			oslDeleteImage(mp3_select);
+			oslDeleteImage(offswitch);	
+			oslDeleteImage(onswitch);
+			mp3player();
+		}
+		
+		if (osl_keys->pressed.square)
+		{
+			powermenu();
+		}
+		
+		if (osl_keys->pressed.L)
+		{
+			oslPlaySound(Lock, 1);  
+			lockscreen();
+		}
+	
+		captureScreenshot();
+		
+		oslEndDrawing(); 
+        oslEndFrame(); 
+		oslSyncFrame();	
+	}
+}
+
 void mp3FileDisplay()
 {
 	oslDrawImageXY(mp3bg, 0, 0);
@@ -280,8 +370,11 @@ void mp3FileDisplay()
 	
 	oslIntraFontSetStyle(Roboto, fontSize, RGBA(255, 255, 255, 255), 0, 0);
 	
-	oslDrawStringf(20, 238, "%s", playingStatus);
-	oslDrawStringf(20, 252, "%s", artistStatus);
+	if (isPlaying)
+	{
+		oslDrawStringf(20, 238, "%.50s", playingStatus);
+		oslDrawStringf(20, 252, "%.50s", artistStatus);
+	}
 	
 	oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 	
@@ -398,10 +491,11 @@ void mp3Controls() //Controls
 		}
 	}
 	
+	if (osl_keys->pressed.select)
+		musicSettings();
+	
 	if (osl_keys->pressed.square)
-	{
 		powermenu();
-	}
 		
 	if (osl_keys->pressed.L)
 	{
@@ -485,7 +579,6 @@ int mp3View(char * browseDirectory)
 
 int mp3player() 
 {
-
 	FILE * file = fopen(apolloFontColorPath, "r");
 	fscanf(file, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
 	fclose(file);
@@ -528,8 +621,11 @@ int mp3player()
 		
 		oslIntraFontSetStyle(Roboto, fontSize, RGBA(255, 255, 255, 255), 0, 0);
 		
-		oslDrawStringf(20, 238, "%s", playingStatus);
-		oslDrawStringf(20, 252, "%s", artistStatus);
+		if (isPlaying)
+		{
+			oslDrawStringf(20, 238, "%.50s", playingStatus);
+			oslDrawStringf(20, 252, "%.50s", artistStatus);
+		}
 		
 		battery(370, 2, 1);
 		digitaltime(420, 4, 0,hrTime);

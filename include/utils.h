@@ -35,6 +35,21 @@ enum colors {
     BLACK = 0xFF000000,
 };
 
+typedef struct
+{
+    unsigned long        maxclusters;
+    unsigned long        freeclusters;
+    int                    unk1;
+    unsigned int        sectorsize;
+    u64                    sectorcount;
+    
+} SystemDevCtl;
+
+typedef struct
+{
+    SystemDevCtl *pdevinf;    
+} SystemDevCommand;
+
 void LowMemExit();
 void debugDisplay();
 int getCpuClock();
@@ -61,6 +76,8 @@ int connectAPCallback(int state);
 int connectToAP(int config);
 void onlineUpdater();
 void flashUpdate();
+u64 storageGetTotalSize();
+u64 storageGetFreeSize();
 int isUSBCableActivated();
 int isUSBCableConnected();
 char getPSPNickname();

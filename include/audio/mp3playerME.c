@@ -320,12 +320,36 @@ int MP3ME_EndOfStream(){
     return MP3ME_eof;
 }
 
-/*int MP3ME_GetPercentage(struct FILE_INFO *file){
-    int perc = (int)(MP3ME_playingTime/(double)file->mp3Info.length*100.0);
+int MP3ME_GetPercentage(char * path){
+	
+	struct ID3Tag ID3;
+	ParseID3(path, &ID3);
+	
+	int length = ID3.ID3Length / 1000;
+    int perc = (int)(MP3ME_playingTime/(double)length * 100.0);
     if (perc > 100)
         perc = 100;
     return perc;
-}*/
+}
+
+char * MP3ME_GetTimeString(){
+    static char timeString[9];
+    int secs = (int)MP3ME_playingTime;
+    int hh = secs / 3600;
+    int mm = (secs - hh * 3600) / 60;
+    int ss = (secs - hh * 3600 - mm * 60) + 1;
+	int min = 0;
+	if ((ss) > 58)
+		min += 1;
+    snprintf(timeString, sizeof(timeString), "%d:%2.2i", min, ss);
+	
+	return timeString;
+}
+
+int MP3ME_GetLength()
+{
+	return (int)MP3ME_playingTime;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Functions for ME

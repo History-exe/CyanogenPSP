@@ -868,6 +868,30 @@ void flashUpdate()
 	}
 }
 
+u64 storageGetTotalSize() //returns data in MB
+{
+	SystemDevCtl devctl;
+    memset(&devctl, 0, sizeof(SystemDevCtl));
+    SystemDevCommand command;
+    command.pdevinf = &devctl;
+    sceIoDevctl("ms0:", 0x02425818, &command, sizeof(SystemDevCommand), NULL, 0);
+    u64 size = (devctl.maxclusters * devctl.sectorcount) * devctl.sectorsize;  
+
+	return size/1048576;
+}
+
+u64 storageGetFreeSize() //returns data in MB
+{
+	SystemDevCtl devctl;
+    memset(&devctl, 0, sizeof(SystemDevCtl));
+    SystemDevCommand command;
+    command.pdevinf = &devctl;
+    sceIoDevctl("ms0:", 0x02425818, &command, sizeof(SystemDevCommand), NULL, 0);
+    u64 size = (devctl.freeclusters * devctl.sectorcount) * devctl.sectorsize; 
+
+	return size/1048576;
+}
+
 int isUSBCableActivated()
 {
 	unsigned long state = oslGetUsbState();

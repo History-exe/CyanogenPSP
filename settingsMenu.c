@@ -849,7 +849,24 @@ void ramMenu()
 	
 	OSL_MEMSTATUS ram = oslGetRamStatus();
 	int availableRam = (ram.maxAvailable/1000000);
-	int totalRam = ((20*1024*1024)/1000000);
+	int totalRam = ((20 * 1024 * 1024)/1000000);
+	
+	char status[20];
+	
+	switch(batteryM)
+	{
+		case 0:
+			strcpy(status, "   Powersave");
+			break;
+	
+		case 1:
+			strcpy(status, "    Balanced");
+			break;
+			
+		case 2:
+			strcpy(status, "Performance");
+			break;
+	}
 	
 	while (!osl_quit)
 	{
@@ -862,18 +879,26 @@ void ramMenu()
 		controls();	
 		
 		oslDrawImageXY(performancebg, 0, 0);
+
+		if (DARK == 0)
+			oslIntraFontSetStyle(Roboto, 0.9f, RGBA(0, 149, 135, 255), 0, INTRAFONT_ALIGN_LEFT);
+		else
+			oslIntraFontSetStyle(Roboto, 0.9f, RGBA(0, 149, 135, 255), 0, INTRAFONT_ALIGN_LEFT);
+		
+		oslDrawStringf(20, 78, "%dMB\n", (20 - (availableRam))); 
 		
 		if (DARK == 0)
 			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
-		oslDrawStringf(20,78,"%s %d MB (%d%%) %s\n", lang_settingsRAM[language][0], availableRam, (((availableRam) * 100)/(totalRam)), lang_settingsRAM[language][1]); 
+		oslDrawFillRect(20, 100, 424, 120, RGB(206, 215, 219));
+		oslDrawFillRect(20, 100, ((availableRam) * 21.2), 120, RGB(r, g, b));
 		
-		oslDrawFillRect(20, 100, 424, 110, RGB(206, 215, 219));
-		oslDrawFillRect(20, 100, ((availableRam)*20.2), 110, RGB(r, g, b));
-		
-		oslDrawStringf(20,122,"%d%% %s", (((20 - (availableRam)) * 100)/(totalRam)), lang_settingsRAM[language][2]);
+		oslDrawStringf(20, 132, "%s:                                          %s", lang_settingsMain[language][3], status);
+		oslDrawStringf(20, 148, "Total memory                                                  %dMB", totalRam);
+		oslDrawStringf(20, 164, "Average Used(%%)                                               %d%%", (((availableRam) * 100)/(totalRam)));
+		oslDrawStringf(20, 180, "Free                                                             %dMB", availableRam);
 
 		navbarButtons(2);
 		battery(330,2,0);
@@ -939,13 +964,6 @@ void storageMenu()
 
 	oslSetFont(Roboto);
 	
-	unsigned int buf[5]; 
-	unsigned int *pbuf = buf; 
-	sceIoDevctl("ms0:", 0x02425818, &pbuf, sizeof(pbuf), 0, 0);
-	
-	double freeSpace = buf[1]*buf[3]*buf[4];
-	//double totalSpace = buf[0]*buf[3]*buf[4];
-	
 	if (!performancebg || !highlight)
 		debugDisplay();
 	
@@ -962,13 +980,31 @@ void storageMenu()
 		oslDrawImageXY(performancebg, 0, 0);
 		
 		if (DARK == 0)
+			oslIntraFontSetStyle(Roboto, 0.9, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
+		else
+			oslIntraFontSetStyle(Roboto, 0.9, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
+		
+		oslDrawStringf(20, 80, "%.2llu MB", (storageGetTotalSize() - storageGetFreeSize())); 
+		
+		if (DARK == 0)
 			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
-		oslDrawStringf(20,80, "%s", lang_settingsStorage[language][0]); 
-		//oslDrawStringf(20,100,"%s %.2f MB", lang_settingsStorage[language][1], totalSpace/1048576);
-		oslDrawStringf(20,120,"%s %.2f MB", lang_settingsStorage[language][2], freeSpace/1048576);
+		oslDrawStringf(20, 100, "Total used of %.2llu MB", storageGetTotalSize()); 
+		
+		
+		oslDrawStringf(20, 136, "Storage:"); 
+		oslDrawStringf(20, 152, "Total used of %.2llu MB", storageGetTotalSize()); 
+		
+		oslDrawFillRect(20, 172, 424, 176, RGB(206, 215, 219));
+		oslDrawFillRect(20, 172, ((((int)storageGetTotalSize() - (int)storageGetFreeSize())/(int)storageGetTotalSize()) * 404), 176, RGB(r, g, b));
+		
+		//oslDrawStringf(20, 80, "%s", lang_settingsStorage[language][0]); 
+		//oslDrawStringf(20, 100,"%s %.2llu MB", lang_settingsStorage[language][1], storageGetTotalSize());
+		//oslDrawStringf(20, 120, "%s %.2llu MB", lang_settingsStorage[language][2], storageGetFreeSize());
+		//oslDrawStringf(20, 100,"%s %.2llu MB", lang_settingsStorage[language][1], storageGetTotalSize());
+		//oslDrawStringf(20, 140, "Used Storage Capcitiy %.2llu MB", storageGetTotalSize() - storageGetFreeSize());
 		
 		if (osl_keys->pressed.select)
 		{

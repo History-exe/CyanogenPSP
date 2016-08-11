@@ -22,6 +22,8 @@ struct musicPlayerFontColor
 
 char artistStatus[100], playingStatus[100];
 
+int lsCoverArt;
+
 char *compact_str(char *s, int max_length);
 void MP3Play(char * path);
 int soundPlay(char * path);
