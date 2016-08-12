@@ -20,11 +20,13 @@ struct musicPlayerFontColor
    int	b;
 };
 
-char artistStatus[100], playingStatus[100];
+char artistStatus[100], playingStatus[100], genreStatus[100];
 
 int lsCoverArt;
 
 char *compact_str(char *s, int max_length);
+
+void drawGenreColors(int style);
 void MP3Play(char * path);
 int soundPlay(char * path);
 void mp3Controls();

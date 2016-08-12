@@ -1985,9 +1985,9 @@ void themesLoad()
 	char themesImg[100] = "/settings/themes.png";
 	char wifiImg[100] = "/settings/wifi.png";
 	
-	char apolloBgImg[100] = "/app/apollo/mp3bg.png";
-	char apolloSelectorImg[100] = "/app/apollo/mp3_select.png";
-	char nowplayingBgImg[100] = "/app/apollo/nowplaying.png";
+	char apolloBgImg[100] = "/app/musicplayer/mp3bg.png";
+	char apolloSelectorImg[100] = "/app/musicplayer/mp3_select.png";
+	char nowplayingBgImg[100] = "/app/musicplayer/nowplaying.png";
 	
 	char fmBgImg[100] = "/app/filemanager/filemanagerbg.png";
 	char fmSelectorImg[100] = "/app/filemanager/bar.png";
@@ -2016,7 +2016,7 @@ void themesLoad()
 	char fileManagerFontColor[100] = "/app/filemanager/rgb.bin";
 	char galleryFontColor[100] = "/app/gallery/rgb.bin";
 	char gameFontColor[100] = "/app/game/rgb.bin";
-	char apolloFontColor[100] = "/app/apollo/rgb.bin";
+	char apolloFontColor[100] = "/app/musicplayer/rgb.bin";
 	char settingsFontColor[100] = "/settings/srgb.bin";
 	char timeAndBatteryFontColor[100] = "/home/rgb.bin";
 	char lockScreenWidgetFontColor[100] = "/app/clock/rgb.bin";

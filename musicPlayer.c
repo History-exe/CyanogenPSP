@@ -12,6 +12,60 @@
 
 struct musicPlayerFontColor fontColor;
 
+void drawGenreColors(int style)
+{
+	int color = 0;
+	
+	if ((strcmp(genreStatus ,"Hip-Hop") == 0))
+		color = 1;
+	else if ((strcmp(genreStatus ,"Pop") == 0) || (strcmp(genreStatus ,"Pop-Folk") == 0) || (strcmp(genreStatus ,"Pop/Funk") == 0) || (strcmp(genreStatus ,"Instrumental Pop") == 0) || (strcmp(genreStatus ,"pop") == 0))
+		color = 2;
+	else if ((strcmp(genreStatus ,"Rock") == 0) || (strcmp(genreStatus ,"Classic Rock") == 0) || (strcmp(genreStatus ,"Folk-Rock") == 0) || (strcmp(genreStatus ,"Gothic Rock") == 0) || (strcmp(genreStatus ,"Punk Rock") == 0) || (strcmp(genreStatus ,"Christian Rock") == 0) || (strcmp(genreStatus ,"Progressive Rock") == 0) || (strcmp(genreStatus ,"Psychedelic Rock") == 0) || (strcmp(genreStatus ,"Symphonic Rock") == 0) || (strcmp(genreStatus ,"Instrumental Rock") == 0) || (strcmp(genreStatus ,"Southern Rock") == 0) || (strcmp(genreStatus ,"Slow Rock") == 0) || (strcmp(genreStatus ,"Rock & Roll") == 0) || (strcmp(genreStatus ,"Alternative Rock") == 0) || (strcmp(genreStatus ,"Hard Rock") == 0) || (strcmp(genreStatus ,"Metal") == 0) || (strcmp(genreStatus ,"Black Metal") == 0) || (strcmp(genreStatus ,"Heavy Metal") == 0) || (strcmp(genreStatus ,"Thrash Metal") == 0) || (strcmp(genreStatus ,"Death Metal") == 0))
+		color = 3;
+	else if (strcmp(genreStatus ,"Country") == 0)
+		color = 4;
+	else if ((strcmp(genreStatus ,"Jazz") == 0) || (strcmp(genreStatus ,"Acid Jazz") == 0) || (strcmp(genreStatus ,"Jazz+Funk") == 0))
+		color = 5;
+	else if ((strcmp(genreStatus ,"Disco") == 0) || (strcmp(genreStatus ,"Funk") == 0) || (strcmp(genreStatus ,"Techno") == 0) || (strcmp(genreStatus ,"Euro-Techno") == 0) || (strcmp(genreStatus ,"Techno-Industrial") == 0))
+		color = 6;
+	
+	if (style == 0)
+	{
+		if (color == 0)
+			oslDrawFillRect(0, 67, 223, 256, RGB(0, 121, 107)); // Teal
+		else if (color == 1)
+			oslDrawFillRect(0, 67, 223, 256, RGB(156, 39, 176)); // Purple
+		else if (color == 2)
+			oslDrawFillRect(0, 67, 223, 256, RGB(244, 67, 54)); // Red
+		else if (color == 3)
+			oslDrawFillRect(0, 67, 223, 256, RGB(158, 158, 158)); //Gray
+		else if (color == 4)
+			oslDrawFillRect(0, 67, 223, 256, RGB(63, 81, 181)); // Indigo
+		else if (color == 5)
+			oslDrawFillRect(0, 67, 223, 256, RGB(121, 85, 72)); // Brown
+		else if (color == 6)
+			oslDrawFillRect(0, 67, 223, 256, RGB(33, 150, 243)); // Blue
+	}
+	
+	else if (style == 1)
+	{
+		if (color == 0)
+			oslDrawFillRect(0, 0, 480, 272, RGB(0, 121, 107)); // Teal
+		else if (color == 1)
+			oslDrawFillRect(0, 0, 480, 272, RGB(156, 39, 176)); // Purple
+		else if (color == 2)
+			oslDrawFillRect(0, 0, 480, 272, RGB(244, 67, 54)); // Red
+		else if (color == 3)
+			oslDrawFillRect(0, 0, 480, 272, RGB(158, 158, 158)); //Gray
+		else if (color == 4)
+			oslDrawFillRect(0, 0, 480, 272, RGB(63, 81, 181)); // Indigo
+		else if (color == 5)
+			oslDrawFillRect(0, 0, 480, 272, RGB(121, 85, 72)); // Brown
+		else if (color == 6)
+			oslDrawFillRect(0, 0, 480, 272, RGB(33, 150, 243)); // Blue
+	}
+}
+
 void MP3Play(char * path)
 {	
 	struct ID3Tag ID3;
@@ -25,7 +79,6 @@ void MP3Play(char * path)
 	
 	pspAudioInit();
 	
-	int i, mp3Min = 0;
 	MP3ME_Init(1);
 	ParseID3(path, &ID3);
 	MP3ME_Load(path);
@@ -74,17 +127,16 @@ void MP3Play(char * path)
 		
 		oslIntraFontSetStyle(Roboto, fontSize, RGBA(255, 255, 255, 255), 0, 0);
 		
-		if (MP3ME_playingTime > 59)
-		{
-			mp3Min += 1;
-			MP3ME_playingTime = 0;
-		}
+		drawGenreColors(0);
+		
 		oslDrawImageXY(nowplaying, 0, 0);
 		if (experimentalF == 1)
 			oslDrawImageXY(coverArt, 0, 68);
+		
 		//oslDrawStringf(240,76, "Playing: %.19s", folderIcons[current].name);
 		strcpy(playingStatus, ID3.ID3Title);
 		strcpy(artistStatus, ID3.ID3Artist);
+		strcpy(genreStatus, ID3.ID3GenreText);
 		oslDrawStringf(15, 28, "%.44s", strupr(ID3.ID3Title));
 		oslDrawStringf(15, 48, "%.44s", strupr(ID3.ID3Artist));
 		
@@ -199,6 +251,7 @@ int soundPlay(char * path)
 		
 		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 		
+		oslDrawFillRect(0, 0, 480, 272, RGB(156, 39, 176));
 		oslDrawImageXY(nowplaying, 0, 0);
 
 		if (Play == 1)
@@ -309,7 +362,7 @@ void musicSettings()
 				{
 					oslPlaySound(KeypressStandard, 1);
 					lsCoverArt = 1;
-					FILE * _CoverArt = fopen("system/app/apollo/lsCoverArt.bin", "w");
+					FILE * _CoverArt = fopen("system/app/musicplayer/lsCoverArt.bin", "w");
 					fprintf(_CoverArt, "%d", lsCoverArt);
 					fclose(_CoverArt);
 				}
@@ -322,7 +375,7 @@ void musicSettings()
 				{
 					oslPlaySound(KeypressStandard, 1);
 					lsCoverArt = 0;
-					FILE * _CoverArt = fopen("system/app/apollo/lsCoverArt.bin", "w");
+					FILE * _CoverArt = fopen("system/app/musicplayer/lsCoverArt.bin", "w");
 					fprintf(_CoverArt, "%d", lsCoverArt);
 					fclose(_CoverArt);
 				}
@@ -491,7 +544,7 @@ void mp3Controls() //Controls
 		}
 	}
 	
-	if (osl_keys->pressed.select)
+	if (osl_keys->pressed.start)
 		musicSettings();
 	
 	if (osl_keys->pressed.square)
@@ -670,10 +723,11 @@ int mp3player()
 			appdrawer();
 		}
 		
+		if (osl_keys->pressed.start)
+			musicSettings();
+		
 		if (osl_keys->pressed.square)
-		{
 			powermenu();
-		}
 		
 		if (osl_keys->pressed.L)
 		{

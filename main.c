@@ -45,7 +45,7 @@ int main()
 	experimentalF = setFileDefaultsInt("system/settings/experimentalFeatures.bin", 0, experimentalF);
 	DARK = setFileDefaultsInt("system/settings/darkTheme.bin", 0, DARK);
 	fontSize = setFileDefaultsFloat("system/settings/fontSize.bin", 0.5, fontSize);
-	lsCoverArt = setFileDefaultsInt("system/app/apollo/lsCoverArt.bin", 1, lsCoverArt);
+	lsCoverArt = setFileDefaultsInt("system/app/musicplayer/lsCoverArt.bin", 1, lsCoverArt);
 	
 	checkGBootActivation();
 	themesLoad();
@@ -94,8 +94,8 @@ int main()
 	recoverySelection = oslLoadImageFilePNG("system/home/menu/recoverySelection.png", OSL_IN_RAM, OSL_PF_8888);
 	lsMusic = oslLoadImageFilePNG("system/home/menu/lsMusic.png", OSL_IN_RAM, OSL_PF_8888);
 	lsMusicBg = oslLoadImageFilePNG("system/home/menu/lsMusicBg.png", OSL_IN_RAM, OSL_PF_8888);
-	mp3Play = oslLoadImageFilePNG("system/app/apollo/play.png", OSL_IN_RAM, OSL_PF_8888);
-	mp3Pause = oslLoadImageFilePNG("system/app/apollo/pause.png", OSL_IN_RAM, OSL_PF_8888);
+	mp3Play = oslLoadImageFilePNG("system/app/musicplayer/play.png", OSL_IN_RAM, OSL_PF_8888);
+	mp3Pause = oslLoadImageFilePNG("system/app/musicplayer/pause.png", OSL_IN_RAM, OSL_PF_8888);
 	
 	//Debugger - Displays an error message if the following resources are missing.
 	if (!background || !cursor || !navbar || !navbar2 || !ic_allapps || !ic_allapps_pressed || !ic_launcher_apollo || !ic_launcher_settings || !ic_launcher_messenger || !ic_launcher_browser || !batt100 || !batt80 || !batt60 || !batt40 || !batt20 || !batt10 || !batt0 || !battcharge || !usbdebug  || !music || !power || !powerSelection || !recoverySelection || !lsMusic)
