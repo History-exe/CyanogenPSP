@@ -936,57 +936,57 @@ void dirDisplay()
 			break;
 		}
 		
-		if (dirScan[i].directory == 0)
+		/*if (dirScan[i].directory == 0)
 		{  
-			oslDrawImageXY(unknownicon, 45, (i - curScroll) * 48 + ICON_DISPLAY_Y);
-		}
+			oslDrawImageXY(unknownicon, 40, (i - curScroll) * 48 + ICON_DISPLAY_Y);
+		}*/
 		
 		if(((ext) != NULL) && ((strcmp(ext ,".mp3") == 0) || (strcmp(ext ,".mov") == 0) || (strcmp(ext ,".m4a") == 0) || (strcmp(ext ,".wav") == 0) || (strcmp(ext ,".ogg") == 0)) && (dirScan[i].directory == 0))
 		{
 			//Checks if the file is a music file.
-			oslDrawImageXY(mp3icon, 45, (i - curScroll)* 48 + ICON_DISPLAY_Y);
+			oslDrawImageXY(mp3icon, 40, (i - curScroll)* 48 + ICON_DISPLAY_Y);
 		}
 		
 		if(((ext) != NULL) && ((strcmp(ext ,".mp4") == 0) || (strcmp(ext ,".mpg") == 0) || (strcmp(ext ,".flv") == 0) || (strcmp(ext ,".mpeg") == 0)) && (dirScan[i].directory == 0)) 
 		{
 			//Checks if the file is a video.
-			oslDrawImageXY(videoicon, 45, (i - curScroll)* 48 + ICON_DISPLAY_Y);
+			oslDrawImageXY(videoicon, 40, (i - curScroll)* 48 + ICON_DISPLAY_Y);
 		}
 		
 		if(((ext) != NULL) && ((strcmp(ext ,".png") == 0) || (strcmp(ext ,".jpg") == 0) || (strcmp(ext ,".jpeg") == 0) || (strcmp(ext ,".gif") == 0)) && (dirScan[i].directory == 0)) 
 		{
 			//Checks if the file is an image.
-			oslDrawImageXY(imageicon, 45, (i - curScroll)* 48 + ICON_DISPLAY_Y);
+			oslDrawImageXY(imageicon, 40, (i - curScroll)* 48 + ICON_DISPLAY_Y);
 		}
 		
 		if(((ext) != NULL) && ((strcmp(ext ,".PBP") == 0) || (strcmp(ext ,".prx") == 0) || (strcmp(ext ,".PRX") == 0) || (strcmp(ext ,".elf") == 0)) && (dirScan[i].directory == 0)) 
 		{
 			//Checks if the file is a binary file.
-			oslDrawImageXY(binaryicon, 45, (i - curScroll)* 48 + ICON_DISPLAY_Y);
+			oslDrawImageXY(binaryicon, 40, (i - curScroll)* 48 + ICON_DISPLAY_Y);
 		}
 		
 		if(((ext) != NULL) && ((strcmp(ext ,".txt") == 0) || (strcmp(ext ,".TXT") == 0) || (strcmp(ext ,".log") == 0) || (strcmp(ext ,".prop") == 0) || (strcmp(ext ,".lua") == 0)) && (dirScan[i].directory == 0))
 		{
 			//Checks if the file is a text document.
-			oslDrawImageXY(txticon, 45, (i - curScroll)* 48 + ICON_DISPLAY_Y);
+			oslDrawImageXY(txticon, 40, (i - curScroll)* 48 + ICON_DISPLAY_Y);
 		}
 		
 		if(((ext) != NULL) && ((strcmp(ext ,".doc") == 0) || (strcmp(ext ,".docx") == 0) || (strcmp(ext ,".pdf") == 0) || (strcmp(ext ,".ppt") == 0)) && (dirScan[i].directory == 0)) 
 		{
 			//Checks if the file is a document.
-			oslDrawImageXY(documenticon, 45, (i - curScroll)* 48 + ICON_DISPLAY_Y);
+			oslDrawImageXY(documenticon, 40, (i - curScroll)* 48 + ICON_DISPLAY_Y);
 		}
 		
 		if(((ext) != NULL) && ((strcmp(ext ,".rar") == 0) || (strcmp(ext ,".zip") == 0) || (strcmp(ext ,".7z") == 0)) && (dirScan[i].directory == 0)) 
 		{
 			//Checks if the file is an archive.
-			oslDrawImageXY(archiveicon, 45, (i - curScroll)* 48 + ICON_DISPLAY_Y);
+			oslDrawImageXY(archiveicon, 40, (i - curScroll)* 48 + ICON_DISPLAY_Y);
 		}
 		
 		if (dirScan[i].directory == 1 && (!dirScan[i].directory == 0))
 		{      
 			// if it's a directory
-			oslDrawImageXY(diricon, 45,(i - curScroll)* 48 + ICON_DISPLAY_Y);
+			oslDrawImageXY(diricon, 40,(i - curScroll)* 48 + ICON_DISPLAY_Y);
 		}
 		
 		// If the currently selected item is active, then display the name
