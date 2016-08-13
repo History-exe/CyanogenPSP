@@ -8,6 +8,11 @@
 
 #include <kubridge.h>
 
+#define MAX_FZIP_DISPLAY		10
+#define FZIP_DISPLAY_X			10
+#define FZIP_DISPLAY_Y			60 
+#define FZIP_CURR_DISPLAY_Y     58
+
 #define Version "flash0:/vsh/etc/version.txt"
 #define PWD "system/settings/backupPassword.txt"
 #define selector_xDistance 0 //The distance between the X axis of the two selections

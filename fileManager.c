@@ -906,7 +906,7 @@ void dirDisplay()
 	oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, 0);
 
 	oslDrawImageXY(filemanagerbg, 0, 0);
-	oslDrawStringf(86, 40, "%.34s",curDir); // Displays the current directory.
+	oslDrawStringf(86, 40, "%.34s", curDir); // Displays the current directory.
 	oslDrawImageXY(bar, 0, (current - curScroll) * 48 + CURR_DISPLAY_Y);
 	
 	battery(370, 2, 1);

@@ -3,9 +3,11 @@
 // Thanks Yoti for his libpspident.a
 // Thanks Raing3 for his psppower lib.
 
+#include "fileManager.h"
 #include "homeMenu.h"
 #include "include/common.h"
 #include "include/utils.h"
+#include "include/pgeZip.h"
 #include "prx/ipl_update.h"
 #include "prx/battManager.h"
 #include "prx/kernelUserManager.h"
@@ -16,6 +18,169 @@
 #include "systemctrl_se.h"
 
 SEConfig config;
+
+void fZipDisplay()
+{	
+	oslDrawImage(recoverybg);
+	oslDrawImageXY(Selector, 0, (current - curScroll) * 20 + FZIP_CURR_DISPLAY_Y);
+
+	for(i = curScroll; i < MAX_FZIP_DISPLAY + curScroll; i++) 
+	{
+		if ((folderIcons[i].active == 0) && (current >= i-1)) 
+		{
+			current = i-1;
+			break;
+		}
+
+		if (current <= curScroll-1) 
+		{
+			current = curScroll-1;
+			break;
+		}
+
+		if (folderIcons[i].active == 1) 
+		{
+			oslIntraFontSetStyle(Roboto, 0.5f, RGBA(100,192,231,255), 0, INTRAFONT_ALIGN_LEFT);
+			oslDrawStringf(FZIP_DISPLAY_X, (i - curScroll)*20 + FZIP_DISPLAY_Y, "%.56s", folderIcons[i].name);	
+		}
+	}
+}
+
+void fZipControls()
+{
+	oslReadKeys();	
+
+	if (pad.Buttons != oldpad.Buttons) 
+	{
+		if (osl_keys->pressed.down) 
+		{
+			selectionDown(MAX_FZIP_DISPLAY);
+			timer = 0;
+		}
+		if (osl_keys->pressed.up) 
+		{
+			selectionUp();
+			timer = 0;
+		}
+		
+		if (osl_keys->pressed.right) 
+		{
+			selectionDownx5(MAX_FZIP_DISPLAY);
+			timer = 0;
+		}
+		else if (osl_keys->pressed.left) 
+		{
+			selectionUpx5();	
+			timer = 0;
+		}
+		
+		if (osl_keys->pressed.triangle) 
+		{
+			curScroll = 1;
+			current = 1;
+		}
+	}
+	
+	if ((osl_keys->pressed.cross) && (strcmp(folderIcons[current].filePath, "doesn't matter") != 0))
+	{
+		char str[80] = "ms0:/PSP/GAME/CyanogenPSP/Updates/";
+		strcat(str, folderIcons[current].name);
+		
+		oslDrawStringf(10, 250, "Flashing Zip...");
+		oslSyncFrame();
+		sceKernelDelayThread(3 * 1000000);
+		
+		pgeZip* zipFiles = pgeZipOpen(str);
+		chdir("ms0:/PSP/GAME/");
+		pgeZipExtract(zipFiles, NULL);
+		pgeZipClose(zipFiles);
+		
+		oslDrawStringf(10, 250, "Zip flashed successfully.");
+		oslSyncFrame();
+		sceKernelDelayThread(3 * 1000000);
+		
+		oslDrawStringf(10, 250, "Rebooting..");
+		oslSyncFrame();
+		sceKernelDelayThread(3 * 1000000);
+		sceKernelExitGame();
+	}
+	
+	if (osl_keys->pressed.circle)
+	{	
+		unloadRecoveryMenuAssets();
+		mainRecoveryMenu();
+	}
+	timer++;
+	
+	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
+	{
+		selectionUp();
+		timer = 25;
+	} 
+	else if ((timer > 30) && (pad.Buttons & PSP_CTRL_DOWN))
+	{
+		selectionDown(MAX_FZIP_DISPLAY);
+		timer = 25;
+	}
+	
+	if (current < 1) 
+		current = 1;
+	if (current > MAX_FILES) 
+		current = MAX_FILES;
+}
+
+char * fZipBrowse(const char * path)
+{
+	folderScan(path);
+	dirVars();
+	
+	while (!osl_quit)
+	{		
+		LowMemExit();
+	
+		oslStartDrawing();
+		
+		oslClearScreen(RGB(0,0,0));	
+		oldpad = pad;
+		sceCtrlReadBufferPositive(&pad, 1);
+		fZipDisplay();
+
+		fZipControls(); //0 is to used for selecting a font
+			
+		if (strlen(returnMe) > 4) 
+			break;
+			
+		oslEndDrawing(); 
+        oslEndFrame(); 
+		oslSyncFrame();
+	}
+	return returnMe;
+}
+
+void displayFlashableZips(char * browseDirectory)
+{	
+	recoverybg = oslLoadImageFilePNG("android_bootable_recovery/res/images/recoverybg.png", OSL_IN_RAM, OSL_PF_8888);
+	Selector = oslLoadImageFile("android_bootable_recovery/res/images/selector.png", OSL_IN_RAM, OSL_PF_8888);
+	
+	oslSetFont(Roboto);
+	
+	browseDirectory = fZipBrowse("ms0:/PSP/GAME/CyanogenPSP/Updates");
+	
+	while (!osl_quit)
+	{
+		LowMemExit();
+	
+		oslStartDrawing();
+		
+		oslClearScreen(RGB(0,0,0));
+		
+		centerText(480/2, 272/2, browseDirectory, 50);
+		
+		oslEndDrawing(); 
+		oslEndFrame(); 
+		oslSyncFrame();	
+	}
+}
 
 void ShowPage5()
 {
@@ -1059,7 +1224,7 @@ int mainRecoveryMenu()
 	int MenuSelection = 1; // Pretty obvious
 	int selector_x = 0; //The x position of the first selection
 	int selector_y = 35; //The y position of the first selection
-	int numMenuItems = 9; //Amount of items in the menu
+	int numMenuItems = 10; //Amount of items in the menu
 	int selector_image_x = 0; //Determines the starting x position of the selection
 	int selector_image_y = 0; //Determines the starting y position of the selection
 	
@@ -1091,52 +1256,59 @@ int mainRecoveryMenu()
 		oslDrawImageXY(recoverybg, 0, 0);
 		oslDrawImageXY(Selector, selector_image_x, selector_image_y);
 		
-		oslDrawStringf(10,60,"Toggle USB");
-		oslDrawStringf(10,80,"System information");
-		oslDrawStringf(10,100,"Configuration");
-        oslDrawStringf(10,120,"Show version.txt");
-		//oslDrawStringf(10,140,"Plugins");
-		oslDrawStringf(10,140,"Exit");
-		oslDrawStringf(10,160,"Exit to XMB");
-		oslDrawStringf(10,180,"Standby");
-		oslDrawStringf(10,200,"Shutdown device");
-		oslDrawStringf(10,220,"Reboot to XMB");
+		oslDrawStringf(10, 60, "Apply Update");
+		oslDrawStringf(10, 80, "Toggle USB");
+		oslDrawStringf(10, 100, "System information");
+		oslDrawStringf(10, 120, "Configuration");
+        oslDrawStringf(10, 140, "Show version.txt");
+		//oslDrawStringf(10,140, "Plugins");
+		oslDrawStringf(10, 160, "Exit");
+		oslDrawStringf(10, 180, "Exit to XMB");
+		oslDrawStringf(10, 200, "Standby");
+		oslDrawStringf(10, 220, "Power down");
+		oslDrawStringf(10, 240, "Reboot system");
         
-        if (osl_keys->pressed.down) MenuSelection++; //Moves the selector down
-        if (osl_keys->pressed.up) MenuSelection--; //Moves the selector up
+        if (osl_keys->pressed.down) 
+			MenuSelection++; //Moves the selector down
+        if (osl_keys->pressed.up) 
+			MenuSelection--; //Moves the selector up
         
-        if (MenuSelection > numMenuItems) MenuSelection = 1; //Sets the selection to the first
-        if (MenuSelection < 1) MenuSelection = numMenuItems; //Sets the selection back to last
+        if (MenuSelection > numMenuItems) 
+			MenuSelection = 1; //Sets the selection to the first
+        if (MenuSelection < 1) 
+			MenuSelection = numMenuItems; //Sets the selection back to last
 		
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
 		{
-			enableUsb();
+			unloadRecoveryMenuAssets();
+			displayFlashableZips("ms0:/PSP/GAME/CyanogenPSP/Updates");
 		}
 		
-		else if (MenuSelection == 1 && osl_keys->pressed.cross)
-		{
-			disableUsb();
-		}
+		if (MenuSelection == 2 && osl_keys->pressed.cross)
+			enableUsb();
 		
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
+			disableUsb();
+		
+		else if (MenuSelection == 3 && osl_keys->pressed.cross)
 		{
 			unloadRecoveryMenuAssets();
 			ShowPage1();
 		}
 		
-		else if (MenuSelection == 3 && osl_keys->pressed.cross)
+		else if (MenuSelection == 4 && osl_keys->pressed.cross)
 		{
 			unloadRecoveryMenuAssets();
 			ConfigurationMenu();
 		}
 		
-		else if (MenuSelection == 4 && osl_keys->pressed.cross)
+		else if (MenuSelection == 5 && osl_keys->pressed.cross)
 		{
 			unloadRecoveryMenuAssets();
 			ShowVersionTxt();
 		}
 		
-		else if (MenuSelection == 5 && osl_keys->pressed.cross)
+		else if (MenuSelection == 6 && osl_keys->pressed.cross)
 		{
 			unloadRecoveryMenuAssets();
 			oslDeleteFont(roboto);
@@ -1145,22 +1317,22 @@ int mainRecoveryMenu()
 			home();
 		}
 		
-		else if (MenuSelection == 6 && osl_keys->pressed.cross)
+		else if (MenuSelection == 7 && osl_keys->pressed.cross)
 		{
 			exitToXMB();
 		}
 		
-		else if (MenuSelection == 7 && osl_keys->pressed.cross)
+		else if (MenuSelection == 8 && osl_keys->pressed.cross)
 		{
 			deviceStandby();
 		}
 		
-		else if (MenuSelection == 8 && osl_keys->pressed.cross)
+		else if (MenuSelection == 9 && osl_keys->pressed.cross)
 		{
 			deviceShutdown();
 		}
 		
-		else if (MenuSelection == 9 && osl_keys->pressed.cross)
+		else if (MenuSelection == 10 && osl_keys->pressed.cross)
 		{
 			scePowerRequestColdReset(0);
 			scePowerRequestColdReset(50000);
