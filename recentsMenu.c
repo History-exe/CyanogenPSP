@@ -14,6 +14,8 @@ int multitask()
 
 	if (!multi_task)
 		debugDisplay();
+	
+	oslSetFont(Roboto);
 
 	while (!osl_quit)
 	{

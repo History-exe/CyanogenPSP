@@ -48,10 +48,10 @@ int calculator()
 
 	calcbackground = oslLoadImageFile("system/app/calculator/calcbg.png", OSL_IN_RAM, OSL_PF_8888);
 
-	oslSetFont(Roboto);
-	
 	if (!calcbackground)
 		debugDisplay();
+	
+	oslSetFont(Roboto);
 		
 	while (!osl_quit)
 	{

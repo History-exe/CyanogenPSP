@@ -862,6 +862,9 @@ void home()
 	wDay = oslLoadImageFilePNG("system/widget/Day.png", OSL_IN_RAM, OSL_PF_8888);
 	wNight = oslLoadImageFile("system/widget/Night.png", OSL_IN_RAM, OSL_PF_8888);
 	
+	if (!wDay || !wNight)
+		debugDisplay();
+
 	oslSetFont(Roboto);
 	
 	widgetActivator = setFileDefaultsInt("system/widget/widgetActivator.bin", 1, widgetActivator);

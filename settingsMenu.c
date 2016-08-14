@@ -61,8 +61,6 @@ void aboutMenu()
 		aboutbg = oslLoadImageFilePNG("system/settings/Dark/aboutbg.png", OSL_IN_RAM, OSL_PF_8888);
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
-
-	oslSetFont(Roboto);
 	
 	if (!aboutbg || !highlight)
 		debugDisplay();
@@ -234,11 +232,6 @@ void creditsMenu()
 		aboutbg = oslLoadImageFilePNG(aboutBgPath, OSL_IN_RAM, OSL_PF_8888);
 	else
 		aboutbg = oslLoadImageFilePNG("system/settings/Dark/aboutbg.png", OSL_IN_RAM, OSL_PF_8888);
-	
-	oslSetFont(Roboto);
-	
-	if (!aboutbg)
-		debugDisplay();
 
 	while (!osl_quit)
 	{
@@ -342,8 +335,6 @@ void updatesMenu()
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
 
-	oslSetFont(Roboto);
-
 	if (!updatesbg || !highlight)
 		debugDisplay();
 
@@ -445,8 +436,6 @@ void performanceMenu()
 		performancebg = oslLoadImageFilePNG("system/settings/Dark/performancebg.png", OSL_IN_RAM, OSL_PF_8888);
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
-
-	oslSetFont(Roboto);
 
 	if (!performancebg || !highlight)
 		debugDisplay();
@@ -637,8 +626,6 @@ void processorMenu()
 		processorbg = oslLoadImageFilePNG("system/settings/Dark/performancebg.png", OSL_IN_RAM, OSL_PF_8888);
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
-
-	oslSetFont(Roboto);
 	
 	if (!processorbg || !highlight)
 		debugDisplay(); 
@@ -841,8 +828,6 @@ void ramMenu()
 		performancebg = oslLoadImageFilePNG("system/settings/Dark/performancebg2.png", OSL_IN_RAM, OSL_PF_8888);
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
-
-	oslSetFont(Roboto);
 	
 	if (!performancebg || !highlight)
 		debugDisplay();
@@ -961,8 +946,6 @@ void storageMenu()
 		performancebg = oslLoadImageFilePNG("system/settings/Dark/performancebg2.png", OSL_IN_RAM, OSL_PF_8888);
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
-
-	oslSetFont(Roboto);
 	
 	if (!performancebg || !highlight)
 		debugDisplay();
@@ -1083,8 +1066,6 @@ void batteryMenu()
 	deselect = oslLoadImageFilePNG("system/settings/deselect.png", OSL_IN_RAM, OSL_PF_8888);
 	
 	batteryM = setFileDefaultsInt("system/settings/battery.bin", 1, batteryM);
-	
-	oslSetFont(Roboto);
 
 	if (!performancebg || !highlight || !select || !deselect)
 		debugDisplay();
@@ -1285,9 +1266,7 @@ void displayMenu()
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
 
-	oslSetFont(Roboto);
-
-	if (!displaybg)
+	if (!displaybg || !highlight)
 		debugDisplay();
 
 	while (!osl_quit)
@@ -1430,10 +1409,8 @@ void displayThemes()
 		displaybg = oslLoadImageFilePNG("system/settings/Dark/displaybg.png", OSL_IN_RAM, OSL_PF_8888);
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
-	
-	oslSetFont(Roboto);
 
-	if (!displaybg)
+	if (!displaybg || !highlight)
 		debugDisplay();
 
 	while (!osl_quit)
@@ -1577,9 +1554,7 @@ void displayFontMenu()
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
 
-	oslSetFont(Roboto);
-
-	if (!displaybg)
+	if (!displaybg || !highlight)
 		debugDisplay();
 
 	while (!osl_quit)
@@ -1709,8 +1684,6 @@ void displayFontSizeMenu()
 		tempFontData = 1;
 	else if (fontSize > 0.6)
 		tempFontData = 2;
-	
-	oslSetFont(Roboto);
 
 	if (!displaybg || !highlight || !select || !deselect)
 		debugDisplay();
@@ -2401,10 +2374,7 @@ void displaySubThemes(char * browseDirectory, int n) // n is used here to search
 		highlight = oslLoadImageFilePNG("system/settings/Dark/highlight.png", OSL_IN_RAM, OSL_PF_8888);
 	}
 
-
-	oslSetFont(Roboto);
-
-	if (!displaybg)
+	if (!displaybg || !highlight)
 		debugDisplay();
 		
 	if (n == 0)	
@@ -2451,10 +2421,8 @@ void displayTime()
 
 	offswitch = oslLoadImageFilePNG(offSwitchPath, OSL_IN_RAM, OSL_PF_8888);
 	onswitch = oslLoadImageFilePNG(onSwitchPath, OSL_IN_RAM, OSL_PF_8888);
-
-	oslSetFont(Roboto);
-
-	if (!displaybg)
+	
+	if (!displaybg || !highlight || !offswitch || !onswitch)
 		debugDisplay();
 
 	while (!osl_quit)
@@ -2599,9 +2567,7 @@ void displayMiscellaneous()
 	offswitch = oslLoadImageFilePNG(offSwitchPath, OSL_IN_RAM, OSL_PF_8888);
 	onswitch = oslLoadImageFilePNG(onSwitchPath, OSL_IN_RAM, OSL_PF_8888);
 
-	oslSetFont(Roboto);
-
-	if (!displaybg)
+	if (!displaybg || !highlight || !offswitch || !onswitch)
 		debugDisplay();
 
 	while (!osl_quit)
@@ -2837,10 +2803,8 @@ void securityMenu()
 	
 	offswitch = oslLoadImageFilePNG(offSwitchPath, OSL_IN_RAM, OSL_PF_8888);
 	onswitch = oslLoadImageFilePNG(onSwitchPath, OSL_IN_RAM, OSL_PF_8888);
-
-	oslSetFont(Roboto);
 	
-	if (!securitybg || !highlight)
+	if (!securitybg || !highlight || !offswitch || !onswitch)
 		debugDisplay();
 	
 	while (!osl_quit)
@@ -2981,10 +2945,8 @@ void wifiMenu()
 
 	offswitch = oslLoadImageFilePNG(offSwitchPath, OSL_IN_RAM, OSL_PF_8888);
 	onswitch = oslLoadImageFilePNG(onSwitchPath, OSL_IN_RAM, OSL_PF_8888);
-
-	oslSetFont(Roboto);
-
-	if (!wifibg)
+	
+	if (!wifibg || !offswitch || !onswitch)
 		debugDisplay();
 		
 	int skip = 0;	
@@ -3125,11 +3087,9 @@ void developerMenu()
 	}
 	
 	offswitch = oslLoadImageFilePNG(offSwitchPath, OSL_IN_RAM, OSL_PF_8888);
-	onswitch = oslLoadImageFilePNG(onSwitchPath, OSL_IN_RAM, OSL_PF_8888);
-
-	oslSetFont(Roboto);
+	onswitch = oslLoadImageFilePNG(onSwitchPath, OSL_IN_RAM, OSL_PF_8888); 
 	
-	if (!developerbg || !highlight)
+	if (!developerbg || !highlight || !offswitch || !onswitch)
 		debugDisplay();
 		
 	while (!osl_quit)
@@ -3394,10 +3354,10 @@ void settingsMenu()
 		wifi = oslLoadImageFilePNG("system/settings/Dark/wifi.png", OSL_IN_RAM, OSL_PF_8888);
 	}
 	
-	oslSetFont(Roboto);
-
 	if (!settingsbg || !about || !developeroptions || !wifi || !themes || !performance || !security)
 		debugDisplay();
+	
+	oslSetFont(Roboto);
 
 	while (!osl_quit)
 	{

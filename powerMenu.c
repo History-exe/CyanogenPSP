@@ -9,6 +9,8 @@
 
 void powermenu()
 {
+	oslSetFont(Roboto);
+	
 	while (!osl_quit)
 	{
 		LowMemExit();

@@ -218,6 +218,13 @@ void installRequiredFiles()
 		sceIoDclose(dir);
 	}
 	
+	if (!(dirExists("ms0:/PSP/GAME/CyanogenPSP/updates")))
+	{
+		dir = sceIoDopen("ms0:/PSP/GAME/CyanogenPSP/updates");
+		sceIoMkdir("ms0:/PSP/GAME/CyanogenPSP/updates", 0777);
+		sceIoDclose(dir);
+	}
+	
 	if (!(dirExists("ms0:/PSP/GAME/CyanogenPSP/system/themes")))
 	{
 		dir = sceIoDopen("ms0:/PSP/GAME/CyanogenPSP/system/themes");

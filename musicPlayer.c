@@ -24,9 +24,9 @@ void drawGenreColors(int style)
 		color = 3;
 	else if (strcmp(genreStatus ,"Country") == 0)
 		color = 4;
-	else if ((strcmp(genreStatus ,"Jazz") == 0) || (strcmp(genreStatus ,"Acid Jazz") == 0) || (strcmp(genreStatus ,"Jazz+Funk") == 0))
+	else if ((strcmp(genreStatus ,"Jazz") == 0) || (strcmp(genreStatus ,"Acid Jazz") == 0) || (strcmp(genreStatus ,"Jazz+Funk") == 0) || (strcmp(genreStatus ,"Classical") == 0) || (strcmp(genreStatus ,"Blues") == 0))
 		color = 5;
-	else if ((strcmp(genreStatus ,"Disco") == 0) || (strcmp(genreStatus ,"Funk") == 0) || (strcmp(genreStatus ,"Techno") == 0) || (strcmp(genreStatus ,"Euro-Techno") == 0) || (strcmp(genreStatus ,"Techno-Industrial") == 0))
+	else if ((strcmp(genreStatus ,"Disco") == 0) || (strcmp(genreStatus ,"Funk") == 0) || (strcmp(genreStatus ,"Techno") == 0) || (strcmp(genreStatus ,"Euro-Techno") == 0) || (strcmp(genreStatus ,"Techno-Industrial") == 0) || (strcmp(genreStatus ,"Dance") == 0))
 		color = 6;
 	
 	if (style == 0)
@@ -326,7 +326,8 @@ void musicSettings()
 	offswitch = oslLoadImageFilePNG(offSwitchPath, OSL_IN_RAM, OSL_PF_8888);
 	onswitch = oslLoadImageFilePNG(onSwitchPath, OSL_IN_RAM, OSL_PF_8888);
 	
-	oslSetFont(Roboto);
+	if (!offswitch || !onswitch)
+		debugDisplay();
 
 	while (!osl_quit)
 	{		
@@ -609,8 +610,6 @@ int mp3View(char * browseDirectory)
 {	
 	mp3bg = oslLoadImageFilePNG(apolloBgPath, OSL_IN_RAM, OSL_PF_8888);
 	mp3_select = oslLoadImageFilePNG(apolloSelectorPath, OSL_IN_RAM, OSL_PF_8888);
-
-	oslSetFont(Roboto);
 
 	char * Directory = mp3Browse(browseDirectory);
 

@@ -353,8 +353,6 @@ int galleryView(char * browseDirectory)
 	gallerySelection = oslLoadImageFilePNG(gallerySelectorPath, OSL_IN_RAM, OSL_PF_8888);
 	galleryThumbnail = oslLoadImageFilePNG("system/app/gallery/ic_images.png", OSL_IN_RAM, OSL_PF_8888);
 
-	oslSetFont(Roboto);
-
 	char * Directory = galleryBrowse(browseDirectory);
 
 	while (!osl_quit)

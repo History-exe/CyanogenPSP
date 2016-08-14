@@ -654,8 +654,6 @@ int gameView(char * browseDirectory, int type)
 {	
 	gamebg = oslLoadImageFilePNG(gameBgPath, OSL_IN_RAM, OSL_PF_8888);
 	gameSelection = oslLoadImageFilePNG(gameSelectorPath, OSL_IN_RAM, OSL_PF_8888);
-	
-	oslSetFont(Roboto);
 
 	if (type == 0)
 	{
@@ -724,6 +722,9 @@ int gameBoot()
 	gameAnim[18] = oslLoadImageFileGIF("system/app/game/boot/18.gif", OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
 	gameAnim[19] = oslLoadImageFileGIF("system/app/game/boot/19.gif", OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
 
+	if (!gameAnim[0] || !gameAnim[1] || !gameAnim[2] || !gameAnim[3] || !gameAnim[4] || !gameAnim[5] || !gameAnim[6] || !gameAnim[7] || !gameAnim[8] || !gameAnim[9] || !gameAnim[10] || !gameAnim[11] || !gameAnim[12] || !gameAnim[13] || !gameAnim[14] || !gameAnim[15] || !gameAnim[16] || !gameAnim[17] || !gameAnim[18] || !gameAnim[19])
+		debugDisplay();
+	
     while(!osl_quit)
 	{
 		oslStartDrawing();
@@ -758,11 +759,11 @@ int gameApp()
 	
 	gamebg = oslLoadImageFilePNG(gameBgPath, OSL_IN_RAM, OSL_PF_8888);
 	gameSelection = oslLoadImageFilePNG(gameSelectorPath, OSL_IN_RAM, OSL_PF_8888);
-
-	oslSetFont(Roboto);
 	
 	if (!gamebg || !gameSelection)
 		debugDisplay();
+
+	oslSetFont(Roboto);
 		
 	checkGBootActivation();
 	

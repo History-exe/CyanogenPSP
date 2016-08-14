@@ -186,7 +186,7 @@ int cyanogenPSPTimer()
 	
 	loadClockBg();
 	
-	if (!timerBg || !timeBg || !timerPause || !timerPlay)
+	if (!timerBg || !timerPause || !timerPlay)
 		debugDisplay();
 
 	oslSetFont(Roboto);
@@ -298,7 +298,7 @@ int cyanogenPSPStopWatch()
 	
 	loadClockBg();
 	
-	if (!stopWatchBg || !timeBg || !timerPause || !timerPlay)
+	if (!stopWatchBg || !timerPause || !timerPlay)
 		debugDisplay();
 
 	oslSetFont(Roboto);

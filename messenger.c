@@ -15,8 +15,7 @@ int initiateMessage()
 {
     char* nickname = (char*)malloc(100);
     int skip = 0;
-
-    oslSetFont(Roboto);
+	
 	oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
 	
     while(!osl_quit)

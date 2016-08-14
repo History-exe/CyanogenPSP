@@ -30,6 +30,8 @@ int lockscreen()
 
 	if (!lockscreenBg)
 		debugDisplay();
+	
+	oslSetFont(Roboto);
 		
 	if (fileExists("system/settings/password.bin"))
 		passProtect = 1;	
@@ -55,7 +57,11 @@ int lockscreen()
 		if (isPlaying)
 		{
 			if (lsCoverArt)
-				oslDrawImage(lsMusicBg);
+			{
+				drawGenreColors(1);
+				oslDrawImageXY(lsMusicBg, 104, 0);
+			}
+			
 			oslDrawImage(lockscreenBg);
 			oslDrawImageXY(lsMusic, 40, 120);
 			if (MP3ME_isPlaying == 1)

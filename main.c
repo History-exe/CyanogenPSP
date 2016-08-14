@@ -98,7 +98,7 @@ int main()
 	mp3Pause = oslLoadImageFilePNG("system/app/musicplayer/pause.png", OSL_IN_RAM, OSL_PF_8888);
 	
 	//Debugger - Displays an error message if the following resources are missing.
-	if (!background || !cursor || !navbar || !navbar2 || !ic_allapps || !ic_allapps_pressed || !ic_launcher_apollo || !ic_launcher_settings || !ic_launcher_messenger || !ic_launcher_browser || !batt100 || !batt80 || !batt60 || !batt40 || !batt20 || !batt10 || !batt0 || !battcharge || !usbdebug  || !music || !power || !powerSelection || !recoverySelection || !lsMusic)
+	if (!background || !cursor || !navbar || !navbar2 || !ic_allapps || !ic_allapps_pressed || !ic_launcher_apollo || !ic_launcher_browser || !ic_launcher_calculator || !ic_launcher_filemanager || !ic_launcher_gallery || !ic_launcher_game || !ic_launcher_messenger || !ic_launcher_settings || !ic_launcher_umd || !usbdebug  || !music || !quickSettings || !batt100 || !batt80 || !batt60 || !batt40 || !batt20 || !batt10 || !batt0 || !battcharge || !volumeBar || !volumeControl || !layerA || !layerA || !navbarHighlight || !navbarHighlight2 || !power || !powerSelection || !recoverySelection || !lsMusic || !lsMusicBg || !mp3Play || !mp3Pause)
 		debugDisplay();
 	
 	Roboto = oslLoadIntraFontFile(fontPath, INTRAFONT_CACHE_ALL | INTRAFONT_STRING_UTF8);

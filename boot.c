@@ -46,6 +46,9 @@ int bootAnimation()
 	bootAnim[11] = oslLoadImageFilePNG("system/boot/part1/boot11.png", OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
 	bootAnim[12] = oslLoadImageFilePNG("system/boot/part1/boot12.png", OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
 	
+	if (!bootAnim[0] || !bootAnim[1] || !bootAnim[2] || !bootAnim[3] || !bootAnim[4] || !bootAnim[5] || !bootAnim[6] || !bootAnim[7] || !bootAnim[8] || !bootAnim[9] || !bootAnim[10] || !bootAnim[11] || !bootAnim[12])
+		debugDisplay();
+	
 	while(!osl_quit)
 	{
 		oslStartDrawing();
@@ -205,13 +208,13 @@ char * langBrowse(const char * path)
 void displayLangSelection(char * browseDirectory)
 {	
 	langSelection = oslLoadImageFilePNG("system/settings/langSelection.png", OSL_IN_RAM, OSL_PF_8888);
+	
+	if (!langSelection)
+		debugDisplay();
 
 	oslSetFont(Roboto);
 	
 	browseDirectory = langBrowse("system/settings/language"); //For language
-
-	if (!langSelection)
-		debugDisplay();
 	
 	while (!osl_quit)
 	{

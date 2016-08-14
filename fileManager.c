@@ -1276,10 +1276,10 @@ int cyanogenPSPFileManager(int argc, char *argv[])
 	videoicon = oslLoadImageFilePNG("system/app/filemanager/videoicon.png", OSL_IN_RAM, OSL_PF_8888);
 	archiveicon = oslLoadImageFilePNG("system/app/filemanager/archiveicon.png", OSL_IN_RAM, OSL_PF_8888);
 	
-	oslSetFont(Roboto);
-
 	if (!filemanagerbg || !diricon || !imageicon || !mp3icon || !txticon || !unknownicon || !bar || !documenticon || !binaryicon || !videoicon || !archiveicon)
 		debugDisplay();
+	
+	oslSetFont(Roboto);
 
 	char * testDirectory = dirBrowse("ms0:");
 	
