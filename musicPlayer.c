@@ -86,6 +86,9 @@ void MP3Play(char * path)
 	
 	isPlaying = 1;
 	
+	char mp3time[200];
+    char mp3timefeed[200];
+	
 	if (experimentalF == 1)
 	{
 		if (ID3.ID3EncapsulatedPictureOffset && ID3.ID3EncapsulatedPictureLength <= MAX_IMAGE_DIMENSION)
@@ -137,6 +140,11 @@ void MP3Play(char * path)
 		strcpy(playingStatus, ID3.ID3Title);
 		strcpy(artistStatus, ID3.ID3Artist);
 		strcpy(genreStatus, ID3.ID3GenreText);
+		if (MP3ME_isPlaying == 1)
+		{
+			MP3ME_GetTimeString(mp3time);
+			sprintf(mp3timefeed, "%s", mp3time);
+		}
 		oslDrawStringf(15, 28, "%.44s", strupr(ID3.ID3Title));
 		oslDrawStringf(15, 48, "%.44s", strupr(ID3.ID3Artist));
 		
@@ -150,9 +158,9 @@ void MP3Play(char * path)
 		if (MP3ME_isPlaying == 0)
 			oslDrawImageXY(mp3Pause, 328, 147);
 		
-		oslDrawStringf(270, 155, "%s", MP3ME_GetTimeString());
+		oslDrawStringf(268, 155, "%s", mp3timefeed);
 		
-		//oslDrawStringf(400, 155, "%d", MP3ME_GetLength());
+		//oslDrawStringf(397, 155, "%d", MP3ME_GetLength());
 		
 		battery(370,2,1);
 		digitaltime(420,4,0,hrTime);

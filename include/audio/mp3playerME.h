@@ -38,7 +38,7 @@ int MP3ME_Stop();
 int MP3ME_Load(char * path);
 int MP3ME_EndOfStream();
 int MP3ME_GetPercentage(char * path);
-char * MP3ME_GetTimeString();
+void MP3ME_GetTimeString(char *dest);
 int MP3ME_GetLength();
 int releaseAudio(void);
 int endAudioLib();

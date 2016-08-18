@@ -332,18 +332,14 @@ int MP3ME_GetPercentage(char * path){
     return perc;
 }
 
-char * MP3ME_GetTimeString(){
-    static char timeString[9];
+void MP3ME_GetTimeString(char *dest){
+    char timeString[9];
     int secs = (int)MP3ME_playingTime;
     int hh = secs / 3600;
     int mm = (secs - hh * 3600) / 60;
-    int ss = (secs - hh * 3600 - mm * 60) + 1;
-	int min = 0;
-	if ((ss) > 58)
-		min += 1;
-    snprintf(timeString, sizeof(timeString), "%d:%2.2i", min, ss);
-	
-	return timeString;
+    int ss = secs - hh * 3600 - mm * 60;
+    snprintf(timeString, sizeof(timeString), "%2.2i:%2.2i", mm, ss);
+    strcpy(dest, timeString);
 }
 
 int MP3ME_GetLength()
