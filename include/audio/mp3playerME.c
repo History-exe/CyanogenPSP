@@ -338,7 +338,7 @@ void MP3ME_GetTimeString(char *dest){
     int hh = secs / 3600;
     int mm = (secs - hh * 3600) / 60;
     int ss = secs - hh * 3600 - mm * 60;
-    snprintf(timeString, sizeof(timeString), "%2.2i:%2.2i", mm, ss);
+    snprintf(timeString, sizeof(timeString), "%d:%2.2i", mm, ss);
     strcpy(dest, timeString);
 }
 
