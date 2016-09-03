@@ -2,17 +2,12 @@ INCLUDE_DIR := include
 OSLIB_DIR := $(INCLUDE_DIR)/oslib
 
 TARGET = CyanogenPSP
-OBJS = main.o appDrawer.o homeMenu.o calculator.o lockScreen.o settingsMenu.o clock.o recoveryMenu.o recentsMenu.o \
-	   powerMenu.o musicPlayer.o fileManager.o gameLauncher.o messenger.o screenshot.o gallery.o language.o umd.o boot.o\
-	   include/utils.o include/pgeZip.o include/ram.o include/common.o \
-	   include/audio/mp3playerME.o include/audio/id3.o \
-	   prx/display.o prx/imposeDriver.o prx/control.o prx/power.o prx/recoveryImports.o \
 	   
 OBJS =	appDrawer.o boot.o calculator.o clock.o fileManager.o gallery.o gameLauncher.o homeMenu.o language.o lockScreen.o main.o \
 		messenger.o  musicPlayer.o powerMenu.o recentsMenu.o recoveryMenu.o screenshot.o settingsMenu.o umd.o \
 		include/audio/mp3playerME.o include/audio/id3.o \
-		include/common.o include/pgeZip.o include/ram.o include/utils.o \
-		prx/control.o prx/display.o prx/imposeDriver.o prx/power.o prx/recoveryImports.o \
+		include/common.o include/ram.o include/unzip.o include/utils.o \
+		prx/control.o prx/display.o prx/homehook.o prx/imposeDriver.o prx/power.o prx/recoveryImports.o \
 		#scepower.o
 	   
 BUILD_PRX = 1
