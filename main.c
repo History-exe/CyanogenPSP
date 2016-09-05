@@ -1,6 +1,7 @@
 #include "appDrawer.h"
 #include "boot.h"
 #include "gameLauncher.h"
+#include "homehook.h"
 #include "homeMenu.h"
 #include "include/utils.h"
 #include "lockScreen.h"
@@ -25,9 +26,54 @@ int initOSLib() //Initialize OsLib
     return 0;
 }
 
+u32 homeHook()
+{
+	SceCtrlData ctrl;
+	u32 buttons = 0;
+	u32 homeButton = 0;
+	sceCtrlPeekBufferPositive(&ctrl, 1);
+	homeButton = readHomeButton();
+	if (buttons & PSP_CTRL_HOME)
+		powermenu();
+	
+	return 0;
+}
+
+int exit_callback(int arg1, int arg2, void *common)
+{
+	sceKernelExitGame();
+	return 0;
+}
+
+int callbackThread(SceSize args, void *argp)
+{
+	int id;
+	
+	id = sceKernelCreateCallback("Exit Callback", (void *)exit_callback, NULL);
+	sceKernelRegisterExitCallback(id);
+
+	sceKernelSleepThreadCB();
+
+	return 0;
+}
+
+int setupCallbacks()
+{
+	int callback_thread_id = 0;
+
+	callback_thread_id = sceKernelCreateThread("update_thread", callbackThread, 0x11, 0xFA0, 0, 0);
+	if (callback_thread_id >= 0)
+	{
+		sceKernelStartThread(callback_thread_id, 0, 0);
+	}
+
+	return callback_thread_id;
+}
+
 int main()
 {
 	initOSLib(); //Initializes OsLib
+	initHomeButton(sceKernelDevkitVersion());
 	oslIntraFontInit(INTRAFONT_CACHE_ALL | INTRAFONT_STRING_UTF8); //Initializes OSL fonts
 
 	//Loads our audio tones
@@ -66,6 +112,7 @@ int main()
 	ic_launcher_apollo = oslLoadImageFilePNG(apolloPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_browser = oslLoadImageFile(browserPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_calculator = oslLoadImageFilePNG(calcPath, OSL_IN_RAM, OSL_PF_8888);
+	ic_launcher_clock = oslLoadImageFilePNG(clockPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_filemanager = oslLoadImageFilePNG(fmPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_gallery = oslLoadImageFilePNG(galleryPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_game = oslLoadImageFilePNG(gamePath, OSL_IN_RAM, OSL_PF_8888);
@@ -104,11 +151,12 @@ int main()
 	Roboto = oslLoadIntraFontFile(fontPath, INTRAFONT_CACHE_ALL | INTRAFONT_STRING_UTF8);
 	oslSetFont(Roboto); //Load and set font
 	
-	SceUID kModule[3];
+	SceUID kModule[4];
 	
 	kModule[0] = pspSdkLoadStartModule("modules/display.prx", PSP_MEMORY_PARTITION_KERNEL);
 	kModule[1] = pspSdkLoadStartModule("modules/control.prx", PSP_MEMORY_PARTITION_KERNEL);
 	kModule[2] = pspSdkLoadStartModule("modules/impose.prx", PSP_MEMORY_PARTITION_KERNEL);
+	kModule[2] = pspSdkLoadStartModule("modules/homehook.prx", PSP_MEMORY_PARTITION_KERNEL);
 	
 	int i;
 	
@@ -121,6 +169,8 @@ int main()
 		}
 	}
 	
+	setupCallbacks();
+	
 	removeUpdateZip(); //Delete update.zip
 	
 	setCpuBoot(); //Set default CPU or load pre-existing value
@@ -132,6 +182,8 @@ int main()
 	//Sets the cursor's original position on the screen
 	cursor->x = 240;
 	cursor->y = 136;	
+	
+	sceImposeSetHomePopup(0);
 	
 	//Main loop to run the program
 	while (!osl_quit)
@@ -148,6 +200,7 @@ int main()
 		oslSyncFrame();	
 	}
 	
+	//sceImposeSetHomePopup(1);
 	oslNetTerm();
 	oslQuit(); //Terminates/Ends the program
 	return 0;

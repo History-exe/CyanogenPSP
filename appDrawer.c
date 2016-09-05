@@ -21,14 +21,11 @@ void appdrawer_loadImages()
 		backdrop = oslLoadImageFilePNG(backdropPath, OSL_IN_RAM, OSL_PF_8888);
 	else 
 		backdrop = oslLoadImageFilePNG("system/home/icons/backdropDark.png", OSL_IN_RAM, OSL_PF_8888);
-	
-	ic_launcher_clock = oslLoadImageFilePNG(clockPath, OSL_IN_RAM, OSL_PF_8888);
 }
 
 void appdrawer_deleteImages()
 {
 	oslDeleteImage(backdrop);
-	oslDeleteImage(ic_launcher_clock);
 }
 
 void appHighlight(int n)
@@ -228,7 +225,7 @@ int appdrawer()
 	//loads appdrawer icons
 	appdrawer_loadImages();
 	
-	if (!ic_launcher_clock || !backdrop)
+	if ( !backdrop)
 		debugDisplay();
 
 	oslSetFont(Roboto);

@@ -421,7 +421,6 @@ void updatesMenu()
     oslEndFrame(); 
 	oslSyncFrame();	
 	}
-	oslNetTerm();
 }
 
 void performanceMenu()
@@ -950,6 +949,10 @@ void storageMenu()
 	if (!performancebg || !highlight)
 		debugDisplay();
 	
+	int usedStorage = (storageGetTotalSize() - storageGetFreeSize());
+	int totalStorage = storageGetTotalSize();
+	int fill = ((usedStorage/totalStorage) * 404);
+	
 	while (!osl_quit)
 	{
 		LowMemExit();
@@ -967,21 +970,21 @@ void storageMenu()
 		else
 			oslIntraFontSetStyle(Roboto, 0.9, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
-		oslDrawStringf(20, 80, "%.2llu MB", (storageGetTotalSize() - storageGetFreeSize())); 
+		oslDrawStringf(20, 80, "%.2d MB", usedStorage); 
 		
 		if (DARK == 0)
 			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
-		oslDrawStringf(20, 100, "Total used of %.2llu MB", storageGetTotalSize()); 
+		oslDrawStringf(20, 100, "Total used of %.2d MB", totalStorage); 
 		
 		
 		oslDrawStringf(20, 136, "Storage:"); 
-		oslDrawStringf(20, 152, "Total used of %.2llu MB", storageGetTotalSize()); 
+		oslDrawStringf(20, 152, "Total used of %.2d MB", totalStorage); 
 		
 		oslDrawFillRect(20, 172, 424, 176, RGB(206, 215, 219));
-		oslDrawFillRect(20, 172, ((((int)storageGetTotalSize() - (int)storageGetFreeSize())/(int)storageGetTotalSize()) * 404), 176, RGB(r, g, b));
+		oslDrawFillRect(20, 172, fill, 176, RGB(r, g, b));
 		
 		//oslDrawStringf(20, 80, "%s", lang_settingsStorage[language][0]); 
 		//oslDrawStringf(20, 100,"%s %.2llu MB", lang_settingsStorage[language][1], storageGetTotalSize());

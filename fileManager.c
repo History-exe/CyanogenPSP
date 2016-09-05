@@ -4,7 +4,7 @@
 #include "gallery.h"
 #include "gameLauncher.h"
 #include "homeMenu.h"
-#include "include/pgeZip.h"
+#include "include/unzip.h"
 #include "include/utils.h"
 #include "lockScreen.h"
 #include "musicPlayer.h"
@@ -564,6 +564,7 @@ void OptionMenu()
 		oslDrawStringf(255,160,"Press Circle");
 		oslDrawStringf(255,175,"to Rename");
 		oslDrawStringf(170,215,"Press Select to Cancel");
+		oslDrawStringf(40,230,"%s", oldLocation);
 	
 		oslReadKeys();
 	
@@ -571,17 +572,25 @@ void OptionMenu()
 		{
 			if (experimentalF == 1)
 			{
+				char str[250], str1[250];
+				strcpy(str, curDir);
+				strcpy(str1, curDir);
+				strcat(str, "/");
+				strcat(str1, "/");
+				strcat(str, folderIcons[current].name);
+				
 				if(copyData == 0)
 				{
-					strcpy(oldLocation, folderIcons[current].filePath); 
+					strcpy(oldLocation, str); 
 					copyData = 1;
 					oslPlaySound(KeypressStandard, 1);  
 					oslDeleteImage(action);
 					refresh();
 				}
+				
 				if (copyData == 1)
 				{
-					copy_file(oldLocation, curDir);
+					copy_file(oldLocation, str1);
 					copyData = 0;
 					oslPlaySound(KeypressStandard, 1);  
 					oslDeleteImage(action);
@@ -1076,13 +1085,20 @@ void dirControls() //Controls
 	if (((ext) != NULL) && ((strcmp(ext ,".ZIP") == 0) || (strcmp(ext ,".zip") == 0)) && (osl_keys->pressed.cross))
 	{
 		oslPlaySound(KeypressStandard, 1);  
-		pgeZip * zipFile = pgeZipOpen(folderIcons[current].filePath);
-		chdir(curDir);
-		pgeZipExtract(zipFile, NULL);
-		pgeZipClose(zipFile);
+		char str[100], directory[100];
+		strcpy(str, curDir);
+		strcat(str, "/");
+		strcpy(directory, str);
+		strcat(str, folderIcons[current].name);
+		
+		Zip* zip = ZipOpen(str);
+		chdir(directory);
+		ZipExtract(zip, NULL);
+		ZipClose(zip);
+		
 		oslSyncFrame();
 		sceKernelDelayThread(3*1000000);
-		refresh();
+		//refresh();
 	}
 	
 	if (((ext) != NULL) && ((strcmp(ext ,".PBP") == 0) || (strcmp(ext ,".pbp") == 0)) && (osl_keys->pressed.cross))

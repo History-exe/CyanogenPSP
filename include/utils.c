@@ -1,4 +1,4 @@
-#include "pgeZip.h"
+#include "unzip.h"
 #include "utils.h"
 #include "../appDrawer.h"
 #include "../clock.h"
@@ -853,10 +853,10 @@ void flashUpdate()
 		oslDrawStringf(10, 60, "Flashing zip...");
 		if (fileExists("ms0:/PSP/GAME/update.zip"))
 		{		
-			pgeZip* zipFiles = pgeZipOpen("../update.zip");
+			Zip* zip = ZipOpen("../update.zip");
 			chdir("..");
-			pgeZipExtract(zipFiles, NULL);
-			pgeZipClose(zipFiles);
+			ZipExtract(zip, NULL);
+			ZipClose(zip);
 			oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, INTRAFONT_ALIGN_LEFT);
 			oslDrawStringf(10,80,"Installed Successfully.");
 			oslDrawStringf(10,90,"Exiting..");

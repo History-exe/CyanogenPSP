@@ -5,6 +5,7 @@
 #include "include/utils.h"
 #include "language.h"
 #include "lockScreen.h"
+#include "main.h"
 #include "messenger.h"
 #include "musicPlayer.h"
 #include "powerMenu.h"
@@ -95,6 +96,8 @@ void internet() //Draws the browser
 
 void controls() //Main controller function - allows cursor movement
 {
+	homeHook();
+	
 	//Intialize the limits
 	int llimit = 0;
 	int rlimit = 460;

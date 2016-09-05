@@ -7,7 +7,7 @@
 #include "homeMenu.h"
 #include "include/common.h"
 #include "include/utils.h"
-#include "include/pgeZip.h"
+#include "include/unzip.h"
 #include "prx/ipl_update.h"
 #include "prx/battManager.h"
 #include "prx/kernelUserManager.h"
@@ -90,10 +90,10 @@ void fZipControls()
 		oslSyncFrame();
 		sceKernelDelayThread(3 * 1000000);
 		
-		pgeZip* zipFiles = pgeZipOpen(str);
+		Zip* zip = ZipOpen(str);
 		chdir("ms0:/PSP/GAME/");
-		pgeZipExtract(zipFiles, NULL);
-		pgeZipClose(zipFiles);
+		ZipExtract(zip, NULL);
+		ZipClose(zip);
 		
 		oslDrawStringf(10, 250, "Zip flashed successfully.");
 		oslSyncFrame();
