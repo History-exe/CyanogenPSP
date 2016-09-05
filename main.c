@@ -33,9 +33,9 @@ u32 homeHook()
 	u32 homeButton = 0;
 	sceCtrlPeekBufferPositive(&ctrl, 1);
 	homeButton = readHomeButton();
-	if (buttons & PSP_CTRL_HOME)
-		powermenu();
-	
+	if (homeButton != 0)
+		if (buttons & PSP_CTRL_HOME)
+			powermenu();
 	return 0;
 }
 
