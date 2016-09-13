@@ -43,4 +43,5 @@ int MP3ME_GetLength();
 int releaseAudio(void);
 int endAudioLib();
 
+int MP3ME_SeekNextFrameMP3(SceUID fd);
 #endif

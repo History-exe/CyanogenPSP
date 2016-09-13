@@ -93,27 +93,36 @@ void MP3Play(char * path)
 	{
 		if (ID3.ID3EncapsulatedPictureOffset && ID3.ID3EncapsulatedPictureLength <= MAX_IMAGE_DIMENSION)
 		{
-			u8 *buffer = (unsigned char *) malloc(sizeof(unsigned char) * ID3.ID3EncapsulatedPictureLength);
-			if (buffer != NULL)
+			SceUID fd = sceIoOpen(path, PSP_O_RDONLY, 0777);
+			if (fd >= 0) 
 			{
-				SceUID file = sceIoOpen(path, PSP_O_RDONLY, 0777);
-				if (file >= 0)
+				char *buffer = malloc(ID3.ID3EncapsulatedPictureLength);
+				if (buffer) 
 				{
-					sceIoLseek(file, ID3.ID3EncapsulatedPictureOffset, PSP_SEEK_SET);
-					sceIoRead(file, buffer, ID3.ID3EncapsulatedPictureLength);
-					sceIoClose(file);
+					sceIoLseek32(fd, ID3.ID3EncapsulatedPictureOffset, PSP_SEEK_SET);
+					sceIoRead(fd, buffer, ID3.ID3EncapsulatedPictureLength);
+					sceIoClose(fd);
 
-					oslSetTempFileData(buffer, ID3.ID3EncapsulatedPictureLength, &VF_MEMORY);
-					tempCoverArt = oslLoadImageFileJPG(oslGetTempFileName(), OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
+					if (ID3.ID3EncapsulatedPictureType == JPEG_IMAGE)
+					{
+						oslSetTempFileData(buffer, ID3.ID3EncapsulatedPictureLength, &VF_MEMORY);
+						tempCoverArt = oslLoadImageFileJPG(oslGetTempFileName(), OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
+					}
+					
+					else if (ID3.ID3EncapsulatedPictureType == PNG_IMAGE)
+					{
+						oslSetTempFileData(buffer, ID3.ID3EncapsulatedPictureLength, &VF_MEMORY);
+						tempCoverArt = oslLoadImageFilePNG(oslGetTempFileName(), OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
+					}
+						
+					free(buffer);
 				}
-				free(buffer);
-				buffer = NULL;
 			}
 		}
 		
 		if (tempCoverArt)
 		{
-			coverArt = oslScaleImageCreate(tempCoverArt, OSL_IN_RAM | OSL_SWIZZLED, 222, 204, OSL_PF_8888);
+			coverArt = oslScaleImageCreate(tempCoverArt, OSL_IN_RAM | OSL_SWIZZLED, 223, 205, OSL_PF_8888);
 			oslDeleteImage(tempCoverArt);
 		}
 	}
@@ -134,7 +143,7 @@ void MP3Play(char * path)
 		
 		oslDrawImageXY(nowplaying, 0, 0);
 		if (experimentalF == 1)
-			oslDrawImageXY(coverArt, 0, 68);
+			oslDrawImageXY(coverArt, 0, 67.5);
 		
 		//oslDrawStringf(240,76, "Playing: %.19s", folderIcons[current].name);
 		strcpy(playingStatus, ID3.ID3Title);

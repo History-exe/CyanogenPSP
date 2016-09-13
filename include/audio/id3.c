@@ -614,7 +614,6 @@ int ParseID3(char *mp3path, struct ID3Tag *target)
     return 0;
 }
 
-
 void getFileName(char *fileName, char *onlyName){
 	int slash = 0;
 
