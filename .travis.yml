@@ -2,7 +2,6 @@ language: c
 branches:
   only:
   - master
-  - experiment
   - "/v\\d+\\.\\d+[a-z]/"
 before_install:
 - sudo apt-get update -qq
