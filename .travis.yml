@@ -1,34 +1,28 @@
 language: c
-
 branches:
-    only:
-    - master
-    - /v\d+\.\d+[a-z]/
-
+  only:
+  - master
+  - "/v\\d+\\.\\d+[a-z]/"
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get remove mingw* -q
-  
+- sudo apt-get update -qq
+- sudo apt-get remove mingw* -q
 install:
-  - cd ..
-  - wget https://dl.dropboxusercontent.com/u/23414835/PSPSDK/psptoolchain_1.0_amd64.deb -O psptoolchain.deb
-  - sudo dpkg --install psptoolchain.deb
-  - source /etc/profile.d/psptoolchain.sh
-  - cd $TRAVIS_BUILD_DIR
-  
-
-# Change this to your needs
+- cd ..
+- wget https://dl.dropboxusercontent.com/u/23414835/PSPSDK/psptoolchain_1.0_amd64.deb
+  -O psptoolchain.deb
+- sudo dpkg --install psptoolchain.deb
+- source /etc/profile.d/psptoolchain.sh
+- cd $TRAVIS_BUILD_DIR
 script:
-  - make -k
-  
+- make -k
 deploy:
   provider: releases
   api_key:
-   file:
-    - "CyanogenPSP.prx"
-    - "EBOOT.PBP"
-  skip_cleanup: true
+    secure: ihNw9a/oHsji0HLJld6A+jM31mu+Lq3/8TeBzU0zcDmjKSbGP8THn2k0PAzzO07s4NmTb3TlHmE/bNW2mQuvJpOcWZWQki/N+qenj1szaEFXL2xYkNBs3rwac7Ax2vDZH3YaO9j7ClfX3wRqg/SfxjdgwDHh9fvXAy8Uy3uXAgrdf4eV+oCIx14stRHUAwdPCEphFlbP2e0i8W67RloZV6TBXuYYoODCIN2161ZA8QJJzIK+fBCBT3bpmIuKEWm7AxFg2KZfAopfKFCZwlQjDO9o5ooxoIvnOR4Et8GQES5Y6AkY2Iiwh/gKMQRxQ1o5UrtioUrhIozvaQd9y2lVVtUshs9+gjXhaWvWG7Ok7KDreBY+xSLWNucGs3KjKAOTbxGjsnRWeIM8w/hzY5l7jL6vkADQAu0SlFCFBp08NsmdsFH2km7RpK7jujh3REDpwdo7yU/YbxlyN1bcnf/NgvYv4F6mUGfj9KkL96xbT2aHPzN5qCpTV0rN7K67F22M9uzllCIiaecHtnhN0W0yyxkhJVeTMNwLqhSzXX9/zXasZz+2Vzb5sZ5GXr89b8xuXH7Fb3LTR872ETazmvPP3jeS4IYOke8MKO9Jme16fN9Cqu4rculH5/td5x5HZDq6p6blrImUICMQ4nbqsPsYFZTueJdfqli5F9wQpmf4Hig=
+  file:
+  - CyanogenPSP.prx
+  - EBOOT.PBP
   on:
     tags: true
-    all_branches: true
-
+  api-key:
+    secure: ChVn3kl5xSsAjo+vQ/ufy/UjbKfV+q6S9NfuWKQWjEViATYR/SocZEsAtNJDOH3X/K+F0rfEivZ4eYqc9t5OsW8LFWNe11Uy1+19+yPeTWWnWKnuhD/yIYKTDVutHz+tqM8eHjgXC+HFJS7kQUY9TPt4v/HOVDg/qdKq+vRlv7M=
