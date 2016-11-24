@@ -97,6 +97,7 @@ void MP3Play(char * path)
 			if (fd >= 0) 
 			{
 				char *buffer = malloc(ID3.ID3EncapsulatedPictureLength);
+				
 				if (buffer) 
 				{
 					sceIoLseek32(fd, ID3.ID3EncapsulatedPictureOffset, PSP_SEEK_SET);
@@ -120,10 +121,17 @@ void MP3Play(char * path)
 			}
 		}
 		
-		if (tempCoverArt)
+		if (!tempCoverArt)
+		{
+			coverArtFound = 0;
+			tempCoverArt = NULL;
+		}
+		
+		else if (tempCoverArt)
 		{
 			coverArt = oslScaleImageCreate(tempCoverArt, OSL_IN_RAM | OSL_SWIZZLED, 223, 205, OSL_PF_8888);
 			oslDeleteImage(tempCoverArt);
+			coverArtFound = 1;
 		}
 	}
 	
@@ -142,7 +150,7 @@ void MP3Play(char * path)
 		drawGenreColors(0);
 		
 		oslDrawImageXY(nowplaying, 0, 0);
-		if (experimentalF == 1)
+		if ((experimentalF == 1) && (coverArtFound == 1))
 			oslDrawImageXY(coverArt, 0, 67.5);
 		
 		//oslDrawStringf(240,76, "Playing: %.19s", folderIcons[current].name);

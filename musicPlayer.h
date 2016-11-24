@@ -22,7 +22,7 @@ struct musicPlayerFontColor
 
 char artistStatus[100], playingStatus[100], genreStatus[100];
 
-int lsCoverArt;
+int lsCoverArt, coverArtFound;
 
 char *compact_str(char *s, int max_length);
 

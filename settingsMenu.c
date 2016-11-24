@@ -2153,6 +2153,7 @@ void iconPackReload()
 	oslDeleteImage(ic_launcher_apollo);
 	oslDeleteImage(ic_launcher_browser);
 	oslDeleteImage(ic_launcher_calculator);
+	oslDeleteImage(ic_launcher_clock);
 	oslDeleteImage(ic_launcher_filemanager);
 	oslDeleteImage(ic_launcher_gallery);
 	oslDeleteImage(ic_launcher_game);
@@ -2163,6 +2164,7 @@ void iconPackReload()
 	ic_launcher_apollo = oslLoadImageFilePNG(apolloPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_browser = oslLoadImageFile(browserPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_calculator = oslLoadImageFilePNG(calcPath, OSL_IN_RAM, OSL_PF_8888);
+	ic_launcher_clock = oslLoadImageFilePNG(clockPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_filemanager = oslLoadImageFilePNG(fmPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_gallery = oslLoadImageFilePNG(galleryPath, OSL_IN_RAM, OSL_PF_8888);
 	ic_launcher_game = oslLoadImageFilePNG(gamePath, OSL_IN_RAM, OSL_PF_8888);
