@@ -75,31 +75,34 @@ void pspGetModel(int x, int y)
 {
 	int pspmodel = kuKernelGetModel();
 	
-	switch(pspmodel)
+	if (fileExists("ms0:/adrenaline"))
 	{
-		case 0:
-			oslDrawStringf(x,y,"Model: PSP 1000");
-			break;
+		oslDrawStringf(x, y, "Model: PS Vita");
+	}
+	else
+	{
+		switch(pspmodel)
+		{
+			case 0:
+				oslDrawStringf(x, y, "Model: PSP 1000");
+				break;
    
-		case 1:
-			oslDrawStringf(x,y,"Model: PSP 2000");
-			break;
+			case 1:
+				oslDrawStringf(x, y, "Model: PSP 2000");
+				break;
    
-		case 2:
-			oslDrawStringf(x,y,"Model: PSP 3000");
-			break;
+			case 2:
+				oslDrawStringf(x, y, "Model: PSP 3000");
+				break;
    
-		case 3:
-			oslDrawStringf(x,y,"Model: PSP 3000");
-			break;
+			case 3:
+				oslDrawStringf(x, y, "Model: PSP 3000");
+				break;
 		
-		case 4:
-			oslDrawStringf(x,y,"Model: PSP Go N1000");
-			break;
-   
-		default:
-			oslDrawStringf(x,y,"Model: PS Vita");
-			break;
+			case 4:
+				oslDrawStringf(x, y, "Model: PSP Go N1000");
+				break;
+		}
 	}
 }
 
@@ -474,253 +477,186 @@ int enableUsbEx(u32 device)
 	return 1;
 }
 
-void networkInit()
-{
-	connectionInitialized = false;
-}
-
-bool networkInitializeConnection()
-{
-	if(!connectionInitialized)
-	{
-		int result;
-
-		result = sceUtilityLoadNetModule(PSP_NET_MODULE_COMMON);
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityLoadNetModule(PSP_NET_MODULE_INET);
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEURI);
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEHTTP);
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityLoadNetModule(PSP_NET_MODULE_HTTP);
-
-		if(result < 0)
-			return false;
-
-		result = sceNetInit(128*1024, 42, 0, 42, 0);
-
-		if(result < 0)
-			return false;
-
-		result = sceNetInetInit();
-
-		if(result < 0)
-			return false;
-
-		result = sceNetApctlInit(0x10000, 48);
-
-		if(result < 0)
-			return false;
-
-		result = sceNetResolverInit();
-
-		if(result < 0)
-			return false;
-
-		connectionInitialized = true;
-	}
-
-	return connectionInitialized;
-}
-
-bool networkShutDownConnection()
-{
-	if(connectionInitialized)
-	{
-		int result;
-
-		result = sceNetApctlTerm();
-
-		if(result < 0)
-			return false;
-
-		result = sceNetResolverTerm();
-
-		if(result < 0)
-			return false;
-
-		result = sceNetInetTerm();
-
-		if(result < 0)
-			return false;
-
-		result = sceNetTerm();
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityUnloadNetModule(PSP_NET_MODULE_HTTP);
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEHTTP);
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEURI);
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityUnloadNetModule(PSP_NET_MODULE_INET);
-
-		if(result < 0)
-			return false;
-
-		result = sceUtilityUnloadNetModule(PSP_NET_MODULE_COMMON);
-
-		if(result < 0)
-			return false;
-
-		connectionInitialized = false;
-	}
-
-	return true;
-}
-
-int initNetDialog()
-{
-	char message[100] = "";
-    int dialog = OSL_DIALOG_NONE;
+int netInit(void)
+{	
+	int result;
 	
-	dialog = oslGetDialogType();
-    if (dialog)
-	{
-		oslDrawDialog();
-        if (oslGetDialogStatus() == PSP_UTILITY_DIALOG_NONE)
-		{
-            if (oslDialogGetResult() == OSL_DIALOG_CANCEL)
-				sprintf(message, "Cancel");
-            else if (dialog == OSL_DIALOG_MESSAGE)
-			{
-				int button = oslGetDialogButtonPressed();
-				if (button == PSP_UTILITY_MSGDIALOG_RESULT_YES)
-					sprintf(message, "You pressed YES");
-				else if (button == PSP_UTILITY_MSGDIALOG_RESULT_NO)
-					sprintf(message, "You pressed NO");
-            }
+	result = sceUtilityLoadNetModule(PSP_NET_MODULE_COMMON);
+	
+	if(result < 0)
+		return result;
+		
+	result = sceUtilityLoadNetModule(PSP_NET_MODULE_INET);
+	
+	if(result < 0)
+		return result;
+		
+	result = sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEURI);
+	
+	if(result < 0)
+		return result;
+
+	result = sceUtilityLoadNetModule(PSP_NET_MODULE_PARSEHTTP);
+	
+	if(result < 0)
+		return result;
+	
+	result = sceUtilityLoadNetModule(PSP_NET_MODULE_HTTP);
+	
+	if(result < 0)
+		return result;
 			
-			oslEndDialog();
-        }
-    }
+	result = sceNetInit(128*1024, 42, 4*1024, 42, 4*1024);
 	
-	if (dialog == OSL_DIALOG_NONE)
-	{
-        oslInitNetDialog();
-        memset(message, 0, sizeof(message));
-    }
+	if(result < 0)
+		return result;
+			
+	result = sceNetInetInit();
+	
+	if(result < 0)
+		return result;
+			
+	result = sceNetApctlInit(0x10000, 48);
+	
+	if(result < 0)
+		return result;
+			
+	result = sceNetResolverInit();
+	
+	if(result < 0)
+		return result;
+
+	return(1);
+}
+
+int  netShutdown(void)
+{
+	int result;
+	
+	result = sceNetApctlTerm();
+	
+	if(result < 0)
+		return result;
+		
+	result = sceNetResolverTerm();
+	
+	if(result < 0)
+		return result;
+		
+	result = sceNetInetTerm();
+	
+	if(result < 0)
+		return result;
+		
+	result = sceNetTerm();
+	
+	if(result < 0)
+		return result;
+		
+	result = sceUtilityUnloadNetModule(PSP_NET_MODULE_HTTP);
+	
+	if(result < 0)
+		return result;
+		
+	result = sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEHTTP);
+	
+	if(result < 0)
+		return result;
+		
+	result = sceUtilityUnloadNetModule(PSP_NET_MODULE_PARSEURI);
+	
+	if(result < 0)
+		return result;
+
+	result = sceUtilityUnloadNetModule(PSP_NET_MODULE_INET);
+	
+	if(result < 0)
+		return result;
+	
+	result = sceUtilityUnloadNetModule(PSP_NET_MODULE_COMMON);
+	
+	if(result < 0)
+		return result;
 	
 	return 1;
 }
+
+static pspUtilityNetconfData netConfData;
+
+int netDialogInit(void)
+{		
+	memset(&netConfData, 0, sizeof(netConfData));
+	netConfData.base.size = sizeof(netConfData);
+	sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_LANGUAGE, &netConfData.base.language);
+	sceUtilityGetSystemParamInt(PSP_SYSTEMPARAM_ID_INT_UNKNOWN, &netConfData.base.buttonSwap);
+	netConfData.base.graphicsThread = 17;
+	netConfData.base.accessThread = 19;
+	netConfData.base.fontThread = 18;
+	netConfData.base.soundThread = 16;
+	netConfData.action = 0;
+	
+	struct pspUtilityNetconfAdhoc adhocparam;
+	memset(&adhocparam, 0, sizeof(adhocparam));
+	netConfData.adhocparam = &adhocparam;
+
+	int result = sceUtilityNetconfInitStart(&netConfData);
+	
+	if(result == 0)
+		return 1;
 		
-bool networkGetFile(const char *url, const char *filepath)
+	return result;
+}
+
+int netDialogUpdate(void)
 {
-	int templ, connection, request, ret, status, dataend, fd, byteswritten;
-	SceULong64 contentsize;
-	unsigned char readbuffer[8192];
+		int result = -1;
+		
+		switch(sceUtilityNetconfGetStatus())
+		{
+			case PSP_UTILITY_DIALOG_NONE:
+				result = netConfData.base.result;
+				break;
 
-	ret = sceHttpInit(20000);
+			case PSP_UTILITY_DIALOG_VISIBLE:
+				sceUtilityNetconfUpdate(1);
+				break;
+
+			case PSP_UTILITY_DIALOG_QUIT:
+				sceUtilityNetconfShutdownStart();
+				break;
+				
+			case PSP_UTILITY_DIALOG_FINISHED:
+				break;
+
+			default:
+				break;
+		}
+		
+	return(result);
+}
+
+void netGetFile(const char *url, const char *filepath) 
+{
+	int template = sceHttpCreateTemplate("TEMA - Themes Direct Installer", 1, 1);
+
+	int connection = sceHttpCreateConnectionWithURL(template, url, 0);
+
+	int request = sceHttpCreateRequestWithURL(connection, PSP_HTTP_METHOD_GET, (char *)url, 0);
+
+	sceHttpSendRequest(request, NULL, 0);
+
+	int fh = sceIoOpen(filepath, PSP_O_WRONLY | PSP_O_CREAT, 0777);
+
+	unsigned char data[16*1024];
+	int read = 0;
 	
-	if(ret < 0)
-		return false;
-	
-	templ = sceHttpCreateTemplate("xxx-agent/0.0.1 libhttp/1.0.0", 1, 1);
-
-	if(templ < 0)
-		return false;
-
-	ret = sceHttpSetResolveTimeOut(templ, 3000000);
-
-	if(ret < 0)
-		return false;
-
-	ret = sceHttpSetRecvTimeOut(templ, 60000000);
-	
-	if(ret < 0)
-		return false;
-
-	ret = sceHttpSetSendTimeOut(templ, 60000000);
-
-	if(ret < 0)
-		return false;
-
-	connection = sceHttpCreateConnectionWithURL(templ, url, 0);
-
-	if(connection < 0)
-		return false;
-
-	request = sceHttpCreateRequestWithURL(connection, PSP_HTTP_METHOD_GET, (char*)url, 0);
-
-	if(request < 0)
-		return false;
-
-	ret = sceHttpSendRequest(request, 0, 0);
-
-	if(ret < 0)
-		return false;
-
-	ret = sceHttpGetStatusCode(request, &status);
-
-	if(ret < 0)
-		return false;
-
-	if(status != 200)
-		return false;
-
-	ret = sceHttpGetContentLength(request, &contentsize);
-
-	if(ret < 0)
-		return false;
-
-	dataend = 0;
-	byteswritten = 0;
-	fd = sceIoOpen(filepath, PSP_O_WRONLY | PSP_O_CREAT, 0777);
-
-	while(dataend == 0)
+	while ((read = sceHttpReadData(request, &data, sizeof(data))) > 0) 
 	{
-		ret = sceHttpReadData(request, readbuffer, 8192);
-
-		if(ret < 0)
-		{
-			sceIoWrite(fd, filepath, 4);
-			sceIoClose(fd);
-			return false;
-		}
-
-		if(ret == 0)
-		dataend = 1;
-
-		if(ret > 0)
-		{
-			byteswritten += ret;
-			sceIoWrite(fd, readbuffer, ret);
-			//printf("Got and wrote %d bytes...\n", ret);
-		}
+		sceIoWrite(fh, data, read);
 	}
 
-	sceIoClose(fd);
-	//printf("File saved (size = %d bytes)... Exiting!\n", bytes_written);
-	sceHttpDeleteRequest(request);
-	sceHttpDeleteConnection(connection);
-	sceHttpDeleteTemplate(templ);
-	sceHttpEnd();
-
-	return true;
+	// close file
+	sceIoClose(fh);
 }
 
 int connectAPCallback(int state) //Internet stuff
@@ -875,6 +811,56 @@ void flashUpdate()
 	}
 }
 
+int downloadUpdate()
+{
+	netInit();
+	netDialogInit();
+	
+	while (!osl_quit)
+	{
+		oslStartDrawing();
+		
+		oslClearScreen(RGB(0, 0, 0));
+		
+		oslEndDrawing(); 
+		
+		int result = netDialogUpdate();
+		
+		if(result != -1)
+			break;
+		
+		oslSyncFrame();	
+	}
+	
+	pspDebugScreenInit();
+	
+	pspDebugScreenSetXY(0, 2);
+	pspDebugScreenPrintf("Downloading update...");
+	
+	//download file
+	netGetFile("https://sourceforge.net/projects/cyanogenpsp/files/Updates/update.zip", "ms0:/PSP/GAME/CyanogenPSP/updates/update.zip");
+	
+	//installing file
+	pspDebugScreenSetXY(0, 4);
+	pspDebugScreenPrintf("Installing update...");
+
+	
+	pspDebugScreenSetXY(0, 6);
+	pspDebugScreenPrintf("Installation done - press X to exit");
+	
+	while(1)
+	{
+		oslReadKeys();
+		if (osl_pad.held.cross)	
+		{
+			break;
+		}
+	}
+	
+	netShutdown();
+	return 0;
+}
+	
 u64 storageGetTotalSize() //returns data in MB
 {
 	SystemDevCtl devctl;
