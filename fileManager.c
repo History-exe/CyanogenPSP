@@ -621,8 +621,8 @@ void OptionMenu()
 			oslDeleteImage(action);
 			return;
 		}
-	oslEndDrawing();
-	oslSyncFrame();	
+		
+		termDrawing();
 	}
 }
 
@@ -632,7 +632,7 @@ void renameFile()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
+		initDrawing();
 		
 		openOSK("Enter File Name", folderIcons[current].filePath, 250, -1);
 		
@@ -640,9 +640,7 @@ void renameFile()
 		
 		refresh();
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 }
 
@@ -654,7 +652,7 @@ void newFolder()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
+		initDrawing();
 		
 		openOSK("Enter Folder Name", "", 250, -1);
 		
@@ -671,9 +669,7 @@ void newFolder()
 		
 		refresh();
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 }
 
@@ -722,9 +718,8 @@ void deleteFile(char path[])
 			oslDeleteImage(deletion);
 			return;
 		}
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		
+		termDrawing();
 	}
 }
 
@@ -815,15 +810,13 @@ void displayTextFromFile(char * path)
 
 	while (!osl_quit)
 	{
-		oslStartDrawing();	
+		initDrawing();
+		
 		oslReadKeys();
 		
-		oslClearScreen(RGB(0, 0, 0));
 		oslDrawImageXY(textview, 0, 0);
 
-		battery(370, 2, 1);
-		digitaltime(420, 4, 0,hrTime);	
-		volumeController();
+		displayMenuBar(3);
 		
 		oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, 0);	
 			
@@ -836,9 +829,7 @@ void displayTextFromFile(char * path)
 			refresh();
 		}	
 				
-	oslEndDrawing(); 
-	oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 }
 	
@@ -918,13 +909,12 @@ void dirDisplay()
 	oslDrawStringf(86, 40, "%.34s", curDir); // Displays the current directory.
 	oslDrawImageXY(bar, 0, (current - curScroll) * 48 + CURR_DISPLAY_Y);
 	
-	battery(370, 2, 1);
-	digitaltime(420, 4, 0, hrTime);
+	displayMenuBar(4);
 	
 	oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 
 	// Displays the directories, while also incorporating the scrolling
-	for(i=curScroll;i<MAX_DISPLAY+curScroll;i++) 
+	for(i = curScroll; i < MAX_DISPLAY + curScroll; i++) 
 	{
 	
 		char * ext = strrchr(dirScan[i].name, '.'); //For file extension.
@@ -933,15 +923,15 @@ void dirDisplay()
 		// For moving down
 		//if ((folderIcons[i].active == 0) && (current >= i-1)) {
 	
-		if ((folderIcons[i].active == 0) && (current >= i-1)) 
+		if ((folderIcons[i].active == 0) && (current >= i - 1)) 
 		{
-			current = i-1;
+			current = i - 1;
 			break;
 		}
 		// For moving up
-		if (current <= curScroll-1) 
+		if (current <= curScroll - 1) 
 		{
-			current = curScroll-1;
+			current = curScroll - 1;
 			break;
 		}
 		
@@ -1054,27 +1044,21 @@ void dirControls() //Controls
 	char * ext = strrchr(folderIcons[current].filePath, '.'); 
 	
 	if (osl_keys->pressed.select)
-	{
-			OptionMenu();
-	}
+		OptionMenu();
 	
 	if (osl_keys->pressed.circle)
 	{		
 		if((!strcmp("ms0:/", curDir)) || (!strcmp("ms0:", curDir))) //If pressed circle in root folder
 		{
 			filemanagerUnloadAssets();
-			appdrawer();
+			appDrawer();
 		}
 		else
-		{
-			dirBack(0);
-		}		
+			dirBack(0);	
 	}
 
-	if (osl_keys->pressed.R)
-	{		
+	if (osl_keys->pressed.R)	
 		newFolder();
-	}
 	
 	if (((ext) != NULL) && ((strcmp(ext ,".png") == 0) || (strcmp(ext ,".jpg") == 0) || (strcmp(ext ,".jpeg") == 0) || (strcmp(ext ,".gif") == 0) || (strcmp(ext ,".PNG") == 0) || (strcmp(ext ,".JPG") == 0) || (strcmp(ext ,".JPEG") == 0) || (strcmp(ext ,".GIF") == 0)) && (osl_keys->pressed.cross))
 	{
@@ -1128,18 +1112,7 @@ void dirControls() //Controls
 		displayTextFromFile(folderIcons[current].filePath);
 	}
 	
-	if (osl_keys->pressed.square)
-	{
-		powermenu();
-	}
-		
-	if (osl_keys->pressed.L)
-	{
-		oslPlaySound(Lock, 1);  
-		lockscreen();
-	}
-	
-	captureScreenshot();
+	coreNavigation(1);
 	
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
@@ -1232,9 +1205,8 @@ char * dirBrowse(const char * path)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
-		oslClearScreen(RGB(0,0,0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 		dirDisplay();
@@ -1243,9 +1215,7 @@ char * dirBrowse(const char * path)
 		if (strlen(returnMe) > 4) 
 			break;	
 			
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
 	return returnMe;
 }
@@ -1303,15 +1273,12 @@ int cyanogenPSPFileManager(int argc, char *argv[])
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 
 		centerText(480/2, 272/2, testDirectory, 50);	// Shows the path that 'testDirectory' was supposed to receive from dirBrowse();
 		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
+	
 	return 0;
 }

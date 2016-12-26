@@ -19,7 +19,7 @@
 
 struct settingsFontColor fontColor;
 struct timeAndBatteryStatusFontColor fontColorTime;
-	
+
 void switchStatus(int n)
 {
 	if (n == 1)
@@ -69,19 +69,12 @@ void aboutMenu()
 	
 	fw_version version;
 	getFwVersion(&version);
-	
-	char message[100] = "";
-    int dialog = OSL_DIALOG_NONE;
-	
-	int updateActivation = 1;
 
 	while (!osl_quit)
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 
@@ -95,7 +88,7 @@ void aboutMenu()
 		oslDrawStringf(20, 78, "%s", lang_settingsAbout[language][0]);
 		oslDrawStringf(20, 92, "%s", lang_settingsAbout[language][1]);
 		pspGetModel(20, 143);
-		oslDrawStringf(20, 129, "%s %s-%d%02d%02d-%s", lang_settingsAbout[language][2], VERSION, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
+		oslDrawStringf(20, 129, "%s %d.%d-%d%02d%02d-%s", lang_settingsAbout[language][2], VER_MAJOR, VER_MINOR, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
 		oslDrawStringf(20, 157, "%s %02X:%02X:%02X:%02X:%02X:%02X", lang_settingsAbout[language][4], macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 		oslDrawStringf(20, 185, "%s %d.%d", lang_settingsAbout[language][5], version.major, version.minor);
 		oslDrawStringf(20, 199, "%s %s", lang_settingsAbout[language][6], OSL_VERSION);
@@ -119,7 +112,7 @@ void aboutMenu()
 		{
 			oslDrawImageXY(highlight, 0, 122);
 			pspGetModel(20,143);
-			oslDrawStringf(20,129,"%s %s-%d%02d%02d-%s", lang_settingsAbout[language][2], VERSION, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
+			oslDrawStringf(20, 129, "%s %d.%d-%d%02d%02d-%s", lang_settingsAbout[language][2], VER_MAJOR, VER_MINOR, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
 			oslDrawStringf(20,157,"%s %02X:%02X:%02X:%02X:%02X:%02X", lang_settingsAbout[language][4], macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 		}
 		
@@ -138,56 +131,7 @@ void aboutMenu()
 			}
 		}
 		
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		dialog = oslGetDialogType();
-        if (dialog)
-		{
-			oslDrawDialog();
-            if (oslGetDialogStatus() == PSP_UTILITY_DIALOG_NONE)
-			{
-				if (oslDialogGetResult() == OSL_DIALOG_CANCEL)
-					sprintf(message, "Cancel");
-				else if (dialog == OSL_DIALOG_MESSAGE)
-				{
-					int button = oslGetDialogButtonPressed();
-					if (button == PSP_UTILITY_MSGDIALOG_RESULT_YES)
-						flashUpdate();
-					else if (button == PSP_UTILITY_MSGDIALOG_RESULT_NO)
-						updateActivation = 0;
-						oslEndDialog();
-				}
-            oslEndDialog();
-            }
-		}
-		
-		if (dialog == OSL_DIALOG_NONE)
-		{
-			if (updateReady == 1)
-			{
-				if (updateActivation == 1 && (fileExists("ms0:/PSP/GAME/update.zip")))
-				{
-					oslInitMessageDialog("Update.zip has been found. Would you like to flash the update?", 1);
-					memset(message, 0, sizeof(message));
-				}
-			}
-		}
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{	
@@ -209,7 +153,7 @@ void aboutMenu()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(aboutbg);
 			oslDeleteImage(highlight);
-			home();	
+			homeMenu();	
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -218,11 +162,9 @@ void aboutMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -237,9 +179,7 @@ void creditsMenu()
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 
@@ -270,23 +210,7 @@ void creditsMenu()
 		oslDrawStringf(10,242,"Other memebers from Hack Informer, GBAtemp and wololo.net.");
 		oslDrawStringf(10,254,"I hope I didn't forget anyone. Once again, thank you all :)");
 		
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{	
@@ -305,7 +229,7 @@ void creditsMenu()
 		{	
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(aboutbg);
-			home();	
+			homeMenu();	
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -314,11 +238,9 @@ void creditsMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -342,9 +264,7 @@ void updatesMenu()
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 
@@ -364,27 +284,11 @@ void updatesMenu()
 			if (osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				onlineUpdater();
+				flashUpdate();
 			}
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -406,7 +310,7 @@ void updatesMenu()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(updatesbg);
 			oslDeleteImage(highlight);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -415,11 +319,9 @@ void updatesMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -443,9 +345,7 @@ void performanceMenu()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 
@@ -513,23 +413,7 @@ void performanceMenu()
 			}
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -551,7 +435,7 @@ void performanceMenu()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(highlight);
 			oslDeleteImage(performancebg);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -560,11 +444,9 @@ void performanceMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -610,7 +492,7 @@ void setCpuBoot()
 
 void processorMenu()
 {	
-	FILE * processorInfo;
+	//FILE * processorInfo;
 	
 	int currentState = stateOff;
 	int cpufreq, cpu, bus, state = 0;
@@ -629,13 +511,13 @@ void processorMenu()
 	if (!processorbg || !highlight)
 		debugDisplay(); 
 	
+	char data[1];
+	
 	while (!osl_quit)
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -667,7 +549,8 @@ void processorMenu()
 		
 		if (currentState == stateOverClock)
 		{
-			processorInfo = fopen("system/settings/processorInfo.bin", "w");
+			SceUID file = sceIoOpen("system/settings/processorInfo.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+			/*processorInfo = fopen("system/settings/processorInfo.bin", "w");*/
 			cpufreq = scePowerGetCpuClockFrequency();
 			
 			if (cpufreq <70)
@@ -706,14 +589,19 @@ void processorMenu()
 				scePowerSetClockFrequency(333, 333, 166);
 			}
 			
-			fprintf(processorInfo, "%d", state);
+			/*fprintf(processorInfo, "%d", state);
 			fclose(processorInfo);
-			currentState = stateNoClock;
+			currentState = stateNoClock;*/
+			
+			sprintf(data, "%d", state);
+			sceIoWrite(file, data, strlen(data));
+			sceIoClose(file);
 		}
 		
 		if (currentState == stateUnderClock)
 		{
-			processorInfo = fopen("system/settings/processorInfo.bin", "w");
+			SceUID file = sceIoOpen("system/settings/processorInfo.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+			/*processorInfo = fopen("system/settings/processorInfo.bin", "w");*/
 			cpufreq = scePowerGetCpuClockFrequency();
 			
 			if (cpufreq> 300)
@@ -752,8 +640,13 @@ void processorMenu()
 				scePowerSetClockFrequency(20, 20, 10);
 			}
 			
-			fprintf(processorInfo, "%d", state);
-			fclose(processorInfo);
+			/*fprintf(processorInfo, "%d", state);
+			fclose(processorInfo);*/
+			
+			sprintf(data, "%d", state);
+			sceIoWrite(file, data, strlen(data));
+			sceIoClose(file);
+			
 			currentState = stateNoClock; // This state allows the frequency to not climb on each cycle.
 		}
 		
@@ -766,17 +659,7 @@ void processorMenu()
 		oslDrawStringf(20,241, "%s", lang_settingsProcessor[language][3]);
 		oslDrawStringf(20,254,"%d MHz", bus);
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -798,7 +681,7 @@ void processorMenu()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(processorbg);
 			oslDeleteImage(highlight);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -807,11 +690,9 @@ void processorMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(1);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -832,8 +713,7 @@ void ramMenu()
 		debugDisplay();
 	
 	OSL_MEMSTATUS ram = oslGetRamStatus();
-	int availableRam = (ram.maxAvailable/1000000);
-	int totalRam = ((20 * 1024 * 1024)/1000000);
+	int availableRam = (totalRam - (ram.maxAvailable/1000000));
 	
 	char status[20];
 	
@@ -856,9 +736,7 @@ void ramMenu()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -869,32 +747,22 @@ void ramMenu()
 		else
 			oslIntraFontSetStyle(Roboto, 0.9f, RGBA(0, 149, 135, 255), 0, INTRAFONT_ALIGN_LEFT);
 		
-		oslDrawStringf(20, 78, "%dMB\n", (20 - (availableRam))); 
+		oslDrawStringf(20, 83, "%dMB\n", (availableRam)); 
 		
 		if (DARK == 0)
 			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		else
 			oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
 		
-		oslDrawFillRect(20, 100, 424, 120, RGB(206, 215, 219));
-		oslDrawFillRect(20, 100, ((availableRam) * 21.2), 120, RGB(r, g, b));
+		oslDrawFillRect(20, 105, 424, 125, RGB(206, 215, 219));
+		oslDrawFillRect(20, 105, ((availableRam) * 21.2), 125, RGB(r, g, b));
 		
-		oslDrawStringf(20, 132, "%s:                                          %s", lang_settingsMain[language][3], status);
-		oslDrawStringf(20, 148, "Total memory                                                  %dMB", totalRam);
-		oslDrawStringf(20, 164, "Average Used(%%)                                               %d%%", (((availableRam) * 100)/(totalRam)));
-		oslDrawStringf(20, 180, "Free                                                             %dMB", availableRam);
+		oslDrawStringf(20, 137, "%s:                                          %s", lang_settingsMain[language][3], status);
+		oslDrawStringf(20, 153, "Total memory                                                  %dMB", totalRam);
+		oslDrawStringf(20, 169, "Average Used(%%)                                               %d%%", (((availableRam) * 100)/(totalRam)));
+		oslDrawStringf(20, 185, "Free                                                             %dMB", (totalRam - (availableRam)));
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -916,7 +784,7 @@ void ramMenu()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(highlight);
 			oslDeleteImage(performancebg);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -925,11 +793,9 @@ void ramMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -957,9 +823,7 @@ void storageMenu()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -1002,17 +866,7 @@ void storageMenu()
 			disableUsb();
 		}
 		
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -1034,7 +888,7 @@ void storageMenu()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(highlight);
 			oslDeleteImage(performancebg);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -1043,11 +897,9 @@ void storageMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -1077,9 +929,7 @@ void batteryMenu()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 
@@ -1101,9 +951,15 @@ void batteryMenu()
 			if (osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);
-				batteryManagement = fopen("system/settings/battery.bin", "w"); 
+				
+				SceUID file = sceIoOpen("system/settings/battery.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "0", 1);
+				sceIoClose(file);
+				
+				/*batteryManagement = fopen("system/settings/battery.bin", "w"); 
 				fprintf(batteryManagement, "0");
-				fclose(batteryManagement);
+				fclose(batteryManagement);*/
+				
 				batteryM = setFileDefaultsInt("system/settings/battery.bin", 1, batteryM);
 				setPowerManagement();
 			}
@@ -1116,9 +972,15 @@ void batteryMenu()
 			if (osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);
-				batteryManagement = fopen("system/settings/battery.bin", "w"); 
+				
+				SceUID file = sceIoOpen("system/settings/battery.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "1", 1);
+				sceIoClose(file);
+				
+				/*batteryManagement = fopen("system/settings/battery.bin", "w"); 
 				fprintf(batteryManagement, "1");
-				fclose(batteryManagement);
+				fclose(batteryManagement);*/
+				
 				batteryM = setFileDefaultsInt("system/settings/battery.bin", 1, batteryM);
 				setPowerManagement();
 			}
@@ -1160,23 +1022,7 @@ void batteryMenu()
 				break;
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -1204,7 +1050,7 @@ void batteryMenu()
 			oslDeleteImage(performancebg);
 			oslDeleteImage(select);
 			oslDeleteImage(deselect);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -1213,11 +1059,9 @@ void batteryMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -1276,9 +1120,7 @@ void displayMenu()
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -1346,23 +1188,7 @@ void displayMenu()
 			}
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -1384,7 +1210,7 @@ void displayMenu()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(displaybg);
 			oslDeleteImage(highlight);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -1392,11 +1218,9 @@ void displayMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -1420,9 +1244,7 @@ void displayThemes()
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -1490,23 +1312,7 @@ void displayThemes()
 			}
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -1528,7 +1334,7 @@ void displayThemes()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(displaybg);
 			oslDeleteImage(highlight);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -1536,11 +1342,9 @@ void displayThemes()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -1564,9 +1368,7 @@ void displayFontMenu()
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -1606,23 +1408,7 @@ void displayFontMenu()
 			}
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -1644,7 +1430,7 @@ void displayFontMenu()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(displaybg);
 			oslDeleteImage(highlight);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -1652,11 +1438,9 @@ void displayFontMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -1695,9 +1479,7 @@ void displayFontSizeMenu()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 
@@ -1778,23 +1560,7 @@ void displayFontSizeMenu()
 				break;
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -1822,7 +1588,7 @@ void displayFontSizeMenu()
 			oslDeleteImage(displaybg);
 			oslDeleteImage(select);
 			oslDeleteImage(deselect);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -1831,38 +1597,35 @@ void displayFontSizeMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
 void settingsDisplay()
 {	
 	oslDrawImageXY(displaybg, 0, 0);
-	oslDrawImageXY(highlight,0,(current - curScroll)*56+SETTINGS_CURR_DISPLAY_Y);
+	oslDrawImageXY(highlight,0,(current - curScroll) * 56 + SETTINGS_CURR_DISPLAY_Y);
 
-	battery(330,2,0);
-	digitaltime(381,4,0,hrTime);
+	displayMenuBar(5);
 	
 	// Displays the directories, while also incorporating the scrolling
-	for(i=curScroll;i<MAX_SETTINGS_DISPLAY+curScroll;i++) 
+	for(i = curScroll; i < MAX_SETTINGS_DISPLAY + curScroll; i++) 
 	{
 		// Handles the cursor and the display to not move past 4.
 		// For moving down
 		//if ((folderIcons[i].active == 0) && (current >= i-1)) {
 	
-		if ((folderIcons[i].active == 0) && (current >= i-1)) 
+		if ((folderIcons[i].active == 0) && (current >= i - 1)) 
 		{
-			current = i-1;
+			current = i - 1;
 			break;
 		}
 		// For moving up
-		if (current <= curScroll-1) 
+		if (current <= curScroll - 1) 
 		{
-			current = curScroll-1;
+			current = curScroll - 1;
 			break;
 		}
 		
@@ -1873,20 +1636,25 @@ void settingsDisplay()
 				oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 			else
 				oslIntraFontSetStyle(Roboto, fontSize, LITEGRAY, 0, INTRAFONT_ALIGN_LEFT);
-			oslDrawStringf(SETTINGS_DISPLAY_X, (i - curScroll)*55+SETTINGS_DISPLAY_Y, "%.56s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
+			oslDrawStringf(SETTINGS_DISPLAY_X, (i - curScroll) * 55 + SETTINGS_DISPLAY_Y, "%.56s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
 		}
 	}
 }
 
 void changeFont() //Created a separated function for this only because deleting a font while its in use causes it to crash.
 {
+	char data[256];
+	
 	while (!osl_quit)
 	{		
 		oslDeleteFont(Roboto);
-		oslPlaySound(KeypressStandard, 1);  
-		FILE * fontPathTXT = fopen("system/settings/font.bin", "w");
-		fprintf(fontPathTXT,"%s", folderIcons[current].filePath);
-		fclose(fontPathTXT);
+		oslPlaySound(KeypressStandard, 1); 
+	
+		SceUID file = sceIoOpen("system/settings/font.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sprintf(data, "%s", folderIcons[current].filePath);
+		sceIoWrite(file, data, strlen(data));
+		sceIoClose(file);
+		
 		Roboto = oslLoadIntraFontFile(folderIcons[current].filePath, INTRAFONT_CACHE_ALL | INTRAFONT_STRING_UTF8);
 		oslSetFont(Roboto);
 		return;
@@ -1922,9 +1690,15 @@ int changeLanguage() //Created a separated function for this only because deleti
 	else if (strcmp(folderIcons[current].filePath, "system/settings/language/Ukrainian") == 0)
 		language = 12;
 	
-	FILE * languagePath = fopen("system/settings/language.bin", "w");
+	char data[1];
+	SceUID file = sceIoOpen("system/settings/language.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+	sprintf(data, "%d", language);
+	sceIoWrite(file, data, strlen(data));
+	sceIoClose(file);
+	
+	/*FILE * languagePath = fopen("system/settings/language.bin", "w");
 	fprintf(languagePath, "%d", language);
-	fclose(languagePath);
+	fclose(languagePath);*/
 	
 	return language;
 }
@@ -2048,13 +1822,17 @@ void themesLoad()
 	replaceAsset(tempData, themeDirPath, timeAndBatteryFontColor, timeAndBatteryFontColorPath);
 	replaceAsset(tempData, themeDirPath, lockScreenWidgetFontColor, clockWidgetFontColorPath);
 	
-	FILE *temp;
+	FILE * temp;
 	 
 	if (!(fileExists(rgbValuesPath)))
 	{
-		temp = fopen(rgbValuesPath, "w");
+		/*temp = fopen(rgbValuesPath, "w");
 		fprintf(temp, "0\n149\n135");
-		fclose(temp);
+		fclose(temp);*/
+		
+		SceUID file = sceIoOpen(rgbValuesPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "0\n149\n135", 15);
+		sceIoClose(file);
 	}
 	
 	temp = fopen(rgbValuesPath, "r");
@@ -2094,22 +1872,30 @@ void themesReload()
 	 
 	if (!(fileExists(settingsFontColorPath)))
 	{
-		temp = fopen(settingsFontColorPath, "w");
+		/*temp = fopen(settingsFontColorPath, "w");
 		fprintf(temp, "0\n0\n0");
-		fclose(temp);
+		fclose(temp);*/
+		
+		SceUID file = sceIoOpen(settingsFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "0\n0\n0", 15);
+		sceIoClose(file);
 	}
 	
 	temp = fopen(settingsFontColorPath, "r");
 	fscanf(temp, "%d %d %d", &fontColor.r, &fontColor.g, &fontColor.b);
 	fclose(temp);
 	
-	FILE *temp2;
+	FILE * temp2;
 	 
 	if (!(fileExists(timeAndBatteryFontColorPath)))
 	{
-		temp2 = fopen(timeAndBatteryFontColorPath, "w");
+		SceUID file = sceIoOpen(timeAndBatteryFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+		sceIoWrite(file, "255\n255\n255", 15);
+		sceIoClose(file);
+		
+		/*temp2 = fopen(timeAndBatteryFontColorPath, "w");
 		fprintf(temp2, "255\n255\n255");
-		fclose(temp2);
+		fclose(temp2);*/
 	}
 	
 	temp2 = fopen(timeAndBatteryFontColorPath, "r");
@@ -2208,9 +1994,7 @@ void settingsControls(int n) //Controls
 		}
 		
 		if (osl_keys->pressed.cross)
-		{
 			oslPlaySound(KeypressStandard, 1);  
-		}
 	}
 	
 	volumeController();
@@ -2220,9 +2004,7 @@ void settingsControls(int n) //Controls
 	if (((ext) != NULL) && (n == 0) && ((strcmp(ext ,".pgf") == 0) || (strcmp(ext ,".PGF") == 0)))
 	{
 		if ((osl_keys->pressed.cross) && (strcmp(folderIcons[current].filePath, "doesn't matter") != 0))
-		{
 			changeFont();
-		}
 	}
 	else if (((ext) != NULL) && (n == 1) && ((strcmp(ext ,".png") == 0) || (strcmp(ext ,".jpg") == 0) || (strcmp(ext ,".jpeg") == 0) || (strcmp(ext ,".gif") == 0) || (strcmp(ext ,".PNG") == 0) || (strcmp(ext ,".JPG") == 0) || (strcmp(ext ,".JPEG") == 0) || (strcmp(ext ,".GIF") == 0)))
 	{
@@ -2298,18 +2080,7 @@ void settingsControls(int n) //Controls
 		displayThemes();
 	}
 	
-	if (osl_keys->pressed.square)
-	{
-		powermenu();
-	}
-		
-	if (osl_keys->pressed.L)
-	{
-		oslPlaySound(Lock, 1);  
-		lockscreen();
-    }
-	
-	captureScreenshot();
+	coreNavigation(0);
 	
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
@@ -2338,9 +2109,8 @@ char * settingsBrowse(const char * path, int n) // n is used here to search for 
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
-		oslClearScreen(RGB(0, 0, 0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 		settingsDisplay();
@@ -2359,9 +2129,7 @@ char * settingsBrowse(const char * path, int n) // n is used here to search for 
 		if (strlen(returnMe) > 4) 
 			break;
 			
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
 	return returnMe;
 }
@@ -2397,15 +2165,11 @@ void displaySubThemes(char * browseDirectory, int n) // n is used here to search
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		centerText(480/2, 272/2, browseDirectory, 50);
 		
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -2434,9 +2198,7 @@ void displayTime()
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -2487,23 +2249,7 @@ void displayTime()
 			}
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -2531,7 +2277,7 @@ void displayTime()
 			oslDeleteImage(highlight);
 			oslDeleteImage(offswitch);	
 			oslDeleteImage(onswitch);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -2539,11 +2285,9 @@ void displayTime()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -2579,9 +2323,7 @@ void displayMiscellaneous()
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -2733,23 +2475,7 @@ void displayMiscellaneous()
 			}
 		}
 		
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -2777,7 +2503,7 @@ void displayMiscellaneous()
 			oslDeleteImage(highlight);
 			oslDeleteImage(offswitch);	
 			oslDeleteImage(onswitch);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -2785,11 +2511,9 @@ void displayMiscellaneous()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -2816,9 +2540,7 @@ void securityMenu()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 		
@@ -2884,17 +2606,7 @@ void securityMenu()
 			}
 		}
 		
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -2922,7 +2634,7 @@ void securityMenu()
 			oslDeleteImage(securitybg);
 			oslDeleteImage(offswitch);	
 			oslDeleteImage(onswitch);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -2931,11 +2643,9 @@ void securityMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -2978,9 +2688,7 @@ void wifiMenu()
 		{
 			LowMemExit();
 	
-			oslStartDrawing();
-		
-			oslClearScreen(RGB(0, 0, 0));
+			initDrawing();
 		
 			controls();	
 
@@ -3025,17 +2733,6 @@ void wifiMenu()
 		
 			oslDrawImage(cursor);
 		
-			if (osl_keys->pressed.square)
-			{
-				powermenu();
-			}
-		
-			if (osl_keys->pressed.L)
-			{
-				oslPlaySound(Lock, 1);  
-				lockscreen();
-			}
-		
 			if (osl_keys->pressed.circle)
 			{	
 				oslDeleteImage(wifibg);	
@@ -3059,7 +2756,7 @@ void wifiMenu()
 				oslDeleteImage(wifibg);	
 				oslDeleteImage(offswitch);	
 				oslDeleteImage(onswitch);
-				home();
+				homeMenu();
 			}
 
 			if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -3068,7 +2765,7 @@ void wifiMenu()
 				multitask();
 			}
 		
-			captureScreenshot();
+			coreNavigation(0);
 		}
 	oslEndDrawing(); 
     oslEndFrame(); 
@@ -3101,9 +2798,7 @@ void developerMenu()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 
@@ -3219,23 +2914,7 @@ void developerMenu()
 			}
 		}
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -3263,7 +2942,7 @@ void developerMenu()
 			oslDeleteImage(highlight);
 			oslDeleteImage(offswitch);	
 			oslDeleteImage(onswitch);
-			home();
+			homeMenu();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -3272,11 +2951,9 @@ void developerMenu()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}	
 }
 
@@ -3368,9 +3045,7 @@ void settingsMenu()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
+		initDrawing();
 		
 		controls();	
 
@@ -3390,28 +3065,12 @@ void settingsMenu()
 		
 		settingsHighlight();
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{	
 			settingsUnloadAssets();
-			appdrawer();
+			appDrawer();
 		}
 		
 		if (cursor->x >= 3 && cursor->x <= 219 && cursor->y >= 98 && cursor->y <= 154 && osl_keys->pressed.cross)
@@ -3460,14 +3119,14 @@ void settingsMenu()
 		{
 			oslPlaySound(KeypressStandard, 1);  
 			settingsUnloadAssets();
-			appdrawer();
+			appDrawer();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 76 && cursor->y <= 155) && (osl_keys->pressed.cross))
 		{
 			oslPlaySound(KeypressStandard, 1);  
 			settingsUnloadAssets();
-			home();
+			homeMenu();
 		}
 		
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -3476,10 +3135,8 @@ void settingsMenu()
 			multitask();
 		}
 
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+		termDrawing();	
 	}
 }

@@ -32,6 +32,9 @@
 
 #define DATE_AS_INT (((YEAR - 2000) * 12 + MONTH) * 31 + DAY)
 
+#define VER_MAJOR 6
+#define VER_MINOR 1
+
 //declaration
 OSL_IMAGE *settingsbg, *cursor, *usbdebug, *aboutbg, *offswitch, *onswitch, *displaybg, *performancebg, *wifibg, *developerbg, *about, *highlight, 
 		  *developeroptions, *themes, *wifi, *processorbg, *cpuset, *check, *updatesbg, *performance, *recoverybg, *security, *securitybg, *music,
@@ -83,6 +86,7 @@ float fontSize;
 int passProtect;
 int DARK;
 int updateReady;
+int totalRam;
 
 void switchStatus(int n);
 void aboutMenu();

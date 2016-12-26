@@ -139,9 +139,7 @@ void MP3Play(char * path)
 	{
 		LowMemExit();
 		
-		oslStartDrawing();		
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 
 		oslReadKeys();
 		
@@ -179,9 +177,7 @@ void MP3Play(char * path)
 		
 		//oslDrawStringf(397, 155, "%d", MP3ME_GetLength());
 		
-		battery(370,2,1);
-		digitaltime(420,4,0,hrTime);
-		volumeController();
+		displayMenuBar(3);
 		
 		if(osl_keys->pressed.select) 
 		{
@@ -228,22 +224,9 @@ void MP3Play(char * path)
 			return;
 		}
 		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		coreNavigation(0);
 		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-		}
-	
-		captureScreenshot();
-		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}
 }
 
@@ -268,9 +251,7 @@ int soundPlay(char * path)
 	{
 		LowMemExit();
 		
-		oslStartDrawing();		
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 
 		oslReadKeys();
 		
@@ -287,9 +268,7 @@ int soundPlay(char * path)
 		strcpy(playingStatus, folderIcons[current].name);
 		oslDrawStringf(15, 28, "%.44s", folderIcons[current].name);
 		
-		battery(370,2,1);
-		digitaltime(420,4,0,hrTime);
-		volumeController();
+		displayMenuBar(3);
 		
 		if(osl_keys->pressed.select) 
 		{
@@ -319,28 +298,17 @@ int soundPlay(char * path)
 			return 1;
 		}
 		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		coreNavigation(0);
 		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-		}
+		termDrawing();
+	}
 	
-		captureScreenshot();
-		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
-		}
 	oslStopSound(sound);
 	oslDeleteSound(sound);
 	oslDeleteImage(nowplaying);
 	oslDeleteImage(mp3Play);
 	oslDeleteImage(mp3Pause);
+	
 	return 0;
 }
 
@@ -358,9 +326,7 @@ void musicSettings()
 	{		
 		LowMemExit();
 		
-		oslStartDrawing();		
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		controls();	
 		
@@ -408,9 +374,7 @@ void musicSettings()
 			}
 		}
 		
-		battery(370, 2, 1);
-		digitaltime(420, 4, 0, hrTime);
-		volumeController();
+		displayMenuBar(3);
 		
 		oslDrawImage(cursor);
 		
@@ -423,22 +387,9 @@ void musicSettings()
 			mp3player();
 		}
 		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		coreNavigation(0);
 		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-		}
-	
-		captureScreenshot();
-		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}
 }
 
@@ -458,7 +409,7 @@ void mp3FileDisplay()
 	oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 	
 	// Displays the directories, while also incorporating the scrolling
-	for(i=curScroll;i<MAX_MP3_DISPLAY+curScroll;i++) 
+	for(i = curScroll; i < MAX_MP3_DISPLAY + curScroll; i++) 
 	{
 		// Handles the cursor and the display to not move past the MAX_MP3_DISPLAY.
 		// For moving down
@@ -483,8 +434,7 @@ void mp3FileDisplay()
 		}
 	}
 
-	battery(370,2,1);
-	digitaltime(420,4,0,hrTime);
+	displayMenuBar(4);
 }
 
 void mp3Controls() //Controls
@@ -573,16 +523,7 @@ void mp3Controls() //Controls
 	if (osl_keys->pressed.start)
 		musicSettings();
 	
-	if (osl_keys->pressed.square)
-		powermenu();
-		
-	if (osl_keys->pressed.L)
-	{
-		oslPlaySound(Lock, 1);  
-		lockscreen();
-    }
-	
-	captureScreenshot();
+	coreNavigation(0);
 	
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
@@ -612,9 +553,8 @@ char * mp3Browse(const char * path)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
-		oslClearScreen(RGB(0,0,0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 
@@ -624,9 +564,7 @@ char * mp3Browse(const char * path)
 		if (strlen(returnMe) > 4) 
 			break;	
 			
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();	
 	}
 	return returnMe;
 }
@@ -642,14 +580,11 @@ int mp3View(char * browseDirectory)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
-		oslClearScreen(RGB(0,0,0));	
+		initDrawing();	
 		
 		centerText(480/2, 272/2, Directory, 50);	// Shows the path that 'Directory' was supposed to receive from mp3Browse();
 	 
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}	
 	return 0;
 }
@@ -683,9 +618,9 @@ int mp3player()
 		selector_image_x = selector_x+(mp3XSelection*MenuSelection); //Determines where the selection image is drawn for each selection
         selector_image_y = selector_y+(mp3YSelection*MenuSelection); //Determines where the selection image is drawn for each selection
 	
-		oslStartDrawing();
+		initDrawing();
+		
 		oslReadKeys();
-		oslClearScreen(RGB(0,0,0));	
 		
 		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 		
@@ -704,9 +639,7 @@ int mp3player()
 			oslDrawStringf(20, 252, "%.50s", artistStatus);
 		}
 		
-		battery(370, 2, 1);
-		digitaltime(420, 4, 0,hrTime);
-		volumeController();
+		displayMenuBar(3);
 		
         if (osl_keys->pressed.down) 
 			MenuSelection++; //Moves the selector down
@@ -744,26 +677,15 @@ int mp3player()
 		{
 			oslDeleteImage(mp3bg);
 			oslDeleteImage(mp3_select);
-			appdrawer();
+			appDrawer();
 		}
 		
 		if (osl_keys->pressed.start)
 			musicSettings();
 		
-		if (osl_keys->pressed.square)
-			powermenu();
+		coreNavigation(0);
 		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-		}
-	
-		captureScreenshot();
-		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}	
 	return selection;
 }

@@ -21,34 +21,19 @@ int multitask()
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
 		controls();
 		
-		oslDrawImageXY(background, 0,0);
-		oslDrawImageXY(multi_task, 0,10);
+		oslDrawImageXY(background, 0, 0);
+		oslDrawImageXY(multi_task, 0, 10);
 
 		oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, 0);
-		oslDrawString(130,136,"Your recent screens appear here");
+		oslDrawString(130, 136, "Your recent screens appear here");
 		
-		navbarButtons(0);
-		battery(370,2,1);
-		digitaltime(420,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
+		displayMenuBar(2);
 		
 		oslDrawImage(cursor);
-		
-		if (osl_pad.held.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_pad.held.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
 		
 		if (osl_pad.held.circle)
 		{	
@@ -67,7 +52,7 @@ int multitask()
 		{	
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(multi_task);
-			home();
+			homeMenu();
 		}
 
 		if (cursor->x >= 276 && cursor->x <= 340 && cursor->y >= 237 && cursor->y <= 271 && osl_pad.held.cross)
@@ -77,11 +62,9 @@ int multitask()
 			multitask();
 		}
 		
-		captureScreenshot();	
+		coreNavigation(0);
 	
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 	return 0;
 }

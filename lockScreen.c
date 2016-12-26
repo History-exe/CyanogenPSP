@@ -44,8 +44,7 @@ int lockscreen()
 	{	
 		LowMemExit();
 	
-		oslStartDrawing();
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		controls();	
 
@@ -96,8 +95,7 @@ int lockscreen()
 
 		oslIntraFontSetStyle(Roboto, 0.5f, RGBA(fontColorTime.r, fontColorTime.g, fontColorTime.b, 255), 0, 0);
 		
-		battery(370,2,1);
-		digitaltime(420, 4, 0, hrTime);
+		displayMenuBar(3);
 		
 		if (passProtect != 1)
 			androidQuickSettings();
@@ -120,7 +118,7 @@ int lockscreen()
 					{
 						oslPlaySound(Unlock, 1); 
 						oslDeleteImage(lockscreenBg);
-						home();
+						homeMenu();
 					}
 					else if ((strcmp(tempMessage, passwordData) != 0) || (oslOskGetResult() == OSL_OSK_CANCEL))
 					{
@@ -147,7 +145,7 @@ int lockscreen()
 					{
 						oslPlaySound(Unlock, 1); 
 						oslDeleteImage(lockscreenBg);
-						home();
+						homeMenu();
 					}
 					else if ((strcmp(tempPin, pinData) != 0) || (oslOskGetResult() == OSL_OSK_CANCEL))
 					{
@@ -166,16 +164,14 @@ int lockscreen()
 				{
 					oslPlaySound(Unlock, 1); 
 					oslDeleteImage(lockscreenBg);
-					home();
+					homeMenu();
 				}
 			}
 		}
 		
 		captureScreenshot();
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 	return 0;
 }

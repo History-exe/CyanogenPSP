@@ -195,9 +195,7 @@ int cyanogenPSPTimer()
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		controls();	
 		
@@ -221,29 +219,13 @@ int cyanogenPSPTimer()
 
         oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, 0);
 
-		digitaltime(381,4,0,hrTime);
-		battery(330,2,0);
-		navbarButtons(2);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-
-		if (osl_keys->pressed.square)
-		{	
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
 			oslDeleteImage(timerBg);
 			oslDeleteImage(timeBg);
-			appdrawer();
+			appDrawer();
 		}
 		
 		if (cursor->x >= 108 && cursor->x <= 140  && cursor->y >= 25 && cursor->y <= 54 && osl_keys->pressed.cross)
@@ -265,7 +247,7 @@ int cyanogenPSPTimer()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(timerBg);
 			oslDeleteImage(timeBg);
-			appdrawer();
+			appDrawer();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 76 && cursor->y <= 155) && (osl_keys->pressed.cross))
@@ -273,14 +255,12 @@ int cyanogenPSPTimer()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(timerBg);
 			oslDeleteImage(timeBg);
-			home();
+			homeMenu();
 		}
 
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 	return 0;
 }
@@ -307,9 +287,7 @@ int cyanogenPSPStopWatch()
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		controls();	
 		
@@ -350,12 +328,7 @@ int cyanogenPSPStopWatch()
 
         oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, 0);
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
+		displayMenuBar(2);
 		
 		if (cursor->x >= 196 && cursor->x <= 246  && cursor->y >= 208 && cursor->y <= 258 && timerStart == 0 && osl_keys->pressed.cross)
 		{
@@ -377,17 +350,6 @@ int cyanogenPSPStopWatch()
 			oslPlaySound(KeypressStandard, 1);  
 			resetTimer();
 		}
-		
-		if (osl_keys->pressed.square)
-		{	
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
 				
 		if (osl_keys->pressed.circle)
 		{
@@ -396,7 +358,7 @@ int cyanogenPSPStopWatch()
 			oslDeleteImage(reset);
 			oslDeleteImage(timerPlay);
 			oslDeleteImage(timerPause);
-			appdrawer();
+			appDrawer();
 		}
 		
 		if (cursor->x >= 108 && cursor->x <= 140  && cursor->y >= 25 && cursor->y <= 54 && osl_keys->pressed.cross)
@@ -424,7 +386,7 @@ int cyanogenPSPStopWatch()
 			oslDeleteImage(reset);
 			oslDeleteImage(timerPlay);
 			oslDeleteImage(timerPause);
-			appdrawer();
+			appDrawer();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 76 && cursor->y <= 155) && (osl_keys->pressed.cross))
@@ -435,14 +397,12 @@ int cyanogenPSPStopWatch()
 			oslDeleteImage(reset);
 			oslDeleteImage(timerPlay);
 			oslDeleteImage(timerPause);
-			home();
+			homeMenu();
 		}
 
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();	
 	}
 	return 0;
 }
@@ -492,9 +452,7 @@ int cyanogenPSPClock()
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		controls();	
 		
@@ -508,29 +466,13 @@ int cyanogenPSPClock()
 		getDayOfWeek(190,156,2);
 		getMonthOfYear(265,156);
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-
-		if (osl_keys->pressed.square)
-		{	
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
 			oslDeleteImage(clockBg);
 			oslDeleteImage(timeBg);
-			appdrawer();
+			appDrawer();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -544,7 +486,7 @@ int cyanogenPSPClock()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(clockBg);
 			oslDeleteImage(timeBg);
-			appdrawer();
+			appDrawer();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 76 && cursor->y <= 155) && (osl_keys->pressed.cross))
@@ -552,7 +494,7 @@ int cyanogenPSPClock()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(clockBg);
 			oslDeleteImage(timeBg);
-			home();
+			homeMenu();
 		}
 		
 		/* PSP timer
@@ -573,11 +515,9 @@ int cyanogenPSPClock()
 			cyanogenPSPStopWatch();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 	return 0;
 }

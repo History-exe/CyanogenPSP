@@ -27,7 +27,7 @@ char messagesPath[250];
 char settingsPath[250];
 char umdPath[250];
 
-void appdrawer_loadImages();
-void appdrawer_deleteImages();
+void appDrawerLoadRes();
+void appDrawerUnloadRes();
 void appHighlight(int n);
-int appdrawer();
+int appDrawer();

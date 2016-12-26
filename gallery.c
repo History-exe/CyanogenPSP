@@ -16,25 +16,24 @@ void galleryDisplay()
 	oslDrawImageXY(gallerybg, 0, 0);
 	oslDrawImageXY(gallerySelection, 15, (current - curScroll) * 56 + GALLERY_CURR_DISPLAY_Y);
 	
-	battery(370, 2, 1);
-	digitaltime(420, 4, 0, hrTime);
+	displayMenuBar(4);
 	
 	// Displays the directories, while also incorporating the scrolling
-	for(i=curScroll; i < MAX_GALLERY_DISPLAY + curScroll; i++) 
+	for(i = curScroll; i < MAX_GALLERY_DISPLAY + curScroll; i++) 
 	{
 		// Handles the cursor and the display to not move past the MAX_GALLERY_DISPLAY.
 		// For moving down
 		//if ((folderIcons[i].active == 0) && (current >= i-1)) {
 	
-		if ((folderIcons[i].active == 0) && (current >= i-1)) 
+		if ((folderIcons[i].active == 0) && (current >= i - 1)) 
 		{
-			current = i-1;
+			current = i - 1;
 			break;
 		}
 		// For moving up
-		if (current <= curScroll-1) 
+		if (current <= curScroll - 1) 
 		{
-			current = curScroll-1;
+			current = curScroll - 1;
 			break;
 		}
 
@@ -44,7 +43,7 @@ void galleryDisplay()
 		if (folderIcons[i].active == 1) 
 		{	
 			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
-			oslDrawStringf(GALLERY_DISPLAY_X, (i - curScroll)*55+GALLERY_DISPLAY_Y, "%.52s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
+			oslDrawStringf(GALLERY_DISPLAY_X, (i - curScroll) * 55 + GALLERY_DISPLAY_Y, "%.52s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it (for Y, just change the +10)		
 		}
 	}
 }
@@ -53,46 +52,45 @@ int changeWallpaper()
 {
 	FILE * backgroundPathTXT;
 	
-	wallpaper = oslLoadImageFilePNG("system/app/gallery/wallpaper.png", OSL_IN_RAM, OSL_PF_8888);
+	wallpaper = oslLoadImageFilePNG("system/debug/debug.png", OSL_IN_RAM, OSL_PF_8888);
 	
 	if (!wallpaper)
 		debugDisplay();
 
-	while (!osl_quit) {
-	
-	oslStartDrawing();
+	while (!osl_quit) 
+	{
+		oslStartDrawing();
 
-	controls();	
+		controls();	
 	
-	oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+		oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
 	
-	oslDrawImageXY(wallpaper, 65, 67);
-	oslDrawStringf(110,95,"Set picture as wallpaper?");
-	oslDrawStringf(110,115,"Press (X) to accept or (O) to cancel.");
+		oslDrawImageXY(wallpaper, 65, 67);
+		oslDrawStringf(110,95,"Set picture as wallpaper?");
+		oslDrawStringf(110,115,"Press (X) to accept or (O) to cancel.");
 	
-	if (osl_keys->pressed.cross) 
-	{
-		oslDeleteImage(background);
-		oslPlaySound(KeypressStandard, 1);  
-		backgroundPathTXT = fopen("system/settings/background.bin", "w");
-		fprintf(backgroundPathTXT,"%s", folderIcons[current].filePath);
-		fclose(backgroundPathTXT);
-		strcpy(backgroundPath, setFileDefaultsChar("system/settings/background.bin", "system/framework/framework-res/res/background.png", backgroundPath));
-		background = oslLoadImageFile(backgroundPath, OSL_IN_RAM, OSL_PF_8888);
-		oslDeleteImage(wallpaper);
-		return 1;
-	}
+		if (osl_keys->pressed.cross) 
+		{
+			oslDeleteImage(background);
+			oslPlaySound(KeypressStandard, 1);  
+			backgroundPathTXT = fopen("system/settings/background.bin", "w");
+			fprintf(backgroundPathTXT,"%s", folderIcons[current].filePath);
+			fclose(backgroundPathTXT);
+			strcpy(backgroundPath, setFileDefaultsChar("system/settings/background.bin", "system/framework/framework-res/res/background.png", backgroundPath));
+			background = oslLoadImageFile(backgroundPath, OSL_IN_RAM, OSL_PF_8888);
+			oslDeleteImage(wallpaper);
+			return 1;
+		}
 		
-	if (osl_keys->pressed.circle) 
-	{
-		oslDeleteImage(wallpaper);
-		return 0;
-	}
+		if (osl_keys->pressed.circle) 
+		{
+			oslDeleteImage(wallpaper);
+			return 0;
+		}
 		
-	oslEndDrawing(); 
-	oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
+	
 	return 0;
 }
 
@@ -117,9 +115,7 @@ int showImage(char * path, int n)
 	while (!osl_quit) 
 	{
 		oslReadKeys();
-		oslStartDrawing();	
-		
-		oslClearScreen(RGB(255,255,255));
+		initDrawing();
 		oslDrawImage(image);//draw image
 		oslDrawImageXY(galleryBar,0,0);
 		oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, INTRAFONT_ALIGN_LEFT);
@@ -136,9 +132,7 @@ int showImage(char * path, int n)
 		
 		volumeController();
 		
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 		
 		if (experimentalF == 1)
 		{
@@ -281,18 +275,7 @@ void galleryControls() //Controls
 		}
 	}
 	
-	if (osl_keys->pressed.square)
-	{
-		powermenu();
-	}
-		
-	if (osl_keys->pressed.L)
-	{
-		oslPlaySound(Lock, 1);  
-		lockscreen();
-    }
-	
-	captureScreenshot();
+	coreNavigation(0);
 	
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
@@ -322,9 +305,8 @@ char * galleryBrowse(const char * path)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
-		oslClearScreen(RGB(0,0,0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 		galleryDisplay();
@@ -333,9 +315,7 @@ char * galleryBrowse(const char * path)
 		if (strlen(returnMe) > 4) 
 			break;
 		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}
 	return returnMe;
 }
@@ -359,14 +339,11 @@ int galleryView(char * browseDirectory)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
-		oslClearScreen(RGB(0,0,0));	
+		initDrawing();
 		
 		centerText(480/2, 272/2, Directory, 50);	// Shows the path that 'Directory' was supposed to receive from mp3Browse();
 	 
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}	
 	return 0;
 }
@@ -402,9 +379,10 @@ int galleryApp()
 	
 		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 	
-		oslStartDrawing();
+		initDrawing();
+		
 		oslReadKeys();
-		oslClearScreen(RGB(0, 0, 0));	
+		
 		oslDrawImageXY(gallerybg, 0, 0);
 		oslDrawImageXY(gallerySelection, selector_image_x, selector_image_y);
 		
@@ -412,9 +390,7 @@ int galleryApp()
 		oslDrawStringf(25, 145, "PSP/PHOTO");
 		oslDrawStringf(25, 201, "PSP/GAME/CyanogenPSP/screenshots");
 		
-		battery(370, 2, 1);
-		digitaltime(420, 4, 0,hrTime);
-		volumeController();
+		displayMenuBar(3);
         
         if (osl_keys->pressed.down) 
 			MenuSelection++; //Moves the selector down
@@ -452,25 +428,12 @@ int galleryApp()
 		if (osl_keys->pressed.circle)
 		{
 			galleryUnloadAssets();
-			appdrawer();
+			appDrawer();
 		}
 		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		coreNavigation(0);
 		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-		}
-	
-		captureScreenshot();
-		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}	
 	return selection;
 }

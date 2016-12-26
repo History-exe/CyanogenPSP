@@ -110,6 +110,7 @@ void fZipControls()
 		unloadRecoveryMenuAssets();
 		mainRecoveryMenu();
 	}
+	
 	timer++;
 	
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
@@ -138,9 +139,8 @@ char * fZipBrowse(const char * path)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
-		oslClearScreen(RGB(0,0,0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 		fZipDisplay();
@@ -150,9 +150,7 @@ char * fZipBrowse(const char * path)
 		if (strlen(returnMe) > 4) 
 			break;
 			
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
 	return returnMe;
 }
@@ -170,15 +168,11 @@ void displayFlashableZips(char * browseDirectory)
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		centerText(480/2, 272/2, browseDirectory, 50);
 		
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();	
 	}
 }
 
@@ -199,11 +193,9 @@ void ShowPage5()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();	
+		initDrawing();
 		
 		oslReadKeys();
-	
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 		
@@ -241,9 +233,8 @@ void ShowPage5()
 			oslDeleteImage(recoverybg);
 			mainRecoveryMenu();
 		}
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		
+		termDrawing();
 	}
 }
 
@@ -257,11 +248,9 @@ void ShowPage4()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();	
+		initDrawing();
 		
 		oslReadKeys();
-	
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 		
@@ -299,9 +288,8 @@ void ShowPage4()
 			oslDeleteImage(recoverybg);
 			mainRecoveryMenu();
 		}
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		
+		termDrawing();
 	}
 }
 
@@ -338,11 +326,9 @@ void ShowPage3()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();	
+		initDrawing();
 		
 		oslReadKeys();
-	
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 	
@@ -435,9 +421,8 @@ void ShowPage3()
 			oslDeleteImage(recoverybg);
 			mainRecoveryMenu();
 		}
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		
+		termDrawing();
 	}
 }
 
@@ -452,11 +437,9 @@ void ShowPage2()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();	
+		initDrawing();
 		
 		oslReadKeys();
-		
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 	
@@ -506,9 +489,7 @@ void ShowPage2()
 			mainRecoveryMenu();
 		}
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 }
 
@@ -533,11 +514,9 @@ void ShowPage1()
 	{
 		LowMemExit();
 
-		oslStartDrawing();	
+		initDrawing();
 		
 		oslReadKeys();
-		
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 	
@@ -578,9 +557,7 @@ void ShowPage1()
 			mainRecoveryMenu();
 		}
 	   
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 }
 
@@ -592,11 +569,9 @@ void ShowVersionTxt()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();	
+		initDrawing();
 	
 		oslReadKeys();
-	
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 	
@@ -616,9 +591,7 @@ void ShowVersionTxt()
 		    mainRecoveryMenu();
 		}
 		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 }
 
@@ -645,11 +618,9 @@ int ConfigurationMenu()
 		selector_image_x = selector_x+(selector_xDistance*MenuSelection); //Determines where the selection image is drawn for each selection
         selector_image_y = selector_y+(selector_yDistance*MenuSelection); //Determines where the selection image is drawn for each selection
 
-		oslStartDrawing();	
+		initDrawing();	
 	
 		oslReadKeys();
-		
-		oslClearScreen(RGB(0,0,0));
 			
 		oslDrawImageXY(recoverybg, 0, 0);
 		oslDrawImageXY(Selector, selector_image_x, selector_image_y);
@@ -700,10 +671,9 @@ int ConfigurationMenu()
 		{
 			unloadRecoveryMenuAssets();
 		    mainRecoveryMenu();
-		}	
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		}
+		
+		termDrawing();
 	}
 	return selection;
 }
@@ -732,11 +702,9 @@ int ShowAdvancedCnfMenu()
 		selector_image_x = selector_x+(selector_xDistance*MenuSelection); //Determines where the selection image is drawn for each selection
         selector_image_y = selector_y+(selector_yDistance*MenuSelection); //Determines where the selection image is drawn for each selection
 		
-		oslStartDrawing();	
+		initDrawing();
 		
 		oslReadKeys();
-		
-		oslClearScreen(RGB(0,0,0));
 			
 		oslDrawImageXY(recoverybg, 0, 0);
 		oslDrawImageXY(Selector, selector_image_x, selector_image_y);
@@ -800,9 +768,8 @@ int ShowAdvancedCnfMenu()
 			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
 		}		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		
+		termDrawing();
 	}
 	return selection;
 }
@@ -830,11 +797,9 @@ int ShowCnfMenu()
 		selector_image_x = selector_x+(selector_xDistance*MenuSelection); //Determines where the selection image is drawn for each selection
         selector_image_y = selector_y+(selector_yDistance*MenuSelection); //Determines where the selection image is drawn for each selection
   
-		oslStartDrawing();	
+		initDrawing();
 		
 		oslReadKeys();
-	
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 		oslDrawImageXY(Selector, selector_image_x, selector_image_y);
@@ -975,10 +940,9 @@ int ShowCnfMenu()
 		{
 			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
-		}			
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		}	
+		
+		termDrawing();
 	}
 	return selection;
 }
@@ -1004,11 +968,9 @@ int ShowSystemMenu()
 		selector_image_x = selector_x+(selector_xDistance*MenuSelection); //Determines where the selection image is drawn for each selection
         selector_image_y = selector_y+(selector_yDistance*MenuSelection); //Determines where the selection image is drawn for each selection
 		
-		oslStartDrawing();	
+		initDrawing();
 		
 		oslReadKeys();
-	
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 		oslDrawImageXY(Selector, selector_image_x, selector_image_y);
@@ -1082,9 +1044,8 @@ int ShowSystemMenu()
 			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
 		}		
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		
+		termDrawing();
 	}
 	return selection;
 }
@@ -1113,11 +1074,9 @@ int ShowBatteryMenu()
 		selector_image_x = selector_x+(selector_xDistance*MenuSelection); //Determines where the selection image is drawn for each selection
         selector_image_y = selector_y+(selector_yDistance*MenuSelection); //Determines where the selection image is drawn for each selection
 
-		oslStartDrawing();	
+		initDrawing();	
 		
 		oslReadKeys();
-	
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 		oslDrawImageXY(Selector, selector_image_x, selector_image_y);
@@ -1206,9 +1165,8 @@ int ShowBatteryMenu()
 			unloadRecoveryMenuAssets();
 		    ConfigurationMenu();
 		}	
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		
+		termDrawing();
 	}
 	return selection;
 }
@@ -1247,11 +1205,9 @@ int mainRecoveryMenu()
 		selector_image_x = selector_x+(selector_xDistance*MenuSelection); //Determines where the selection image is drawn for each selection
         selector_image_y = selector_y+(selector_yDistance*MenuSelection); //Determines where the selection image is drawn for each selection
   
-		oslStartDrawing();	
+		initDrawing();	
 
 		oslReadKeys();
-		
-		oslClearScreen(RGB(0,0,0));
 		
 		oslDrawImageXY(recoverybg, 0, 0);
 		oslDrawImageXY(Selector, selector_image_x, selector_image_y);
@@ -1314,7 +1270,7 @@ int mainRecoveryMenu()
 			oslDeleteFont(roboto);
 			oslSyncFrame();
 			sceKernelDelayThread(3*1000000);
-			home();
+			homeMenu();
 		}
 		
 		else if (MenuSelection == 7 && osl_keys->pressed.cross)
@@ -1338,9 +1294,7 @@ int mainRecoveryMenu()
 			scePowerRequestColdReset(50000);
 		}
 		
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
 	return selection;
 }

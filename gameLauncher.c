@@ -166,8 +166,7 @@ void gameDisplay()
 	oslDrawImageXY(gamebg, 0, 0);
 	oslDrawImageXY(gameSelection,-2,(current - curScroll)*63+GAME_CURR_DISPLAY_Y);
 
-	battery(370,2,1);
-	digitaltime(420,4,0,hrTime);
+	displayMenuBar(4);
 
 	/*if (IsNextDir())
 	{
@@ -207,20 +206,20 @@ void gameDisplay()
 	}*/
 
 	// Displays the directories, while also incorporating the scrolling
-	for(i=curScroll;i<MAX_GAME_DISPLAY+curScroll;i++) 
+	for(i = curScroll; i < MAX_GAME_DISPLAY + curScroll; i++) 
 	{
 		// Handles the cursor and the display to not move past the MAX_GAME_DISPLAY.
 		// For moving down
 		//if ((folderIcons[i].active == 0) && (current >= i-1)) {
 	
-		if ((folderIcons[i].active == 0) && (current >= i-1)) 
+		if ((folderIcons[i].active == 0) && (current >= i - 1)) 
 		{
-			current = i-1;
+			current = i - 1;
 			break;
 		}
 		// For moving up
-		if (current <= curScroll-1) {
-			current = curScroll-1;
+		if (current <= curScroll - 1) {
+			current = curScroll - 1;
 			break;
 		}                    
 			
@@ -228,7 +227,7 @@ void gameDisplay()
 		if (folderIcons[i].active == 1) 
 		{
 			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
-			oslDrawStringf(GAME_DISPLAY_X, (i - curScroll)*63+GAME_DISPLAY_Y, "%.41s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it
+			oslDrawStringf(GAME_DISPLAY_X, (i - curScroll) * 63+ GAME_DISPLAY_Y, "%.41s", folderIcons[i].name);	// change the X & Y value accordingly if you want to move it
 		}
 	}
 }
@@ -374,7 +373,7 @@ void gameControls(int n) //Controls
 	{	
 		if((strcmp("ms0:/ISO", curDir)==0) || (strcmp("ms0:/PSP/GAME", curDir)==0) || (strcmp("ms0:/", curDir)==0))
 		{
-			gameUnloadAssets();
+			gameLauncherUnloadRes();
 			gameApp();
 		}
 		else if((strcmp("ms0:/PSP/GAME/", curDir)!=0)) 
@@ -387,18 +386,7 @@ void gameControls(int n) //Controls
 		}	
 	}
 	
-	if (osl_keys->pressed.square)
-	{
-		powermenu();
-	}
-		
-	if (osl_keys->pressed.L)
-	{
-		oslPlaySound(Lock, 1);  
-		lockscreen();
-    }
-	
-	captureScreenshot();
+	coreNavigation(0);
 	
 	timer++;
 	if ((timer > 30) && (pad.Buttons & PSP_CTRL_UP))
@@ -428,9 +416,8 @@ char * gameBrowse(const char * path)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
-		oslClearScreen(RGB(0,0,0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 		gameDisplay();
@@ -439,9 +426,7 @@ char * gameBrowse(const char * path)
 		if (strlen(returnMe) > 4) 
 			break;	
 		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}
 	return returnMe;
 }
@@ -455,9 +440,8 @@ char * popsBrowse(const char * path)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
-		oslClearScreen(RGB(0,0,0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 		gameDisplay();
@@ -466,14 +450,12 @@ char * popsBrowse(const char * path)
 		if (strlen(returnMe) > 4) 
 			break;		
 		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}
 	return returnMe;
 }
 
-void gameUnloadAssets()
+void gameLauncherUnloadRes()
 {
 	oslDeleteImage(gamebg);
 	oslDeleteImage(gameSelection);
@@ -669,14 +651,11 @@ int gameView(char * browseDirectory, int type)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
-		oslClearScreen(RGB(0,0,0));	
+		initDrawing();	
 		
 		centerText(480/2, 272/2, browseDirectory, 50);	// Shows the path that 'Directory' was supposed to receive from mp3Browse();
 	 
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}	
 	return 0;
 }
@@ -731,9 +710,7 @@ int gameBoot()
 		oslClearScreen(RGB(255,255,255));
 		oslDrawImageXY(gameAnim[currentFrame], 80, -25); 
 		sceDisplayWaitVblankStart();
-		oslEndDrawing();
-		oslEndFrame();
-		oslSyncFrame();
+		termDrawing();
 		sceKernelDelayThread(10000 * 2);
    
 		currentFrame++;
@@ -782,9 +759,10 @@ int gameApp()
 		selector_image_x = selector_x+(game_xSelection*MenuSelection); //Determines where the selection image is drawn for each selection
 		selector_image_y = selector_y+(game_ySelection*MenuSelection); //Determines where the selection image is drawn for each selection
 	
-		oslStartDrawing();
+		initDrawing();
+		
 		oslReadKeys();
-		oslClearScreen(RGB(0,0,0));	
+		
 		oslDrawImageXY(gamebg, 0, 0);
 		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_LEFT);
 		oslDrawImageXY(gameSelection, selector_image_x, selector_image_y);
@@ -793,9 +771,7 @@ int gameApp()
 		oslDrawStringf(20,150,"ISO/CSO");
 		oslDrawStringf(20,213,"POPS");
 
-		battery(370,2,1);
-		digitaltime(420,4,0,hrTime);	
-		volumeController();
+		displayMenuBar(3);
         
         if (osl_keys->pressed.down) MenuSelection++; //Moves the selector down
         if (osl_keys->pressed.up) MenuSelection--; //Moves the selector up
@@ -806,44 +782,31 @@ int gameApp()
 		if (MenuSelection == 1 && osl_keys->pressed.cross)
         {		
 			oslPlaySound(KeypressStandard, 1);  
-			gameUnloadAssets();
+			gameLauncherUnloadRes();
 			gameView("ms0:/PSP/GAME", 0); //PSP Homebrew
         }
 		else if (MenuSelection == 2 && osl_keys->pressed.cross)
         {		
 			oslPlaySound(KeypressStandard, 1);  
-			gameUnloadAssets();
+			gameLauncherUnloadRes();
 			gameView("ms0:/ISO", 0); //ISO backups
         }
 		else if (MenuSelection == 3 && osl_keys->pressed.cross)
         {		
 			oslPlaySound(KeypressStandard, 1);  
-			gameUnloadAssets();
+			gameLauncherUnloadRes();
 			gameView("ms0:/PSP/GAME", 1); //POPS
         }
 
 		if (osl_keys->pressed.circle)
 		{
-			gameUnloadAssets();
-			appdrawer();
+			gameLauncherUnloadRes();
+			appDrawer();
 		}
 		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
+		coreNavigation(0);
 		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-		}
-	
-		captureScreenshot();
-		
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}	
 	return selection;
 }

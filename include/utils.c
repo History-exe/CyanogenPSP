@@ -17,12 +17,23 @@ int fade;//To hold the colour of the rectangle
 char usbStatus = 0;
 char usbModuleStatus = 0;
 
+void initDrawing()
+{
+	oslStartDrawing();
+	oslClearScreen(RGB(0,0,0));
+}
+
+void termDrawing()
+{
+	oslEndDrawing(); 
+    oslEndFrame(); 
+	oslSyncFrame();
+}
+
 void LowMemExit() //This is temporary until I come up with a solution. It exits the app, once the memory is less than/equal to 1.5 MB
 {
 	if (oslGetRamStatus().maxAvailable <= 1500000)
-	{
 		oslQuit();
-	}
 }
 
 void debugDisplay()
@@ -37,12 +48,12 @@ void debugDisplay()
 
 		controls();	
 		
-		oslIntraFontSetStyle(Roboto, 0.5f,BLACK,0,0);
+		oslIntraFontSetStyle(Roboto, 0.5f, BLACK, 0, 0);
 
 		oslDrawImageXY(debug, 65, 67);
-		oslDrawStringf(110,95,"Unfortunately some files required by");
-		oslDrawStringf(110,110,"the program are missing. The program");
-		oslDrawStringf(110,125,"has stopped, press (X) to exit to XMB.");
+		oslDrawStringf(110, 95, "Unfortunately some files required by");
+		oslDrawStringf(110, 110, "the program are missing. The program");
+		oslDrawStringf(110, 125, "has stopped, press (X) to exit to XMB.");
 
 		if (osl_keys->pressed.cross)
 		{
@@ -50,15 +61,52 @@ void debugDisplay()
 			sceKernelExitGame();
 		}
 	
-		if (osl_pad.held.R && osl_keys->pressed.triangle) //Takes screenshot
-		{
-			screenshot();
-		}
-	
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
+}
+
+void internet() //Draws the browser
+{
+	int skip = 0;
+    int browser = 0;
+	char message[100] = "";
+	
+	oslNetInit();
+
+    while(!osl_quit)
+	{
+        browser = oslBrowserIsActive();
+		if (!skip)
+		{
+			initDrawing();
+
+            if (browser)
+			{
+                oslDrawBrowser();
+                if (oslGetBrowserStatus() == PSP_UTILITY_DIALOG_NONE)
+				{
+                    oslEndBrowser();
+					homeMenu();
+                }
+            }
+            oslEndDrawing();
+		}
+		oslEndFrame();
+		skip = oslSyncFrame();
+
+        if (!browser)
+		{
+            oslReadKeys();
+            oslBrowserInit("http://www.google.com", "/PSP/GAME/CyanogenPSP/downloads", 5 * 1024 * 1024, //Downloads will be saved into this directory
+                                         PSP_UTILITY_HTMLVIEWER_DISPLAYMODE_SMART_FIT,
+                                         PSP_UTILITY_HTMLVIEWER_DISABLE_STARTUP_LIMITS,
+                                         PSP_UTILITY_HTMLVIEWER_INTERFACEMODE_FULL,
+                                         PSP_UTILITY_HTMLVIEWER_CONNECTMODE_MANUAL_ALL);
+			memset(message, 0, sizeof(message));
+
+        }
+    }
+	oslNetTerm();
 }
 
 int getCpuClock()
@@ -158,14 +206,6 @@ char * setFileDefaultsChar(char path[], char data[], char var[])
 	fclose(temp);
 	
 	return var;
-}
-
-void removeUpdateZip()
-{
-	if (fileExists("ms0:/PSP/GAME/update.zip"))
-	{
-		sceIoRemove("ms0:/PSP/GAME/update.zip");
-	}
 }
 
 void installRequiredFiles()
@@ -375,9 +415,7 @@ void fadeOut(OSL_IMAGE* bg,int x, int y)//Name and params taken
 		fade = RGBA(0, 0, 0, transp);//Set the colour of the rectangle. Sets the alpha to what transp currently is
 		oslDrawImageXY(bg,x,y);//Draws an image in the background
 		oslDrawFillRect(0, 0, 480, 272, fade);//Draws the rectangle over the screen
-		oslEndDrawing();//Finish drawing
-		oslEndFrame();//End the current frame
-    	oslSyncFrame();//Sync everything
+		termDrawing();
 	}
 }
 void fadeIn(OSL_IMAGE* bg, int x, int y)//Name and params taken
@@ -388,9 +426,7 @@ void fadeIn(OSL_IMAGE* bg, int x, int y)//Name and params taken
 		fade = RGBA(0, 0, 0, transp);//Set the colour of the rectangle. Sets the alpha to what transp currently is
 		oslDrawImageXY(bg,x,y);//Draws an image in the background
 		oslDrawFillRect(0, 0, 480, 272, fade);//Draws the rectangle over the screen
-		oslEndDrawing();//Finish drawing
-		oslEndFrame();//End the current frame
-    	oslSyncFrame();//Sync everything
+		termDrawing();
 	}
 }
 
@@ -637,7 +673,7 @@ int netDialogUpdate(void)
 
 void netGetFile(const char *url, const char *filepath) 
 {
-	int template = sceHttpCreateTemplate("TEMA - Themes Direct Installer", 1, 1);
+	int template = sceHttpCreateTemplate("CyanogenPSP Update Client", 1, 1);
 
 	int connection = sceHttpCreateConnectionWithURL(template, url, 0);
 
@@ -645,18 +681,15 @@ void netGetFile(const char *url, const char *filepath)
 
 	sceHttpSendRequest(request, NULL, 0);
 
-	int fh = sceIoOpen(filepath, PSP_O_WRONLY | PSP_O_CREAT, 0777);
+	int file = sceIoOpen(filepath, PSP_O_WRONLY | PSP_O_CREAT, 0777);
 
 	unsigned char data[16*1024];
 	int read = 0;
 	
 	while ((read = sceHttpReadData(request, &data, sizeof(data))) > 0) 
-	{
-		sceIoWrite(fh, data, read);
-	}
+		sceIoWrite(file, data, read);
 
-	// close file
-	sceIoClose(fh);
+	sceIoClose(file);
 }
 
 int connectAPCallback(int state) //Internet stuff
@@ -666,9 +699,7 @@ int connectAPCallback(int state) //Internet stuff
     oslDrawStringf(30, 175, "Connecting to AP...");
     sprintf(buffer, "State: %i", state);
     oslDrawStringf(30, 195, buffer);
-    oslEndDrawing();
-    oslEndFrame();
-    oslSyncFrame();
+    termDrawing();
 
     return 0;
 } 
@@ -678,9 +709,7 @@ int connectToAP(int config) //Internet stuff
     oslStartDrawing();
     oslDrawImageXY(wifibg, 0, 19);
     oslDrawStringf(30, 175, "Connecting to AP...");
-    oslEndDrawing();
-    oslEndFrame();
-    oslSyncFrame();
+    termDrawing();
 
     int result = oslConnectToAP(config, 30, connectAPCallback);
     if (!result){
@@ -695,9 +724,7 @@ int connectToAP(int config) //Internet stuff
 
         sprintf(buffer, "Resolving %s", Address);
         oslDrawStringf(30, 195, buffer);
-        oslEndDrawing();
-        oslEndFrame();
-        oslSyncFrame();
+        termDrawing();
 
         result = oslResolveAddress(Address, resolvedIP);
 
@@ -709,70 +736,19 @@ int connectToAP(int config) //Internet stuff
         else
             sprintf(buffer, "Error resolving address!");
         oslDrawStringf(30, 195, buffer);
-        oslEndDrawing();
-        oslEndFrame();
-        oslSyncFrame();
+        termDrawing();
 		sceKernelDelayThread(3*1000000);
     }else{
         oslStartDrawing();
         oslDrawImageXY(wifibg, 0, 19);
         sprintf(buffer, "Error connecting to AP!");
         oslDrawStringf(30, 195, buffer);
-        oslEndDrawing();
-        oslEndFrame();
-        oslSyncFrame();
+        termDrawing();
 		sceKernelDelayThread(3*1000000);
     }
     oslDisconnectFromAP();
     return 0;
 } 
-
-void onlineUpdater()
-{
-	int skip = 0;
-    int browser = 0;
-	char message[100] = "";
-	
-	oslNetInit();
-
-    while(!osl_quit)
-	{
-        browser = oslBrowserIsActive();
-		if (!skip)
-		{
-            oslStartDrawing();
-			
-            if (browser)
-			{
-                oslDrawBrowser();
-                if (oslGetBrowserStatus() == PSP_UTILITY_DIALOG_NONE)
-				{
-                    oslEndBrowser();
-					updateReady = 1;
-					aboutMenu();
-                }
-            }
-            oslEndDrawing();
-		}
-		oslEndFrame();
-		skip = oslSyncFrame();
-
-        if (!browser)
-		{
-            oslReadKeys();
-            oslBrowserInit("http://downloads.sourceforge.net/project/cyanogenpsp/Updates/update.zip", "/PSP/GAME", 14*1024*1024,
-                                         PSP_UTILITY_HTMLVIEWER_DISPLAYMODE_SMART_FIT,
-                                         PSP_UTILITY_HTMLVIEWER_DISABLE_STARTUP_LIMITS,
-                                         PSP_UTILITY_HTMLVIEWER_INTERFACEMODE_FULL,
-                                         PSP_UTILITY_HTMLVIEWER_CONNECTMODE_MANUAL_ALL);
-			memset(message, 0, sizeof(message));
-
-        }
-		
-		captureScreenshot();
-    }
-	oslNetTerm();
-}
 
 void flashUpdate()
 {
@@ -780,35 +756,34 @@ void flashUpdate()
 	
 	if (!recoverybg)
 		debugDisplay();
+
+	oslClearScreen(RGB(0, 0, 0));
+	oslDrawImageXY(recoverybg, 0, 0);
+		
+	oslDrawStringf(10, 250, "Flashing Zip...");
+	oslSyncFrame();
+	sceKernelDelayThread(3000000);
+		
+	Zip* zip = ZipOpen("../update.zip");
+	chdir("ms0:/PSP/GAME/");
+	ZipExtract(zip, NULL);
+	ZipClose(zip);
+		
+	oslDrawStringf(10, 250, "Zip flashed successfully.");
+	oslSyncFrame();
+	sceKernelDelayThread(3 * 1000000);
 	
-	while (!osl_quit)
-	{	
-		oslStartDrawing();
-		oslClearScreen(RGB(0, 0, 0));
-		oslDrawImageXY(recoverybg, 0, 0);
-		oslDrawStringf(10, 60, "Flashing zip...");
-		if (fileExists("ms0:/PSP/GAME/update.zip"))
-		{		
-			Zip* zip = ZipOpen("../update.zip");
-			chdir("..");
-			ZipExtract(zip, NULL);
-			ZipClose(zip);
-			oslIntraFontSetStyle(Roboto, fontSize, WHITE, 0, INTRAFONT_ALIGN_LEFT);
-			oslDrawStringf(10,80,"Installed Successfully.");
-			oslDrawStringf(10,90,"Exiting..");
-			oslSyncFrame();
-			sceKernelDelayThread(2*1000000);
-			oslSyncFrame();
-			oslDrawStringf(10,50,"Enjoy :)");
-			sceKernelDelayThread(3*1000000);
-			oslDeleteImage(recoverybg);
-			sceIoRemove("ms0:/PSP/GAME/CyanogenPSP/system/build.prop");
-			sceKernelExitGame();
-		}
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();
-	}
+	oslDrawStringf(10, 250, "Rebooting..");
+	oslSyncFrame();
+	sceKernelDelayThread(3 * 1000000);
+	
+	sceKernelExitGame();
+}
+
+void removeUpdateContents()
+{
+	if (fileExists("ms0:/PSP/GAME/update.zip"))
+		sceIoRemove("ms0:/PSP/GAME/update.zip");
 }
 
 int downloadUpdate()
@@ -816,12 +791,20 @@ int downloadUpdate()
 	netInit();
 	netDialogInit();
 	
+	OSL_IMAGE * background = oslLoadImageFilePNG(keyBoardBgPath, OSL_IN_RAM | OSL_SWIZZLED, OSL_PF_8888);
+	dialog = oslLoadImageFilePNG("system/debug/debug.png", OSL_IN_RAM, OSL_PF_8888);
+	
+	if (!dialog)
+		debugDisplay();
+	
+	//int checkVer = 0, initVersion = 0;
+	
+	//initVersion = concatenate(VER_MAJOR, VER_MINOR);
+	
 	while (!osl_quit)
-	{
+	{		
 		oslStartDrawing();
-		
-		oslClearScreen(RGB(0, 0, 0));
-		
+		oslDrawImageXY(background, 0, 0);
 		oslEndDrawing(); 
 		
 		int result = netDialogUpdate();
@@ -832,29 +815,43 @@ int downloadUpdate()
 		oslSyncFrame();	
 	}
 	
-	pspDebugScreenInit();
+		while (!osl_quit) 
+		{
 	
-	pspDebugScreenSetXY(0, 2);
-	pspDebugScreenPrintf("Downloading update...");
-	
-	//download file
-	netGetFile("https://sourceforge.net/projects/cyanogenpsp/files/Updates/update.zip", "ms0:/PSP/GAME/CyanogenPSP/updates/update.zip");
-	
-	//installing file
-	pspDebugScreenSetXY(0, 4);
-	pspDebugScreenPrintf("Installing update...");
+			oslStartDrawing();
 
+			controls();	
 	
-	pspDebugScreenSetXY(0, 6);
-	pspDebugScreenPrintf("Installation done - press X to exit");
+			oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
+	
+			oslDrawImageXY(dialog, 65, 67);
+			oslDrawStringf(110, 95, "An update has been found");
+			oslDrawStringf(110, 115, "Press (X) to download or (O) to cancel.");
+			
+			if (osl_keys->pressed.cross) 
+			{
+				oslPlaySound(KeypressStandard, 1);  
+				netGetFile("http://cyanogenpsp.000webhostapp.com/updates/update.zip", "ms0:/PSP/GAME/update.zip");
+				oslDeleteImage(dialog);
+				break;
+				if (fileExists("ms0:/PSP/GAME/update.zip"))
+					flashUpdate();
+			}
+		
+			if (osl_keys->pressed.circle) 
+			{
+				oslDeleteImage(dialog);
+				break;
+			}
+		
+			termDrawing();
+		}
 	
 	while(1)
 	{
 		oslReadKeys();
-		if (osl_pad.held.cross)	
-		{
-			break;
-		}
+		if (fileExists("ms0:/PSP/GAME/update.zip"))
+			flashUpdate();
 	}
 	
 	netShutdown();
@@ -906,4 +903,12 @@ int isUSBCableConnected()
 char getPSPNickname()
 {
 	return sceUtilityGetSystemParamString(1, nickname, 25);
+}
+
+unsigned concatenate(unsigned x, unsigned y) 
+{
+    unsigned pow = 10;
+    while(y >= pow)
+        pow *= 10;
+    return x * pow + y;        
 }

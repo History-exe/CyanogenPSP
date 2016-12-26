@@ -73,7 +73,12 @@ int setupCallbacks()
 int main()
 {
 	initOSLib(); //Initializes OsLib
+	
+	OSL_MEMSTATUS ram = oslGetRamStatus();
+	totalRam = (ram.maxAvailable/1000000);//Get total RAM during bootup
+	
 	initHomeButton(sceKernelDevkitVersion());
+	
 	oslIntraFontInit(INTRAFONT_CACHE_ALL | INTRAFONT_STRING_UTF8); //Initializes OSL fonts
 
 	//Loads our audio tones
@@ -171,7 +176,7 @@ int main()
 	
 	setupCallbacks();
 	
-	removeUpdateZip(); //Delete update.zip
+	//removeUpdateContents(); //Delete update.zip
 	
 	setCpuBoot(); //Set default CPU or load pre-existing value
 	setPowerManagement(); //Set default power save settings or load pre-existing values.

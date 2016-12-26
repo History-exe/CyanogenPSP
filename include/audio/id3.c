@@ -120,16 +120,44 @@ int swapInt32BigToHost(int arg)
    return i;
 }
 
+static void utf16_to_utf8(uint16_t *src, uint8_t *dst) 
+{
+	int i;
+	for (i = 0; src[i]; i++) {
+		if ((src[i] & 0xFF80) == 0) {
+			*(dst++) = src[i] & 0xFF;
+		} else if((src[i] & 0xF800) == 0) {
+			*(dst++) = ((src[i] >> 6) & 0xFF) | 0xC0;
+			*(dst++) = (src[i] & 0x3F) | 0x80;
+		} else if((src[i] & 0xFC00) == 0xD800 && (src[i + 1] & 0xFC00) == 0xDC00) {
+			*(dst++) = (((src[i] + 64) >> 8) & 0x3) | 0xF0;
+			*(dst++) = (((src[i] >> 2) + 16) & 0x3F) | 0x80;
+			*(dst++) = ((src[i] >> 4) & 0x30) | 0x80 | ((src[i + 1] << 2) & 0xF);
+			*(dst++) = (src[i + 1] & 0x3F) | 0x80;
+			i += 1;
+		} else {
+			*(dst++) = ((src[i] >> 12) & 0xF) | 0xE0;
+			*(dst++) = ((src[i] >> 6) & 0x3F) | 0x80;
+			*(dst++) = (src[i] & 0x3F) | 0x80;
+		}
+	}
+
+	*dst = '\0';
+}
+
 //Reads tag data purging invalid characters:
-void readTagData(int fp, int tagLength, int maxTagLength, char *tagValue){
-    if (tagLength > maxTagLength)
-        tagLength = maxTagLength;
+void readTagData(int fp, int tagLength, int maxTagLength, char *tagValue)
+{
+	// TheFloW: This check corrupts the seeking offset. Thanks TheFloW
+    // if (tagLength > maxTagLength)
+    //     tagLength = maxTagLength;
 
     int i;
     int count = 0;
     unsigned short carattere16[tagLength/2+2];
+	unsigned char carattere8[128];
     unsigned char* carattere = (unsigned char*)carattere16;
-    char* utf8Tag = "";
+    char* utf8Tag;
 
     strcpy(tagValue, "");
     tagValue[0] = '\0';
@@ -138,8 +166,25 @@ void readTagData(int fp, int tagLength, int maxTagLength, char *tagValue){
     carattere[tagLength] = '\0';
     carattere[tagLength+1] = '\0';
 
-    if ( utf8Tag == NULL || !strlen(utf8Tag)) {
-        for (i=0; i<tagLength; i++){
+    // unicode tag
+    if ( carattere16[0] == 0xFEFF ) 
+	{
+        // utf8Tag = miniConvUTF16LEConv( carattere16 + 1 );
+		utf16_to_utf8(carattere16 + 1, carattere8);
+		utf8Tag = (char*)carattere8;
+    }
+    // encode to utf8
+    else 
+	{
+       /* if ( miniConvHaveDefaultSubtitleConv() )
+                utf8Tag = miniConvDefaultSubtitleConv( carattere );
+        else */
+                utf8Tag = (char*)carattere;
+    }
+    if ( utf8Tag == NULL || !strlen(utf8Tag)) 
+	{
+        for (i=0; i<tagLength; i++)
+		{
             if (carattere[i] >= 0x20 && carattere[i] <= 0xfd) //<= 0x7f
                     tagValue[count++] = carattere[i];
         }

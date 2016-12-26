@@ -14,23 +14,18 @@ void powermenu()
 	while (!osl_quit)
 	{
 		LowMemExit();
-	
-		oslStartDrawing();
+		
+		initDrawing();
 
-		controls();	
-
-		oslClearScreen(RGB(0,0,0));	
+		controls();
+		
 		oslDrawImage(background);
 		oslDrawImageXY(ic_launcher_apollo, 105, 190);
 		oslDrawImageXY(ic_launcher_browser, 276, 190);
 		oslDrawImageXY(ic_launcher_settings, 331, 190);
 		oslDrawImageXY(ic_launcher_messenger, 160, 190);
 		appDrawerIcon();
-		navbarButtons(0);
 		oslDrawImageXY(power, 100, 61);
-		
-		battery(370, 2, 1);
-		digitaltime(420, 4, 0, hrTime);
 		
 		oslIntraFontSetStyle(Roboto, 0.75f, BLACK, 0, 0);
 		oslDrawStringf(165, 100, "Power off");
@@ -67,15 +62,13 @@ void powermenu()
 			}
 		}
 		
-		oslDrawImage(cursor);
+		displayMenuBar(0);
 	
 		if (osl_keys->pressed.circle)
 			return;
 		
 		captureScreenshot();
 		
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
 }

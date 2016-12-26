@@ -44,9 +44,9 @@ typedef struct fileIcon {
 
 	int		active;
 
-	char	name[256];
-	char	filePath[256];
-	char	fileType[256];
+	char	name[255];
+	char	filePath[255];
+	char	fileType[255];
 
 	int		x;
 	int		y;
@@ -59,8 +59,8 @@ typedef struct File {
 
 	int exist;
 
-	char path[256];
-	char name[256];
+	char path[255];
+	char name[255];
 
 	int size;
 	int directory;
@@ -82,6 +82,7 @@ int curScroll;
 char curDir[512];
 int timer;
 char returnMe[512];
+
 /* Define a write buffer */
 char write_buffer[128*1024];
 char read_buffer[128*1024];

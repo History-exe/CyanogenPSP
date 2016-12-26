@@ -28,7 +28,7 @@ int bootAnimation()
 			oslDeleteImage(welcome);
 			oslDeleteImage(transbackground);	
 			lockscreen();
-			home();
+			homeMenu();
 		}
 	}
 	
@@ -51,7 +51,7 @@ int bootAnimation()
 	
 	while(!osl_quit)
 	{
-		oslStartDrawing();
+		initDrawing();
 		oslDrawImageXY(bootAnim[currentFrame], 80, -25); 
 		sceDisplayWaitVblankStart();
 		oslEndDrawing();
@@ -79,13 +79,12 @@ int bootAnimation()
 				oslDeleteImage(welcome);
 				oslDeleteImage(transbackground);	
 				lockscreen();
-				home();
+				homeMenu();
 			}
 		}
     }
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();	
+	termDrawing();	
+	
 	return 0;
 }
 
@@ -99,8 +98,8 @@ void langDisplay()
 	oslDrawStringf(20, 110, "%s", lang_welcome[language][0]);
 	
 	oslIntraFontSetStyle(Roboto, 0.5f, WHITE, 0, INTRAFONT_ALIGN_LEFT);
-	digitaltime(420,4,0,hrTime);
-	battery(370,2,1);		
+	
+	displayMenuBar(4);	
 	
 	oslDrawFillRect(60, 179, 420, 180, LITEGRAY);
 	oslDrawFillRect(60, 217, 420, 218, LITEGRAY);
@@ -154,7 +153,7 @@ void langControls()
 		oslPlaySound(KeypressStandard, 1); 
 		language = setFileDefaultsInt("system/settings/language.bin", 0, language);
 		oslDeleteImage(langSelection);
-		home();
+		homeMenu();
 	}
 	
 	captureScreenshot();
@@ -186,9 +185,8 @@ char * langBrowse(const char * path)
 	{		
 		LowMemExit();
 	
-		oslStartDrawing();
+		initDrawing();
 		
-		oslClearScreen(RGB(0,0,0));	
 		oldpad = pad;
 		sceCtrlReadBufferPositive(&pad, 1);
 		langDisplay();
@@ -198,9 +196,7 @@ char * langBrowse(const char * path)
 		if (strlen(returnMe) > 4) 
 			break;
 			
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
 	return returnMe;
 }
@@ -220,14 +216,10 @@ void displayLangSelection(char * browseDirectory)
 	{
 		LowMemExit();
 	
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		centerText(480/2, 272/2, browseDirectory, 50);
 		
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();	
 	}
 }

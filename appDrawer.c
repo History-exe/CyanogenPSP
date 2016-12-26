@@ -15,7 +15,7 @@
 #include "screenshot.h"
 #include "settingsMenu.h"
 
-void appdrawer_loadImages()
+void appDrawerLoadRes()
 {
 	if (DARK == 0)
 		backdrop = oslLoadImageFilePNG(backdropPath, OSL_IN_RAM, OSL_PF_8888);
@@ -23,16 +23,16 @@ void appdrawer_loadImages()
 		backdrop = oslLoadImageFilePNG("system/home/icons/backdropDark.png", OSL_IN_RAM, OSL_PF_8888);
 }
 
-void appdrawer_deleteImages()
+void appDrawerUnloadRes()
 {
 	oslDeleteImage(backdrop);
 }
 
-void appHighlight(int n)
+void appHighlight(int style)
 {
 	float zoomIn = 1.1, zoomOut = 1.1;
 
-	if (n == 0)
+	if (style == 0) // Home menu
 	{	
 		if (cursor->x >= 100 && cursor->x <= 154 && cursor->y >= 195 && cursor->y <= 240)
 		{
@@ -79,7 +79,7 @@ void appHighlight(int n)
 		}
 	}
 
-	else if (n == 1)
+	else if (style == 1) // App Drawer
 	{
 		if (cursor->x >= 15 && cursor->x <= 75 && cursor->y >= 25 && cursor->y <= 85)
 		{
@@ -193,7 +193,7 @@ void appHighlight(int n)
 	}
 }
 
-int appdrawer()
+int appDrawer()
 {	
 	struct appDrawerFontColor fontColor;
 	
@@ -222,10 +222,10 @@ int appdrawer()
 	int umd_x = 255;
 	int umd_text_x = 277;
 
-	//loads appdrawer icons
-	appdrawer_loadImages();
+	//load appdrawer icons
+	appDrawerLoadRes();
 	
-	if ( !backdrop)
+	if (!backdrop)
 		debugDisplay();
 
 	oslSetFont(Roboto);
@@ -234,31 +234,11 @@ int appdrawer()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
+		initDrawing();
 
 		controls();	
 		
 		oslDrawImage(background);
-		
-		if (eDesktopActivator == 1)
-		{
-			navbarButtons(1);
-			battery(370,2,3);
-			if ((cursor->y <= 16) || (cursor->y >= 226))
-			{
-				digitaltime(420,4,0,hrTime);
-			}
-			else if (cursor->y >= 16 && cursor->y <= 226)
-			{
-				digitaltime(420,-10,0,hrTime);
-			}	
-		}
-		else if (eDesktopActivator == 0)
-		{
-			navbarButtons(0);
-			battery(370,2,1);
-			digitaltime(420,4,0,hrTime);
-		}
 		
 		if (DARK == 0)
 			oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, INTRAFONT_ALIGN_CENTER);
@@ -287,32 +267,18 @@ int appdrawer()
 		oslDrawImageXY(ic_launcher_umd, umd_x, 132);
 		oslDrawStringf(umd_text_x, 185, "%s", lang_appDrawer[language][9]);
 
-		androidQuickSettings();
-		volumeController();
-		appHighlight(1);
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{ 
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
+		displayMenuBar(1);
 		
 		if (osl_keys->pressed.circle)
 		{
-			appdrawer_deleteImages();
-			home();
+			appDrawerUnloadRes();
+			homeMenu();
 		}
 		
 		if (cursor->x >= 15 && cursor->x <= 75 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1); 
-			appdrawer_deleteImages();
+			appDrawerUnloadRes();
 			internet();
 		}
 		
@@ -321,7 +287,7 @@ int appdrawer()
 			if (cursor->x >= 100 && cursor->x <= 140 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1); 
-				appdrawer_deleteImages();
+				appDrawerUnloadRes();
 				calculator();
 			}
 		}
@@ -329,28 +295,28 @@ int appdrawer()
 		if (cursor->x >= 160 && cursor->x <= 225 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1); 
-			appdrawer_deleteImages();
+			appDrawerUnloadRes();
 			cyanogenPSPClock();
 		}
 		
 		if (cursor->x >= 245 && cursor->x <= 295 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			appdrawer_deleteImages();
+			appDrawerUnloadRes();
 			cyanogenPSPFileManager();
 		}
 		
 		if (cursor->x >= 320 && cursor->x <= 370 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1); 
-			appdrawer_deleteImages();
+			appDrawerUnloadRes();
 			galleryApp();
 		}
 		
 		if (cursor->x >= 390 && cursor->x <= 450 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1); 
-			appdrawer_deleteImages();
+			appDrawerUnloadRes();
 			gameApp();
 		}
 
@@ -359,7 +325,7 @@ int appdrawer()
 			if (cursor->x >= 15 && cursor->x <= 75 && cursor->y >= 115 && cursor->y <= 180 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1); 
-				appdrawer_deleteImages();
+				appDrawerUnloadRes();
 				messenger();
 			}
 		}
@@ -367,14 +333,14 @@ int appdrawer()
 		if (cursor->x >= 100 && cursor->x <= 140 && cursor->y >= 115 && cursor->y <= 180 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1); 
-			appdrawer_deleteImages();
+			appDrawerUnloadRes();
 			mp3player();
 		}
 		
 		if (cursor->x >= 160 && cursor->x <= 225 && cursor->y >= 115 && cursor->y <= 180 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1); 
-			appdrawer_deleteImages();
+			appDrawerUnloadRes();
 			settingsMenu();
 		}
 		
@@ -387,15 +353,15 @@ int appdrawer()
 		if (cursor->x >= 137 && cursor->x <= 200 && cursor->y >= 237 && cursor->y <= 271 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1); 
-			appdrawer_deleteImages();
-			home();
+			appDrawerUnloadRes();
+			homeMenu();
 		}
 		
 		if (cursor->x >= 200 && cursor->x <= 276 && cursor->y >= 237 && cursor->y <= 271 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1); 
-			appdrawer_deleteImages();
-			home();
+			appDrawerUnloadRes();
+			homeMenu();
 		}
 		
 		if (cursor->x >= 276 && cursor->x <= 340 && cursor->y >= 237 && cursor->y <= 271 && osl_keys->pressed.cross)
@@ -404,11 +370,9 @@ int appdrawer()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 				
-		oslEndDrawing(); 
-        oslEndFrame(); 
-		oslSyncFrame();	
+		termDrawing();
 	}
 	return 0;
 }

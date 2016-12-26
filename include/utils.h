@@ -17,6 +17,8 @@
 
 #define musicPath "ms0:/MUSIC"
 
+OSL_IMAGE *dialog;
+
 char tempMessage[20];
 char tempPin[5];
 char tempData[250];
@@ -50,15 +52,17 @@ typedef struct
     SystemDevCtl *pdevinf;    
 } SystemDevCommand;
 
+void initDrawing();
+void termDrawing();
 void LowMemExit();
 void debugDisplay();
+void internet(); //Draws the browser
 int getCpuClock();
 int getBusClock();
 void pspGetModel(int x, int y);
 int setFileDefaultsInt(char *path, int value, int var);
 float setFileDefaultsFloat(char *path, float value, float var);
 char * setFileDefaultsChar(char path[], char data[], char var[]);
-void removeUpdateZip();
 void installRequiredFiles();
 void openOSK(char * message, char * initialMessage, int textLimit, int lang);
 int isEmpty(FILE *file);
@@ -76,9 +80,11 @@ int connectAPCallback(int state);
 int connectToAP(int config);
 void onlineUpdater();
 void flashUpdate();
+void removeUpdateContents();
 int downloadUpdate();
 u64 storageGetTotalSize();
 u64 storageGetFreeSize();
 int isUSBCableActivated();
 int isUSBCableConnected();
 char getPSPNickname();
+unsigned concatenate(unsigned x, unsigned y);

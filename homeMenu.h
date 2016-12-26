@@ -41,13 +41,14 @@ void set_volume(int vol);
 void increase_volume(int n);
 void decrease_volume(int n);
 
-void internet();
+void coreNavigation(int style);
+void displayMenuBar(int style);
 void controls();
 void battery(int batx, int baty, int n);
 void volumeController();
 void appDrawerIcon();
-void navbarButtons(int n);
+void navbarButtons(int style);
 void androidQuickSettings();
 void dayNightCycleWidget();
-void homeUnloadAssets();
-void home();
+void homeMenuUnloadRes();
+void homeMenu();

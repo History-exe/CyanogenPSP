@@ -46,7 +46,7 @@ void gameDisplay();
 void gameControls(int n);
 char * gameBrowse(const char * path);
 char * popsBrowse(const char * path);
-void gameUnloadAssets();
+void gameLauncherUnloadRes();
 void getIcon0(char* filename);
 OSL_IMAGE * processPBP(const char * path);
 int gameView(char * browseDirectory, int type);

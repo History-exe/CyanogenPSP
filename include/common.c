@@ -24,7 +24,7 @@ void exitToGUI()
 	sceIoRemove("ipl_update.prx");
 	sceIoRemove("batman.prx");
 	sceIoRemove("kuman.prx");
-	home();
+	homeMenu();
 }
 
 void deviceShutdown()

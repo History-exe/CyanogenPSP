@@ -50,48 +50,104 @@ void decrease_volume(int n)
 
 unsigned int getbuttons(); 
 
-void internet() //Draws the browser
+void coreNavigation(int style) //Manages the power menu, lock screen and screenshot buttons. All of these functions are core modules of the program.
 {
-	int skip = 0;
-    int browser = 0;
-	char message[100] = "";
-	
-	oslNetInit();
-
-    while(!osl_quit)
+	if (osl_keys->pressed.square)
+		powermenu();
+		
+	if (style != 1) //Special case (processsor menu and file manager) - requires L/R so I'll disable the lockscreen here.
 	{
-        browser = oslBrowserIsActive();
-		if (!skip)
-		{
-            oslStartDrawing();
-
-            if (browser)
-			{
-                oslDrawBrowser();
-                if (oslGetBrowserStatus() == PSP_UTILITY_DIALOG_NONE)
-				{
-                    oslEndBrowser();
-					home();
-                }
-            }
-            oslEndDrawing();
+		if (osl_keys->pressed.L)
+		{	
+			oslPlaySound(Lock, 1);  
+			lockscreen();
 		}
-		oslEndFrame();
-		skip = oslSyncFrame();
+	}
+		
+	captureScreenshot();
+}
 
-        if (!browser)
+void displayMenuBar(int style)
+{
+	if (style == 0)//Home menu
+	{
+		if (eDesktopActivator == 1)
 		{
-            oslReadKeys();
-            oslBrowserInit("http://www.google.com", "/PSP/GAME/CyanogenPSP/downloads", 5*1024*1024, //Downloads will be saved into this directory
-                                         PSP_UTILITY_HTMLVIEWER_DISPLAYMODE_SMART_FIT,
-                                         PSP_UTILITY_HTMLVIEWER_DISABLE_STARTUP_LIMITS,
-                                         PSP_UTILITY_HTMLVIEWER_INTERFACEMODE_FULL,
-                                         PSP_UTILITY_HTMLVIEWER_CONNECTMODE_MANUAL_ALL);
-			memset(message, 0, sizeof(message));
-
-        }
-    }
-	oslNetTerm();
+			navbarButtons(1);
+			battery(370,2,3);
+			
+			if ((cursor->y <= 16) || (cursor->y >= 226))
+				digitaltime(420,4,0,hrTime);
+			else if (cursor->y >= 16 && cursor->y <= 226)
+				digitaltime(420,-10,0,hrTime);
+		}
+		else if (eDesktopActivator == 0)
+		{
+			navbarButtons(0);
+			battery(370,2,1);
+			digitaltime(420,4,0,hrTime);
+		}
+		
+		androidQuickSettings();
+		volumeController();
+		appHighlight(0);
+		
+		oslDrawImage(cursor);
+	}
+	
+	if (style == 1)//App drawer
+	{
+		if (eDesktopActivator == 1)
+		{
+			navbarButtons(1);
+			battery(370,2,3);
+			
+			if ((cursor->y <= 16) || (cursor->y >= 226))
+				digitaltime(420,4,0,hrTime);
+			else if (cursor->y >= 16 && cursor->y <= 226)
+				digitaltime(420,-10,0,hrTime);
+		}
+		else if (eDesktopActivator == 0)
+		{
+			navbarButtons(0);
+			battery(370,2,1);
+			digitaltime(420,4,0,hrTime);
+		}
+		
+		androidQuickSettings();
+		volumeController();
+		appHighlight(1);
+		oslDrawImage(cursor);
+	}
+	
+	if (style == 2)//Standard apps with curosr
+	{
+		navbarButtons(2);
+		battery(330,2,0);
+		digitaltime(381,4,0,hrTime);
+		androidQuickSettings();
+		volumeController();
+		oslDrawImage(cursor);
+	}
+	
+	if (style == 3)//Standard apps without cursor displayed.
+	{
+		battery(370, 2, 1);
+		digitaltime(420, 4, 0,hrTime);	
+		volumeController();
+	}
+	
+	if (style == 4)//Standard apps without cursor displayed. Volume controller doesn't need to be accessed here, as it will be handled in a separate function.
+	{
+		battery(370, 2, 1);
+		digitaltime(420, 4, 0,hrTime);
+	}
+	
+	if (style == 5)//Settings menu when browsing files.
+	{
+		battery(330,2,0);
+		digitaltime(381,4,0,hrTime);
+	}
 }
 
 void controls() //Main controller function - allows cursor movement
@@ -125,24 +181,16 @@ void controls() //Main controller function - allows cursor movement
 	/* Prevents the cursor from going off screen */
 	
 	if (cursor->x <= llimit)
-	{
 		cursor->x = llimit;
-	}
 		
 	else if (cursor->x >= rlimit)
-	{
 		cursor->x = rlimit;
-	}
 		
 	if (cursor->y <= ulimit)
-	{	
 		cursor->y = ulimit;
-	}
 		
 	else if (cursor->y >= dlimit)
-	{
 		cursor->y = dlimit;
-	}
 }
 
 void battery(int batX, int batY, int n) // Draws the battery icon depending on its percentage. 
@@ -444,14 +492,14 @@ void appDrawerIcon() //Draws the app drawer icon. Draws a different icon of the 
 		oslDrawImageXY(ic_allapps,218,197);
 }
 
-void navbarButtons(int n) //Draws the navbar buttons in the bottom as seen on androids.
+void navbarButtons(int style) //Draws the navbar buttons in a certain style as seen on androids.
 {		
 	int y = 272, ulimit = 237, dlimit = 272;
 	
-	if (batteryM == 0 && n != 2 && n != 1)
-		n = 3;
+	if (batteryM == 0 && style != 2 && style != 1)
+		style = 3;
 
-	if (n == 0)
+	if (style == 0)
 	{		
 		oslDrawImageXY(navbar, 109, 237);
 		
@@ -474,7 +522,7 @@ void navbarButtons(int n) //Draws the navbar buttons in the bottom as seen on an
 			oslDrawImageXY(navbar, 109, 237);
 	}
 	
-	else if (n == 1)
+	else if (style == 1)
 	{
 		if ((cursor->y >= 226) || (cursor->y <= 16) )
 		{
@@ -523,7 +571,7 @@ void navbarButtons(int n) //Draws the navbar buttons in the bottom as seen on an
 		}
 	}
 	
-	else if (n == 2)
+	else if (style == 2)
 	{
 		oslDrawFillRect(444, 0, 480, 272, RGB(0, 0, 0));
 		oslDrawImageXY(navbar2, 444, 19);
@@ -546,7 +594,7 @@ void navbarButtons(int n) //Draws the navbar buttons in the bottom as seen on an
 		}
 	}
 	
-	else if (n == 3) //Powersave
+	else if (style == 3) //Powersave
 	{
 		oslDrawFillRect(0, 237, 480, 272, RGB(245,81,30));
 		oslDrawImageXY(navbar, 109, 237);
@@ -839,13 +887,13 @@ void dayNightCycleWidget()
 	oslDrawImageXY(wNight, 205, 82);
 }
 
-void homeUnloadAssets()
+void homeMenuUnloadRes()
 {
 	oslDeleteImage(wDay);
 	oslDeleteImage(wNight);
 }
 
-void home()
+void homeMenu()
 {	
 	firstBoot = setFileDefaultsInt("system/settings/boot.bin", 1, firstBoot);
 	
@@ -856,11 +904,6 @@ void home()
 	file = fopen(timeAndBatteryFontColorPath, "r");
 	fscanf(file, "%d %d %d", &fontColorTime.r, &fontColorTime.g, &fontColorTime.b);
 	fclose(file);
-
-	char message[100] = "";
-	char *updateData;
-    int dialog = OSL_DIALOG_NONE;
-	int read = 0;
 
 	wDay = oslLoadImageFilePNG("system/widget/Day.png", OSL_IN_RAM, OSL_PF_8888);
 	wNight = oslLoadImageFile("system/widget/Night.png", OSL_IN_RAM, OSL_PF_8888);
@@ -875,16 +918,11 @@ void home()
 
 	unsigned int kernelButtons = getbuttons(); 
 	
-	if (fileExists("ms0:/PSP/GAME/CyanogenPSP/update.txt"))
-		read = 1;
-	else 
-		read = 0;
-	
 	while (!osl_quit)
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
+		initDrawing();
 
 		controls();	
 		
@@ -898,30 +936,6 @@ void home()
 		
 		if (widgetActivator == 1)
 			dayNightCycleWidget();
-		
-		if (eDesktopActivator == 1)
-		{
-			navbarButtons(1);
-			battery(370,2,3);
-			if ((cursor->y <= 16) || (cursor->y >= 226))
-			{
-				digitaltime(420,4,0,hrTime);
-			}
-			else if (cursor->y >= 16 && cursor->y <= 226)
-			{
-				digitaltime(420,-10,0,hrTime);
-			}	
-		}
-		else if (eDesktopActivator == 0)
-		{
-			navbarButtons(0);
-			battery(370,2,1);
-			digitaltime(420,4,0,hrTime);
-		}
-		
-		androidQuickSettings();
-		volumeController();
-		appHighlight(0);
 		
 		if (firstBoot!= 0)
 		{
@@ -940,8 +954,6 @@ void home()
 			oslDrawStringf(385,110, "%s", lang_welcome[language][3]);
 		}
 		
-		oslDrawImage(cursor);
-		
 		if (firstBoot!= 0)
 		{
 			if (cursor->x >= 388 && cursor->x <= 464 && cursor->y >= 98 && cursor->y <= 132 && osl_keys->pressed.cross)
@@ -952,58 +964,29 @@ void home()
 				oslPlaySound(KeypressStandard, 1); 
 				oslDeleteImage(welcome);
 				oslDeleteImage(transbackground);
-				home();
+				homeMenu();
 			}
 		}
 		
-		dialog = oslGetDialogType();
-        if (dialog)
-		{
-			oslDrawDialog();
-            if (oslGetDialogStatus() == PSP_UTILITY_DIALOG_NONE)
-			{
-				oslEndDialog();
-            }
-		}
+		displayMenuBar(0);
 		
-		if (dialog == OSL_DIALOG_NONE)
-		{
-			if (read == 1)
-			{
-				updateData = readTextFromFile("ms0:/PSP/GAME/CyanogenPSP/update.txt");
-				oslInitMessageDialog(updateData, 0);
-				memset(message, 0, sizeof(message));
-				read = 2;
-			}		
-			else if (read == 2)
-			{
-				sceIoRemove("ms0:/PSP/GAME/CyanogenPSP/update.txt");
-				read = 0;
-			}
-		}
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-
 		if (cursor->x >= 276 && cursor->x <= 321 && cursor->y >= 195 && cursor->y <= 240 && osl_keys->pressed.cross)
 		{
-			homeUnloadAssets();
+			homeMenuUnloadRes();
 			internet();
 		}
 		
 		if (cursor->x >= 330 && cursor->x <= 374 && cursor->y >= 190 && cursor->y <= 240 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			homeUnloadAssets();
+			homeMenuUnloadRes();
 			settingsMenu();
 		}
 		
 		if (cursor->x >= 100 && cursor->x <= 154 && cursor->y >= 195 && cursor->y <= 240 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			homeUnloadAssets();
+			homeMenuUnloadRes();
 			mp3player();
 		}
 		
@@ -1011,7 +994,7 @@ void home()
 		{
 			if (cursor->x >= 155 && cursor->x <= 210 && cursor->y >= 195 && cursor->y <= 240 && osl_keys->pressed.cross)
 			{
-				homeUnloadAssets();
+				homeMenuUnloadRes();
 				messenger();
 			}
 		}
@@ -1019,15 +1002,9 @@ void home()
 		if (cursor->x >= 215 && cursor->x <= 243 && cursor->y >= 195 && cursor->y <= 230 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
-			homeUnloadAssets();
-			appdrawer();
+			homeMenuUnloadRes();
+			appDrawer();
 		}
-
-		if (osl_keys->pressed.L)
-		{	
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-        }
 		
 		if (cursor->x >= 276 && cursor->x <= 340 && cursor->y >= 237 && cursor->y <= 271 && osl_keys->pressed.cross)
 		{
@@ -1035,15 +1012,13 @@ void home()
 			multitask();
 		}
 		
-		captureScreenshot();
-
+		coreNavigation(0);
+		
 		if(kernelButtons & PSP_CTRL_HOME) 
 		{ 
 			powermenu();
 		}
 
-	oslEndDrawing(); 
-    oslEndFrame(); 
-	oslSyncFrame();
+		termDrawing();
 	}
 }

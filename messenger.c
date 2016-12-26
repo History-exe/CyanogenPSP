@@ -304,26 +304,13 @@ void newMessage()
 	{
 		LowMemExit();
 		
-		oslStartDrawing();
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		controls();	
 
 		oslDrawImageXY(new_message, 0, 0);
 		
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-		}
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
@@ -342,7 +329,7 @@ void newMessage()
 		{
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(messengerbg);
-			home();
+			homeMenu();
 		}
 		
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -351,7 +338,7 @@ void newMessage()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
 		if (cursor->x >= 7 && cursor->x <= 435 && cursor->y >= 55 && cursor->y <= 86 && osl_keys->pressed.cross)
 		{
@@ -373,9 +360,7 @@ void newMessage()
         else if ((cursor->x >= 410 && cursor->x <= 442 && cursor->y >= 92 && cursor->y <= 118 && osl_keys->pressed.cross) && oslIsWlanPowerOn())
 			doServer();
 		
-        oslEndDrawing(); 
-		oslEndFrame(); 
-        oslSyncFrame();
+        termDrawing();
 	}
 }
 
@@ -392,9 +377,7 @@ int messenger()
 	{
 		LowMemExit();
 
-		oslStartDrawing();	
-		
-		oslClearScreen(RGB(0,0,0));
+		initDrawing();
 		
 		oslIntraFontSetStyle(Roboto, fontSize, BLACK, 0, INTRAFONT_ALIGN_LEFT);
 		
@@ -402,42 +385,26 @@ int messenger()
 
 		oslDrawImageXY(messengerbg, 0, 0);
 
-		navbarButtons(2);
-		battery(330,2,0);
-		digitaltime(381,4,0,hrTime);
-		androidQuickSettings();
-		volumeController();
-		oslDrawImage(cursor);
-		
-		if (osl_keys->pressed.square)
-		{
-			powermenu();
-		}
-		
-		if (osl_keys->pressed.L)
-		{
-			oslPlaySound(Lock, 1);  
-			lockscreen();
-		}
+		displayMenuBar(2);
 		
 		if (osl_keys->pressed.circle)
 		{
 			oslDeleteImage(messengerbg);
-			appdrawer();
+			appDrawer();
 		}
 	
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 157 && cursor->y <= 213) && (osl_keys->pressed.cross))
 		{
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(messengerbg);
-			appdrawer();
+			appDrawer();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 76 && cursor->y <= 155) && (osl_keys->pressed.cross))
 		{
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(messengerbg);
-			home();
+			homeMenu();
 		}
 		
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -446,7 +413,7 @@ int messenger()
 			multitask();
 		}
 		
-		captureScreenshot();
+		coreNavigation(0);
 		
 		if (cursor->x >= 385 && cursor->x <= 428 && cursor->y >= 210 && cursor->y <= 258 && osl_keys->pressed.cross)
 		{
@@ -464,9 +431,7 @@ int messenger()
 		}
 		*/
 		
-		oslEndDrawing(); 
-		oslEndFrame(); 
-		oslSyncFrame();
+		termDrawing();
 	}
 	return 0;
 }
