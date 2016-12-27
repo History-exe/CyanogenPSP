@@ -119,4 +119,4 @@ void dirControls();
 void dirBack(int n);
 char * dirBrowse(const char * path);
 void filemanagerUnloadAssets();
-int cyanogenPSPFileManager();
+int fileManager();

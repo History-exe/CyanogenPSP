@@ -332,6 +332,14 @@ void musicSettings()
 		
 		oslDrawImageXY(mp3bg, 0, 0);
 		
+		oslIntraFontSetStyle(Roboto, fontSize, RGBA(255, 255, 255, 255), 0, 0);
+	
+		if (isPlaying)
+		{
+			oslDrawStringf(20, 238, "%.50s", playingStatus);
+			oslDrawStringf(20, 252, "%.50s", artistStatus);
+		}
+		
 		oslIntraFontSetStyle(Roboto, fontSize, RGBA(fontColor.r, fontColor.g, fontColor.b, 255), 0, 0);
 		
 		oslDrawStringf(20, 80, "Enable music background on lock screen");
@@ -354,9 +362,10 @@ void musicSettings()
 				{
 					oslPlaySound(KeypressStandard, 1);
 					lsCoverArt = 1;
-					FILE * _CoverArt = fopen("system/app/musicplayer/lsCoverArt.bin", "w");
-					fprintf(_CoverArt, "%d", lsCoverArt);
-					fclose(_CoverArt);
+					
+					SceUID file = sceIoOpen("system/app/musicplayer/lsCoverArt.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+					sceIoWrite(file, "1", 1);
+					sceIoClose(file);
 				}
 			}
 			else if (lsCoverArt == 1)
@@ -367,9 +376,10 @@ void musicSettings()
 				{
 					oslPlaySound(KeypressStandard, 1);
 					lsCoverArt = 0;
-					FILE * _CoverArt = fopen("system/app/musicplayer/lsCoverArt.bin", "w");
-					fprintf(_CoverArt, "%d", lsCoverArt);
-					fclose(_CoverArt);
+					
+					SceUID file = sceIoOpen("system/app/musicplayer/lsCoverArt.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+					sceIoWrite(file, "0", 1);
+					sceIoClose(file);
 				}
 			}
 		}

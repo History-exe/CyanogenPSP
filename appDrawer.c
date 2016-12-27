@@ -296,14 +296,14 @@ int appDrawer()
 		{
 			oslPlaySound(KeypressStandard, 1); 
 			appDrawerUnloadRes();
-			cyanogenPSPClock();
+			clockApp();
 		}
 		
 		if (cursor->x >= 245 && cursor->x <= 295 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)
 		{
 			oslPlaySound(KeypressStandard, 1);  
 			appDrawerUnloadRes();
-			cyanogenPSPFileManager();
+			fileManager();
 		}
 		
 		if (cursor->x >= 320 && cursor->x <= 370 && cursor->y >= 25 && cursor->y <= 85 && osl_keys->pressed.cross)

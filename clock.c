@@ -233,7 +233,7 @@ int cyanogenPSPTimer()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(timerBg);
 			oslDeleteImage(timeBg);
-			cyanogenPSPClock();
+			clockApp();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -265,7 +265,7 @@ int cyanogenPSPTimer()
 	return 0;
 }
 
-int cyanogenPSPStopWatch()
+int stopWatch()
 {
 	int hour = 0, min = 0, miliSec = 0;
 	pspTime time;
@@ -369,7 +369,7 @@ int cyanogenPSPStopWatch()
 			oslDeleteImage(reset);
 			oslDeleteImage(timerPlay);
 			oslDeleteImage(timerPause);
-			cyanogenPSPClock();
+			clockApp();
 		}
 
 		if ((cursor->x  >= 444 && cursor->x  <= 480) && (cursor->y >= 19 && cursor->y <= 75) && (osl_keys->pressed.cross))
@@ -434,7 +434,7 @@ void loadClockBg()
 	}
 }
 
-int cyanogenPSPClock()
+int clockApp()
 {
 	pspTime time;
 	sceRtcGetCurrentClockLocalTime(&time);
@@ -512,7 +512,7 @@ int cyanogenPSPClock()
 			oslPlaySound(KeypressStandard, 1);  
 			oslDeleteImage(clockBg);
 			oslDeleteImage(timeBg);
-			cyanogenPSPStopWatch();
+			stopWatch();
 		}
 		
 		coreNavigation(0);

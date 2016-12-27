@@ -1235,7 +1235,7 @@ void filemanagerUnloadAssets()
 	oslDeleteImage(archiveicon);	
 }
 
-int cyanogenPSPFileManager(int argc, char *argv[])
+int fileManager(int argc, char *argv[])
 {
 	FILE *temp;
 	 

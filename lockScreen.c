@@ -20,9 +20,7 @@ int lockscreen()
 	file = fopen(timeAndBatteryFontColorPath, "r");
 	fscanf(file, "%d %d %d", &fontColorTime.r, &fontColorTime.g, &fontColorTime.b);
 	fclose(file);
-	
-	FILE * password;
-	FILE * pin;
+
 	char passwordData[20] = "";
 	char pinData[5] = "";
 	
@@ -74,7 +72,7 @@ int lockscreen()
 			{
 				oslPlaySound(KeypressStandard, 1); 
 				MP3ME_Pause();
-				for(i=0; i<10; i++) 
+				for(i = 0; i < 10; i++) 
 				{
 					sceDisplayWaitVblankStart();
 				}
@@ -110,7 +108,7 @@ int lockscreen()
 				{
 					oslPlaySound(KeypressStandard, 1);
 					openOSK("Enter Password", "", 20, -1);
-					password = fopen("system/settings/password.bin", "r");
+					FILE * password = fopen("system/settings/password.bin", "r");
 					fscanf(password,"%s",passwordData);
 					fclose(password);
 
@@ -137,7 +135,7 @@ int lockscreen()
 				{
 					oslPlaySound(KeypressStandard, 1);
 					openOSK("Enter Pin", "", 5, -1);
-					pin = fopen("system/settings/pin.bin", "r");
+					FILE * pin = fopen("system/settings/pin.bin", "r");
 					fscanf(pin,"%s", pinData);
 					fclose(pin);
 

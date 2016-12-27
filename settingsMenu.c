@@ -205,10 +205,10 @@ void creditsMenu()
 		oslDrawStringf(10,186,"Romanian- imhotep4, Italian - nerdvana8,");
 		oslDrawStringf(10,198,"Russan and Ukrainian - Vasniktel and Raithwall.");
 
-		oslDrawStringf(10,218,"Supporters: PSX-Place - STLcardsWS, Tranced, atreyu187, pinky,");
-		oslDrawStringf(10,230,"bitsbubba, kozarovv, pinkfloydviste. Genetik57 for his assets.");
-		oslDrawStringf(10,242,"Other memebers from Hack Informer, GBAtemp and wololo.net.");
-		oslDrawStringf(10,254,"I hope I didn't forget anyone. Once again, thank you all :)");
+		oslDrawStringf(10,218,"Supporters: STLcardsWS, Tranced, atreyu187, pinky, bitsbubba,");
+		oslDrawStringf(10,230,"kozarovv, pinkfloydviste. preetisketch for the banner,");
+		oslDrawStringf(10,242,"Genetik57 for his assets, and anyone else that I may have");
+		oslDrawStringf(10,254,"forgotten. Once again, thank you all :)");
 		
 		displayMenuBar(2);
 		
@@ -850,12 +850,6 @@ void storageMenu()
 		oslDrawFillRect(20, 172, 424, 176, RGB(206, 215, 219));
 		oslDrawFillRect(20, 172, fill, 176, RGB(r, g, b));
 		
-		//oslDrawStringf(20, 80, "%s", lang_settingsStorage[language][0]); 
-		//oslDrawStringf(20, 100,"%s %.2llu MB", lang_settingsStorage[language][1], storageGetTotalSize());
-		//oslDrawStringf(20, 120, "%s %.2llu MB", lang_settingsStorage[language][2], storageGetFreeSize());
-		//oslDrawStringf(20, 100,"%s %.2llu MB", lang_settingsStorage[language][1], storageGetTotalSize());
-		//oslDrawStringf(20, 140, "Used Storage Capcitiy %.2llu MB", storageGetTotalSize() - storageGetFreeSize());
-		
 		if (osl_keys->pressed.select)
 		{
 			enableUsb();
@@ -905,8 +899,6 @@ void storageMenu()
 
 void batteryMenu()
 {	
-	FILE * batteryManagement;
-
 	if (DARK == 0)
 	{
 		performancebg = oslLoadImageFilePNG(performanceBgPath, OSL_IN_RAM, OSL_PF_8888);
@@ -956,10 +948,6 @@ void batteryMenu()
 				sceIoWrite(file, "0", 1);
 				sceIoClose(file);
 				
-				/*batteryManagement = fopen("system/settings/battery.bin", "w"); 
-				fprintf(batteryManagement, "0");
-				fclose(batteryManagement);*/
-				
 				batteryM = setFileDefaultsInt("system/settings/battery.bin", 1, batteryM);
 				setPowerManagement();
 			}
@@ -977,10 +965,6 @@ void batteryMenu()
 				sceIoWrite(file, "1", 1);
 				sceIoClose(file);
 				
-				/*batteryManagement = fopen("system/settings/battery.bin", "w"); 
-				fprintf(batteryManagement, "1");
-				fclose(batteryManagement);*/
-				
 				batteryM = setFileDefaultsInt("system/settings/battery.bin", 1, batteryM);
 				setPowerManagement();
 			}
@@ -993,9 +977,11 @@ void batteryMenu()
 			if (osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);
-				batteryManagement = fopen("system/settings/battery.bin", "w"); 
-				fprintf(batteryManagement, "2");
-				fclose(batteryManagement);
+				
+				SceUID file = sceIoOpen("system/settings/battery.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "2", 1);
+				sceIoClose(file);
+				
 				batteryM = setFileDefaultsInt("system/settings/battery.bin", 1, batteryM);
 				setPowerManagement();
 			}
@@ -1067,34 +1053,40 @@ void batteryMenu()
 
 void setPowerManagement()
 {
-	FILE * processorInfo;
+	//FILE * processorInfo;
 	batteryM = setFileDefaultsInt("system/settings/battery.bin", 1, batteryM);
 	
 	switch(batteryM)
 	{
 		case 0:
 			processorState = 4;
-			processorInfo = fopen("system/settings/processorInfo.bin", "w");
-			fprintf(processorInfo, "%d", processorState);
-			fclose(processorInfo);
+			
+			SceUID file = sceIoOpen("system/settings/processorInfo.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+			sceIoWrite(file, "4", 1);
+			sceIoClose(file);
+			
 			setCpuBoot();
 			imposeSetBrightness(0);
 			break;
 	
 		case 1:
 			processorState = 4;
-			processorInfo = fopen("system/settings/processorInfo.bin", "w");
-			fprintf(processorInfo, "%d", processorState);
-			fclose(processorInfo);
+			
+			file = sceIoOpen("system/settings/processorInfo.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+			sceIoWrite(file, "4", 1);
+			sceIoClose(file);
+			
 			setCpuBoot();
 			imposeSetBrightness(1);
 			break;
 			
 		case 2:
 			processorState = 7;
-			processorInfo = fopen("system/settings/processorInfo.bin", "w");
-			fprintf(processorInfo, "%d", processorState);
-			fclose(processorInfo);
+			
+			file = sceIoOpen("system/settings/processorInfo.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+			sceIoWrite(file, "7", 1);
+			sceIoClose(file);
+			
 			setCpuBoot();
 			break;
 	}
@@ -1446,7 +1438,7 @@ void displayFontMenu()
 
 void displayFontSizeMenu()
 {	
-	FILE * fontManagement;
+	char data[3];
 	int tempFontData = 0;
 
 	if (DARK == 0)
@@ -1501,9 +1493,12 @@ void displayFontSizeMenu()
 			if (osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);
-				fontManagement = fopen("system/settings/fontSize.bin", "w"); 
-				fprintf(fontManagement, "0.4");
-				fclose(fontManagement);
+
+				SceUID file = sceIoOpen("system/settings/fontSize.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sprintf(data, "0.4");
+				sceIoWrite(file, data, strlen(data));
+				sceIoClose(file);
+				
 				tempFontData = 0;
 				fontSize = setFileDefaultsFloat("system/settings/fontSize.bin", 1, fontSize);
 			}
@@ -1516,9 +1511,12 @@ void displayFontSizeMenu()
 			if (osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);
-				fontManagement = fopen("system/settings/fontSize.bin", "w"); 
-				fprintf(fontManagement, "0.5");
-				fclose(fontManagement);
+
+				SceUID file = sceIoOpen("system/settings/fontSize.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sprintf(data, "0.5");
+				sceIoWrite(file, data, strlen(data));
+				sceIoClose(file);
+				
 				tempFontData = 1;
 				fontSize = setFileDefaultsFloat("system/settings/fontSize.bin", 1, fontSize);
 			}
@@ -1531,9 +1529,12 @@ void displayFontSizeMenu()
 			if (osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);
-				fontManagement = fopen("system/settings/fontSize.bin", "w"); 
-				fprintf(fontManagement, "0.6");
-				fclose(fontManagement);
+				
+				SceUID file = sceIoOpen("system/settings/fontSize.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sprintf(data, "0.6");
+				sceIoWrite(file, data, strlen(data));
+				sceIoClose(file);
+				
 				tempFontData = 2;
 				fontSize = setFileDefaultsFloat("system/settings/fontSize.bin", 1, fontSize);
 			}
@@ -1696,10 +1697,6 @@ int changeLanguage() //Created a separated function for this only because deleti
 	sceIoWrite(file, data, strlen(data));
 	sceIoClose(file);
 	
-	/*FILE * languagePath = fopen("system/settings/language.bin", "w");
-	fprintf(languagePath, "%d", language);
-	fclose(languagePath);*/
-	
 	return language;
 }
 
@@ -1826,10 +1823,6 @@ void themesLoad()
 	 
 	if (!(fileExists(rgbValuesPath)))
 	{
-		/*temp = fopen(rgbValuesPath, "w");
-		fprintf(temp, "0\n149\n135");
-		fclose(temp);*/
-		
 		SceUID file = sceIoOpen(rgbValuesPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 		sceIoWrite(file, "0\n149\n135", 15);
 		sceIoClose(file);
@@ -1871,11 +1864,7 @@ void themesReload()
 	FILE *temp;
 	 
 	if (!(fileExists(settingsFontColorPath)))
-	{
-		/*temp = fopen(settingsFontColorPath, "w");
-		fprintf(temp, "0\n0\n0");
-		fclose(temp);*/
-		
+	{	
 		SceUID file = sceIoOpen(settingsFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 		sceIoWrite(file, "0\n0\n0", 15);
 		sceIoClose(file);
@@ -1892,10 +1881,6 @@ void themesReload()
 		SceUID file = sceIoOpen(timeAndBatteryFontColorPath, PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
 		sceIoWrite(file, "255\n255\n255", 15);
 		sceIoClose(file);
-		
-		/*temp2 = fopen(timeAndBatteryFontColorPath, "w");
-		fprintf(temp2, "255\n255\n255");
-		fclose(temp2);*/
 	}
 	
 	temp2 = fopen(timeAndBatteryFontColorPath, "r");
@@ -1961,6 +1946,7 @@ void iconPackReload()
 
 void settingsControls(int n) //Controls
 {
+	char data[256];
 	oslReadKeys();	
 
 	if (pad.Buttons != oldpad.Buttons) 
@@ -2021,9 +2007,12 @@ void settingsControls(int n) //Controls
 		if ((osl_keys->pressed.cross) && (strcmp(folderIcons[current].filePath, "doesn't matter") != 0))
 		{
 			strcpy(appDirPath, folderIcons[current].filePath);
-			FILE * iconPackTxt = fopen("system/settings/iconpack.bin", "w");
-			fprintf(iconPackTxt,"%s", appDirPath);
-			fclose(iconPackTxt);
+			
+			SceUID file = sceIoOpen("system/settings/iconpack.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+			sprintf(data, "%s", appDirPath);
+			sceIoWrite(file, data, strlen(data));
+			sceIoClose(file);
+			
 			iconPackLoad();
 			iconPackReload();
 		}
@@ -2034,18 +2023,23 @@ void settingsControls(int n) //Controls
 		if ((osl_keys->pressed.cross) && (strcmp(folderIcons[current].filePath, "doesn't matter") != 0))
 		{
 			strcpy(themeDirPath, folderIcons[current].filePath);
-			FILE * themeTxt = fopen("system/settings/theme.bin", "w");
+			SceUID file = sceIoOpen("system/settings/theme.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+			
 			if (strcmp(themeDirPath, "system/themes/Default") == 0)
 			{
-				fprintf(themeTxt,"system");
-				fclose(themeTxt);
+				sprintf(data, "system");
+				sceIoWrite(file, data, strlen(data));
+				sceIoClose(file);
+				
 				themesLoad();
 				themesReload();
 			}
 			else
 			{
-				fprintf(themeTxt,"%s", themeDirPath);
-				fclose(themeTxt);
+				sprintf(data, "%s", themeDirPath);
+				sceIoWrite(file, data, strlen(data));
+				sceIoClose(file);
+				
 				themesLoad();
 				themesReload();
 			}
@@ -2175,8 +2169,6 @@ void displaySubThemes(char * browseDirectory, int n) // n is used here to search
 
 void displayTime()
 {	
-	FILE * timeSetTxt;
-	
 	if (DARK == 0)
 	{
 		displaybg = oslLoadImageFilePNG(displayBgPath, OSL_IN_RAM, OSL_PF_8888);
@@ -2229,9 +2221,10 @@ void displayTime()
 				{
 					oslPlaySound(KeypressStandard, 1);
 					hrTime = 1;
-					timeSetTxt = fopen("system/app/clock/timeSet.bin", "w");
-					fprintf(timeSetTxt, "%d", hrTime);
-					fclose(timeSetTxt);
+					
+					SceUID file = sceIoOpen("system/app/clock/timeSet.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+					sceIoWrite(file, "1", 1);
+					sceIoClose(file);
 				}
 			}
 			else if (hrTime == 1)
@@ -2242,9 +2235,10 @@ void displayTime()
 				{
 					oslPlaySound(KeypressStandard, 1);
 					hrTime = 0;
-					timeSetTxt = fopen("system/app/clock/timeSet.bin", "w");
-					fprintf(timeSetTxt, "%d", hrTime);
-					fclose(timeSetTxt);
+					
+					SceUID file = sceIoOpen("system/app/clock/timeSet.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+					sceIoWrite(file, "0", 1);
+					sceIoClose(file);
 				}
 			}
 		}
@@ -2293,12 +2287,7 @@ void displayTime()
 
 void displayMiscellaneous()
 {	
-	FILE * widgetActivation;
-	FILE * eDesktopActivation;
-	FILE * bootAnimActivation;
-	FILE * gBootActivation;
-	
-	bootAnimActivation = fopen("system/boot/bootAnimActivator.bin", "r");
+	FILE * bootAnimActivation = fopen("system/boot/bootAnimActivator.bin", "r");
 	fscanf(bootAnimActivation,"%d",&bootAnimActivator);
 	fclose(bootAnimActivation);
 
@@ -2370,10 +2359,11 @@ void displayMiscellaneous()
 			if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 60 && cursor->y <= 117 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				widgetActivation = fopen("system/widget/widgetActivator.bin", "w");
 				widgetActivator = 1;
-				fprintf(widgetActivation, "1");
-				fclose(widgetActivation);
+				
+				SceUID file = sceIoOpen("system/widget/widgetActivator.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "1", 1);
+				sceIoClose(file);
 			}
 		}
 		
@@ -2384,10 +2374,11 @@ void displayMiscellaneous()
 			if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 60 && cursor->y <= 117 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				widgetActivation = fopen("system/widget/widgetActivator.bin", "w");
 				widgetActivator = 0;
-				fprintf(widgetActivation, "0");
-				fclose(widgetActivation);
+				
+				SceUID file = sceIoOpen("system/widget/widgetActivator.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "0", 1);
+				sceIoClose(file);
 			}
 		}
 		
@@ -2398,10 +2389,11 @@ void displayMiscellaneous()
 			if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 118 && cursor->y <= 156 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				eDesktopActivation = fopen("system/home/eDesktopActivator.bin", "w");
 				eDesktopActivator = 1;
-				fprintf(eDesktopActivation, "1");
-				fclose(eDesktopActivation);
+				
+				SceUID file = sceIoOpen("system/home/eDesktopActivator.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "1", 1);
+				sceIoClose(file);
 			}
 		}
 		
@@ -2412,10 +2404,11 @@ void displayMiscellaneous()
 			if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 118 && cursor->y <= 156 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				eDesktopActivation = fopen("system/home/eDesktopActivator.bin", "w");
 				eDesktopActivator = 0;
-				fprintf(eDesktopActivation, "0");
-				fclose(eDesktopActivation);
+				
+				SceUID file = sceIoOpen("system/home/eDesktopActivator.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "0", 1);
+				sceIoClose(file);
 			}
 		}
 		
@@ -2427,10 +2420,11 @@ void displayMiscellaneous()
 			if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 157 && cursor->y <= 215 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				bootAnimActivation = fopen("system/boot/bootAnimActivator.bin", "w");
 				bootAnimActivator = 1;
-				fprintf(bootAnimActivation, "1");
-				fclose(bootAnimActivation);
+				
+				SceUID file = sceIoOpen("system/boot/bootAnimActivator.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "1", 1);
+				sceIoClose(file);
 			}
 		}
 		
@@ -2441,10 +2435,11 @@ void displayMiscellaneous()
 			if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 157 && cursor->y <= 215 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				bootAnimActivation = fopen("system/boot/bootAnimActivator.bin", "w");
 				bootAnimActivator = 0;
-				fprintf(bootAnimActivation, "0");
-				fclose(bootAnimActivation);
+				
+				SceUID file = sceIoOpen("system/boot/bootAnimActivator.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "0", 1);
+				sceIoClose(file);
 			}
 		}
 		if (gBootActivator == 0)
@@ -2454,10 +2449,11 @@ void displayMiscellaneous()
 			if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 216 && cursor->y <= 272 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				gBootActivation = fopen("system/app/game/boot/gBootActivator.bin", "w");
 				gBootActivator = 1;
-				fprintf(gBootActivation, "1");
-				fclose(gBootActivation);
+				
+				SceUID file = sceIoOpen("system/app/game/boot/gBootActivator.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "1", 1);
+				sceIoClose(file);
 			}
 		}
 		
@@ -2468,10 +2464,11 @@ void displayMiscellaneous()
 			if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 216 && cursor->y <= 272 && osl_keys->pressed.cross)
 			{
 				oslPlaySound(KeypressStandard, 1);  
-				gBootActivation = fopen("system/app/game/boot/gBootActivator.bin", "w");
 				gBootActivator = 0;
-				fprintf(gBootActivation, "0");
-				fclose(gBootActivation);
+				
+				SceUID file = sceIoOpen("system/app/game/boot/gBootActivator.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sceIoWrite(file, "0", 1);
+				sceIoClose(file);
 			}
 		}
 		
@@ -2519,6 +2516,8 @@ void displayMiscellaneous()
 
 void securityMenu()
 {	
+	char data[20];
+
 	if (DARK == 0)
 	{
 		securitybg = oslLoadImageFilePNG(securityBgPath, OSL_IN_RAM, OSL_PF_8888);
@@ -2568,9 +2567,15 @@ void securityMenu()
 				else if (fileExists("system/settings/pin.bin"))
 					sceIoRemove("system/settings/pin.bin");
 				openOSK("Enter Password", "", 20, -1);
-				FILE * password = fopen("system/settings/password.bin", "w");
+				
+				SceUID file = sceIoOpen("system/settings/password.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sprintf(data, "%s", tempMessage);
+				sceIoWrite(file, data, strlen(data));
+				sceIoClose(file);
+				
+				/*FILE * password = fopen("system/settings/password.bin", "w");
 				fprintf(password, "%s", tempMessage);
-				fclose(password);
+				fclose(password);*/
 			}
 		}
 		
@@ -2586,9 +2591,15 @@ void securityMenu()
 				else if (fileExists("system/settings/pin.bin"))
 					sceIoRemove("system/settings/pin.bin");
 				openOSK("Enter Pin", "", 5, -1);
-				FILE * pin = fopen("system/settings/pin.bin", "w");
+				
+				SceUID file = sceIoOpen("system/settings/pin.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+				sprintf(data, "%s", tempPin);
+				sceIoWrite(file, data, strlen(data));
+				sceIoClose(file);
+				
+				/*FILE * pin = fopen("system/settings/pin.bin", "w");
 				fprintf(pin, "%s", tempPin);
-				fclose(pin);
+				fclose(pin);*/
 			}
 		}
 		
@@ -2844,32 +2855,34 @@ void developerMenu()
 		else if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 118 && cursor->y <= 156)
 		{
 			oslDrawImageXY(highlight, 0, 118);
-			oslDrawStringf(10,140, "%s", lang_settingsDeveloperOptions[language][2]);
+			oslDrawStringf(10, 140, "%s", lang_settingsDeveloperOptions[language][2]);
 			
 			if (experimentalF == 0)
 			{
-				oslDrawImageXY(offswitch,392,133);
+				oslDrawImageXY(offswitch, 392, 133);
 				
 				if (osl_keys->pressed.cross)
 				{
 					oslPlaySound(KeypressStandard, 1);  
-					FILE * experimentalFeatures = fopen("system/settings/experimentalFeatures.bin", "w");
 					experimentalF = 1;
-					fprintf(experimentalFeatures, "1");
-					fclose(experimentalFeatures);
+					
+					SceUID file = sceIoOpen("system/settings/experimentalFeatures.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+					sceIoWrite(file, "1", 1);
+					sceIoClose(file);
 				}
 			}
 			else if (experimentalF == 1)
 			{
-				oslDrawImageXY(onswitch,392,133);
+				oslDrawImageXY(onswitch, 392, 133);
 			
 				if (osl_keys->pressed.cross)
 				{
 					oslPlaySound(KeypressStandard, 1);  
-					FILE * experimentalFeatures = fopen("system/settings/experimentalFeatures.bin", "w");
 					experimentalF = 0;
-					fprintf(experimentalFeatures, "0");
-					fclose(experimentalFeatures);
+					
+					SceUID file = sceIoOpen("system/settings/experimentalFeatures.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+					sceIoWrite(file, "0", 1);
+					sceIoClose(file);
 				}
 			}
 		}
@@ -2877,18 +2890,20 @@ void developerMenu()
 		else if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 157 && cursor->y <= 215)
 		{
 			oslDrawImageXY(highlight, 0, 173);
-			oslDrawStringf(10,195, "%s", lang_settingsDeveloperOptions[language][3]);
+			oslDrawStringf(10, 195, "%s", lang_settingsDeveloperOptions[language][3]);
 			if (DARK == 0)
 			{
-				oslDrawImageXY(offswitch,392,186);
+				oslDrawImageXY(offswitch, 392, 186);
 				
 				if (osl_keys->pressed.cross)
 				{
-					oslPlaySound(KeypressStandard, 1);  
-					FILE * darkTheme = fopen("system/settings/darkTheme.bin", "w");
+					oslPlaySound(KeypressStandard, 1);
 					DARK = 1;
-					fprintf(darkTheme, "1");
-					fclose(darkTheme);
+					
+					SceUID file = sceIoOpen("system/settings/darkTheme.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+					sceIoWrite(file, "1", 1);
+					sceIoClose(file);
+					
 					oslDeleteImage(developerbg);
 					oslDeleteImage(highlight);
 					developerbg = oslLoadImageFilePNG("system/settings/Dark/developerbg.png", OSL_IN_RAM, OSL_PF_8888);
@@ -2897,15 +2912,17 @@ void developerMenu()
 			}
 			else if (DARK == 1)
 			{
-				oslDrawImageXY(onswitch,392,186);
+				oslDrawImageXY(onswitch, 392, 186);
 			
 				if (osl_keys->pressed.cross)
 				{
-					oslPlaySound(KeypressStandard, 1);  
-					FILE * darkTheme = fopen("system/settings/darkTheme.bin", "w");
+					oslPlaySound(KeypressStandard, 1);
 					DARK = 0;
-					fprintf(darkTheme, "0");
-					fclose(darkTheme);
+					
+					SceUID file = sceIoOpen("system/settings/darkTheme.bin", PSP_O_WRONLY | PSP_O_CREAT | PSP_O_TRUNC, 0777);
+					sceIoWrite(file, "0", 1);
+					sceIoClose(file);
+					
 					oslDeleteImage(developerbg);
 					oslDeleteImage(highlight);
 					developerbg = oslLoadImageFilePNG(developerBgPath, OSL_IN_RAM, OSL_PF_8888);

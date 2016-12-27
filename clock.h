@@ -12,6 +12,6 @@ void getMonthOfYear(int x, int y); //Outputs the Month of the Year
 void digitaltime(int x, int y, int color, int hr);
 void centerClock(int n);
 int pspTimer();
-int cyanogenPSPStopWatch();
+int stopWatch();
 void loadClockBg();
-int cyanogenPSPClock();
+int clockApp();
