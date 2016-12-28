@@ -27,7 +27,7 @@ int bootAnimation()
 		{
 			oslDeleteImage(welcome);
 			oslDeleteImage(transbackground);	
-			lockscreen();
+			lockScreen();
 			homeMenu();
 		}
 	}
@@ -78,7 +78,7 @@ int bootAnimation()
 			{
 				oslDeleteImage(welcome);
 				oslDeleteImage(transbackground);	
-				lockscreen();
+				lockScreen();
 				homeMenu();
 			}
 		}

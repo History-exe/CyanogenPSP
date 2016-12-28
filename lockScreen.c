@@ -11,7 +11,7 @@
 struct timeAndBatteryStatusFontColor fontColorTime;
 struct clockWidgetFontColor lFontColor;
 
-int lockscreen()
+int lockScreen()
 {
 	FILE * file = fopen(clockWidgetFontColorPath, "r");
 	fscanf(file, "%d %d %d", &lFontColor.r, &lFontColor.g, &lFontColor.b);
@@ -77,7 +77,7 @@ int lockscreen()
 					sceDisplayWaitVblankStart();
 				}
 			}
-		
+			
 			else if (MP3ME_isPlaying == 0 && osl_keys->pressed.cross)
 			{
 				MP3ME_Play();
@@ -121,7 +121,7 @@ int lockscreen()
 					else if ((strcmp(tempMessage, passwordData) != 0) || (oslOskGetResult() == OSL_OSK_CANCEL))
 					{
 						oslDeleteImage(lockscreenBg);
-						lockscreen();
+						lockScreen();
 					}	
 				}
 			}
@@ -148,7 +148,7 @@ int lockscreen()
 					else if ((strcmp(tempPin, pinData) != 0) || (oslOskGetResult() == OSL_OSK_CANCEL))
 					{
 						oslDeleteImage(lockscreenBg);
-						lockscreen();
+						lockScreen();
 					}	
 				}
 			}

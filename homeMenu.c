@@ -60,7 +60,7 @@ void coreNavigation(int style) //Manages the power menu, lock screen and screens
 		if (osl_keys->pressed.L)
 		{	
 			oslPlaySound(Lock, 1);  
-			lockscreen();
+			lockScreen();
 		}
 	}
 		
@@ -832,7 +832,7 @@ void androidQuickSettings()
 			yPos2 = yPos2-272;
 			yLine1 = yLine1-272;
 			yLine2 = yLine2-272;
-			lockscreen();
+			lockScreen();
 		}
 	}
 	

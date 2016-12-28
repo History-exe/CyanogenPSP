@@ -12,4 +12,4 @@ struct clockWidgetFontColor
    int	b;
 };
 
-int lockscreen();
+int lockScreen();
