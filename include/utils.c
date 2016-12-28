@@ -125,7 +125,7 @@ char * getModel()
 	
 	static char model[20] = "";
 	
-	if (fileExists("ms0:/adrenaline"))
+	if (dirExists("ms0:/adrenaline"))
 		strcpy(model, "Model: PS Vita");
 	
 	else
