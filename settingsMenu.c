@@ -69,6 +69,9 @@ void aboutMenu()
 	
 	fw_version version;
 	getFwVersion(&version);
+	
+	static char model[20] = "";
+	strcpy(model, getModel());
 
 	while (!osl_quit)
 	{
@@ -87,8 +90,8 @@ void aboutMenu()
 
 		oslDrawStringf(20, 78, "%s", lang_settingsAbout[language][0]);
 		oslDrawStringf(20, 92, "%s", lang_settingsAbout[language][1]);
-		pspGetModel(20, 143);
 		oslDrawStringf(20, 129, "%s %d.%d-%d%02d%02d-%s", lang_settingsAbout[language][2], VER_MAJOR, VER_MINOR, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
+		oslDrawStringf(20, 143, "%s", model);
 		oslDrawStringf(20, 157, "%s %02X:%02X:%02X:%02X:%02X:%02X", lang_settingsAbout[language][4], macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 		oslDrawStringf(20, 185, "%s %d.%d", lang_settingsAbout[language][5], version.major, version.minor);
 		oslDrawStringf(20, 199, "%s %s", lang_settingsAbout[language][6], OSL_VERSION);
@@ -111,8 +114,8 @@ void aboutMenu()
 		else if (cursor->x >= 0 && cursor->x <= 444 && cursor->y >= 120 && cursor->y <= 178)
 		{
 			oslDrawImageXY(highlight, 0, 122);
-			pspGetModel(20,143);
 			oslDrawStringf(20, 129, "%s %d.%d-%d%02d%02d-%s", lang_settingsAbout[language][2], VER_MAJOR, VER_MINOR, YEAR, MONTH + 1, DAY, lang_settingsAbout[language][3]);
+			oslDrawStringf(20, 143, "%s", model);
 			oslDrawStringf(20,157,"%s %02X:%02X:%02X:%02X:%02X:%02X", lang_settingsAbout[language][4], macAddress[0], macAddress[1], macAddress[2], macAddress[3], macAddress[4], macAddress[5]);
 		}
 		

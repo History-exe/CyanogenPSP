@@ -510,6 +510,9 @@ void ShowPage1()
 	fw_version version;
 	getFwVersion(&version);
 	
+	static char pspModel[20] = "";
+	strcpy(pspModel, getModel());
+	
 	while (!osl_quit)
 	{
 		LowMemExit();
@@ -529,7 +532,7 @@ void ShowPage1()
 		region = chGetRegion();		
 		
 		oslDrawStringf(10,80,"Kernel Version: %d.%d (0x%08X)\n\n", version.major, version.minor, sceKernelDevkitVersion());
-		pspGetModel(10,90);
+		oslDrawStringf(10, 90, "%s", pspModel);
 		oslDrawStringf(10,100,"Module:         %s\n", Modules[model]);      
 		oslDrawStringf(10,110,"Motherboard:    %s\n\n", MBs[mb]);
 		oslDrawStringf(10,120,"Tachyon:        0x%08X\n", tachyon);

@@ -119,39 +119,46 @@ int getBusClock()
     return scePowerGetBusClockFrequency();
 }
 
-void pspGetModel(int x, int y)
+char * getModel()
 {
-	int pspmodel = kuKernelGetModel();
+	int pspModel = kuKernelGetModel();
+	
+	static char model[20] = "";
 	
 	if (fileExists("ms0:/adrenaline"))
-	{
-		oslDrawStringf(x, y, "Model: PS Vita");
-	}
+		strcpy(model, "Model: PS Vita");
+	
 	else
 	{
-		switch(pspmodel)
+		switch(pspModel)
 		{
 			case 0:
-				oslDrawStringf(x, y, "Model: PSP 1000");
+				strcpy(model, "Model: PSP 1000");
 				break;
    
 			case 1:
-				oslDrawStringf(x, y, "Model: PSP 2000");
+				strcpy(model, "Model: PSP 2000");
 				break;
    
 			case 2:
-				oslDrawStringf(x, y, "Model: PSP 3000");
+				strcpy(model, "Model: PSP 3000");
 				break;
    
 			case 3:
-				oslDrawStringf(x, y, "Model: PSP 3000");
+				strcpy(model, "Model: PSP 3000");
 				break;
 		
 			case 4:
-				oslDrawStringf(x, y, "Model: PSP Go N1000");
+				strcpy(model, "Model: PSP Go N1000");
+				break;
+			
+			default:
+				strcpy(model, "Model: Unknown");
 				break;
 		}
 	}
+	
+	return model;
 }
 
 int setFileDefaultsInt(char *path, int value, int var)

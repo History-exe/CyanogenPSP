@@ -59,7 +59,7 @@ void debugDisplay();
 void internet(); //Draws the browser
 int getCpuClock();
 int getBusClock();
-void pspGetModel(int x, int y);
+char * getModel();
 int setFileDefaultsInt(char *path, int value, int var);
 float setFileDefaultsFloat(char *path, float value, float var);
 char * setFileDefaultsChar(char path[], char data[], char var[]);
