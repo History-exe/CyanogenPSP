@@ -128,6 +128,9 @@ char * getModel()
 	if (dirExists("ms0:/adrenaline"))
 		strcpy(model, "Model: PS Vita");
 	
+	else if (dirExists("ms0:/PSP/PPSSPP_STATE/")) //Hacky ppsspp check
+		strcpy(model, "Model: PPSSPP");
+	
 	else
 	{
 		switch(pspModel)
