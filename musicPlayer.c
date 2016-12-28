@@ -150,8 +150,6 @@ void MP3Play(char * path)
 		oslDrawImageXY(nowplaying, 0, 0);
 		if ((experimentalF == 1) && (coverArtFound == 1))
 			oslDrawImageXY(coverArt, 0, 67.5);
-		
-		//oslDrawStringf(240,76, "Playing: %.19s", folderIcons[current].name);
 		strcpy(playingStatus, ID3.ID3Title);
 		strcpy(artistStatus, ID3.ID3Artist);
 		strcpy(genreStatus, ID3.ID3GenreText);
@@ -162,11 +160,6 @@ void MP3Play(char * path)
 		}
 		oslDrawStringf(15, 28, "%.44s", strupr(ID3.ID3Title));
 		oslDrawStringf(15, 48, "%.44s", strupr(ID3.ID3Artist));
-		
-		//oslDrawStringf(240, 136, "Album: %.21s", ID3.ID3Album);
-		//oslDrawStringf(240, 156, "Year: %.22s", ID3.ID3Year);
-		//oslDrawStringf(240, 176, "Genre: %.21s", ID3.ID3GenreText);
-		//oslDrawStringf(435, 206, "0%d:%.f", mp3Min, MP3ME_playingTime);
 		
 		if (MP3ME_isPlaying == 1)
 			oslDrawImageXY(mp3Play, 328, 147);
@@ -187,17 +180,49 @@ void MP3Play(char * path)
 			return;
 		}
 		
-		if(MP3ME_isPlaying == 1 && osl_keys->pressed.cross) 
+		if((MP3ME_isPlaying == 1) && (osl_keys->pressed.cross)) 
 		{
 			oslPlaySound(KeypressStandard, 1); 
 			MP3ME_Pause();
-			for(i=0; i<10; i++) 
+			for(i = 0; i < 10; i++) 
 			{
 				sceDisplayWaitVblankStart();
 			}
 		}
 		
-		else if (MP3ME_isPlaying == 0 && osl_keys->pressed.cross)
+		/* For reference purposes only. This is a very shitty way of doing it, and often would barely work.
+		This is so broken, I won't be including it as an experimental feature either.
+		
+		if (experimentalF == 1)
+		{
+			if((MP3ME_isPlaying == 1) && (osl_keys->pressed.right)) 
+			{
+				oslPlaySound(KeypressStandard, 1); 
+				isPlaying = 0;
+				endAudioLib();
+				MP3ME_Stop();
+				releaseAudio();
+				char * ext = strrchr(folderIcons[current + 1].filePath, '.'); 
+				if ((strcmp(ext ,".mp3") != 0) || ((strcmp(ext ,".MP3") != 0)))
+					current++;
+				MP3Play(folderIcons[current + 1].filePath);
+			}
+			
+			if((MP3ME_isPlaying == 1) && (osl_keys->pressed.left)) 
+			{
+				oslPlaySound(KeypressStandard, 1); 
+				isPlaying = 0;
+				endAudioLib();
+				MP3ME_Stop();
+				releaseAudio();
+				char * ext = strrchr(folderIcons[current - 1].filePath, '.'); 
+				if ((strcmp(ext ,".mp3") != 0) || ((strcmp(ext ,".MP3") != 0)))
+					current--;
+				MP3Play(folderIcons[current - 1].filePath);
+			}
+		}*/
+		
+		else if ((MP3ME_isPlaying == 0) && (osl_keys->pressed.cross))
 		{
 			MP3ME_Play();
 		}
@@ -527,6 +552,22 @@ void mp3Controls() //Controls
 		{
 			oslPlaySound(KeypressStandard, 1); 
 			MP3Play(folderIcons[current].filePath);
+		}
+	}
+	
+	if (((ext) != NULL) && ((strcmp(ext ,".wav") == 0) || ((strcmp(ext ,".WAV") == 0)) || ((strcmp(ext ,".BGM") == 0)) || ((strcmp(ext ,".bgm") == 0)) || ((strcmp(ext ,".MOD") == 0)) || ((strcmp(ext ,".mod") == 0)) || ((strcmp(ext ,".AT3") == 0)) || ((strcmp(ext ,".at3") == 0))) && (osl_keys->pressed.cross))
+	{
+		if (isPlaying == 1)
+		{
+			endAudioLib();
+			MP3ME_Stop();
+			releaseAudio();
+			soundPlay(folderIcons[current].filePath);
+		}
+		else 
+		{
+			oslPlaySound(KeypressStandard, 1); 
+			soundPlay(folderIcons[current].filePath);
 		}
 	}
 	
