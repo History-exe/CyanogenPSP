@@ -126,6 +126,21 @@ void langDisplay()
 	}
 }
 
+void langScrollUp()
+{
+	current--;
+	if ((current-1 <= curScroll - 1) && (curScroll > 1)) 
+		curScroll--; 
+}
+
+void langScrollDown()
+{
+	if (folderIcons[current+1].active) 
+		current++;
+	if (current >= (MAX_LANG_DISPLAY + curScroll - 1)) 
+		curScroll++; 
+}
+
 void langControls()
 {
 	oslReadKeys();
@@ -134,14 +149,14 @@ void langControls()
 	{
 		if (osl_keys->pressed.down)
 		{
-			selectionDown(MAX_LANG_DISPLAY);
+			langScrollDown();
 			if (strcmp(folderIcons[current].filePath, "doesn't matter") != 0) 
 				changeLanguage();
 			timer = 0;
 		}
 		else if (osl_keys->pressed.up)
 		{
-			selectionUp();
+			langScrollUp();
 			if (strcmp(folderIcons[current].filePath, "doesn't matter") != 0)
 				changeLanguage();
 			timer = 0;
@@ -163,7 +178,7 @@ void langControls()
 	{
 		selectionUp();
 		timer = 25;
-	} 
+	}
 	else if ((timer > 30) && (pad.Buttons & PSP_CTRL_DOWN))
 	{
 		selectionDown(MAX_LANG_DISPLAY);
