@@ -286,8 +286,8 @@ const char lang_settingsSecuirty[][3][100] =
 	{"Passordlås", "Pin-lås", "Sveip"},
 	{"Blocare cu parolă", "Blocare cu PIN", "Bețivan"},
 	{"Blocco con password", "Blocco con PIN", "Swipe"},
-	{"Защита паролем", "Защита PIN-кодом" "Жест"},
-	{"Захист паролем", "Захист PIN-кодом" "Жест"}
+	{"Защита паролем", "Защита PIN-кодом", "Жест"},
+	{"Захист паролем", "Захист PIN-кодом", "Жест"}
 };
 
 const char lang_settingsWifi[][3][100] = 
