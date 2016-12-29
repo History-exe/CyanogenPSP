@@ -5,7 +5,7 @@ CyanogenPSP [![Build Status](https://travis-ci.org/joel16/CyanogenPSP.svg?branch
 
 Disclaimer:
 =================
-**CyanogenPSP is in no affilated with Cyanogen INC or CyanogenMod. It is purely a fan made project that doesn't make use of the Android source code in any way.
+CyanogenPSP is in no way affilated with Cyanogen INC or CyanogenMod. It is purely a fan made project that doesn't make use of the Android source code in any way.
 
 
 About:
