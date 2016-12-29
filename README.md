@@ -2,7 +2,15 @@ CyanogenPSP [![Build Status](https://travis-ci.org/joel16/CyanogenPSP.svg?branch
 =================
 ![CyanogenPSP Banner](http://i.imgur.com/7U6w6pe.png)
 
-This is a program that allows you to do everything a PSP can do with a little more handy features, but with a whole different UI. This isn't a port of CyanogenMod for android, it's a project created from scratch. It's purpose is similar to that of "iR Shell", but has a UI inspired by CyanogenMod, Android. It will never allow you to run android apps, the psp system doesn't have the hardware capabilities to run android. If developers are intrested, feel free to contact me through my email: sauskethunderkid@gmail.com 
+
+Disclaimer:
+=================
+**CyanogenPSP is in no affilated with Cyanogen INC or CyanogenMod. It is purely a fan made project that doesn't make use of the Android source code in any way.
+
+
+About:
+=================
+This is a program that allows you to do everything a regular PSP can do with a little more interesting features, displaying them with an entirely different UI. This is a project built from ground up, which doesn't use any code from the Android SDK. Its purpose is similar to "iR Shell", but is based on a modernized UI inspired by CyanogenMod, Android. This program will never allow you to run android apps.
 
 
 What's working
@@ -22,7 +30,6 @@ What's working
 - Internet browser - NetFront default PSP browser
 - OTA updates - (Settings->About->CyanogenPSP Updates)
 - Gallery app - Allows you to view pictures, and set as wallpaper (Press square to bring up the wallpaper prompt) [JPG, PNG and GIF]
-- Dumping menu - Dump UMD boot.bin, flash 0, flash 1 and memory
 - Expanded desktop (Settings->Display)
 - Homebrew, POPS and ISO/CSO support (Game Menu)
 - Boot animation and game boot toggles (Settings->Display->Miscellaneous)
@@ -37,7 +44,11 @@ What's working
 - Battery management settings - (Powersave, Balanced and Performance)
 - Multi language support (Settings->Display->Language) Available languages can be found here: https://www.transifex.com/cyanogenpsp/cyanogenpsp/
 - Font sizes
+- Font colors (RGB.bin, used by the theme system)
 - UMD
+- Play/Pause music via the lock screen.
+- Flashing zips via recovery.
+- Dark theme mode.
 
 What's yet to work
 =================
@@ -50,6 +61,7 @@ What's yet to work
 What's not working
 =================
 - Everything else that isn't on the working list.
+
 
 Developing Instructions
 =================
